@@ -14,12 +14,10 @@
     usermod -G dialout -a utilisateur
 '''
 
-from codecs import register_error
-from struct import pack
 from time import sleep, time
 
 from cchardet import detect
-from serial import Serial, to_bytes
+from serial import Serial
 
 __all__ = ['ThermalPrinter', 'convert_encoding', 'custom_replace']
 
@@ -38,33 +36,23 @@ __copyright__ = '''
 '''
 
 
-def custom_replace(exc):
-    ''' Callback for codecs.register_error(). '''
-
-    if not isinstance(exc, UnicodeEncodeError):
-        raise
-    new = []
-    for char in exc.object[exc.start:exc.end]:
-        if ord(char) == 128:
-            new.append(chr(0))
-        else:
-            new.append(chr(255))
-    return (''.join(new), exc.end)
-
-register_error('custom_replace', custom_replace)
-
-def convert_encoding(data, new='cp1252'):
+def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
     ''' Tentative de conversion des caractères accentués
         au format connu par l'imprimante.
     '''
 
-    if isinstance(data, bytes):
+    if isinstance(data, (bool, int)):
+        if is_raw:
+            data = chr(data)
+        else:
+            data = str(data)
+    elif isinstance(data, bytes):
         current = detect(data)['encoding']
         if new.lower() != current.lower():
             data = data.decode(current, data).encode(new)
-    elif isinstance(data, (float, int, bool)):
-        data = chr(data)
-    return data.encode('cp1252', 'custom_replace')
+    if is_image:
+        return data.encode(new, 'replace')
+    return data.encode('cp1252', 'replace')
 
 
 class ThermalPrinter(Serial):
@@ -99,77 +87,12 @@ class ThermalPrinter(Serial):
         self.heat_dots = 7
         self.heat_interval = 2
         self.baud_rate = 19200
-        self.rts_cts = False
         self.fw_ver = 269
         super().__init__(port='/dev/ttyAMA0',
                          baudrate=self.baud_rate,
-                         timeout=10,
-                         rtscts=self.rts_cts)
-
-    def configure(self):
-        ''' Printer configurations.
-
-            [1] Calculate time to issue one byte to the printer.
-                11 bits (not 8) to accommodate idle, start and stop bits.
-                Idle time might be unnecessary, but erring on side of
-                caution here.
-
-            [2] The printer can't start receiving data immediately upon
-                power up -- it needs a moment to cold boot and initialize.
-                Allow at least 1/2 sec of uptime before printer can
-                receive data.
-
-            [3] Description of print settings from page 23 of the manual:
-                ESC 7 n1 n2 n3 Setting Control Parameter Command
-                Decimal: 27 55 n1 n2 n3
-                Set "max heating dots", "heating time", "heating interval"
-                n1 = 0-255 Max heat dots, Unit (8dots), Default: 7 (64 dots)
-                n2 = 3-255 Heating time, Unit (10us), Default: 80 (800us)
-                n3 = 0-255 Heating interval, Unit (10us), Default: 2 (20us)
-                The more max heating dots, the more peak current will cost
-                when printing, the faster printing speed. The max heating
-                dots is 8*(n1+1). The more heating time, the more density,
-                but the slower printing speed.  If heating time is too short,
-                blank page may occur. The more heating interval, the more
-                clear, but the slower printing speed.
-
-            [4] Description of print density from page 23 of the manual:
-                DC2 # n Set printing density
-                Decimal: 18 35 n
-                D4..D0 of n is used to set the printing density.
-                Density is 50% + 5% * n(D4-D0) printing density.
-                D7..D5 of n is used to set the printing break time.
-                Break time is n(D7-D5)*250us.
-                (Unsure of the default value for either -- not documented)
-        '''
-
-        self.byte_time = 11.0 / float(self.baud_rate)  # [1]
-
-        if self.rts_cts:
-            # Enable RTS/CTS flow control on printer
-            self.write_bytes(self.ASCII_GS, 'a', (1 << 5))
-
-        self.timeout_set(0.5)  # [2]
-        self.wake()
+                         timeout=10)
         self.reset()
-
-        # [3]
-        self.write_bytes(
-            self.ASCII_ESC, 55,  # '7' (print settings)
-            self.heat_dots,  # Heat dots (20 = balance darkness w/no jams)
-            self.heat_time,  # Lib default = 45
-            self.heat_interval)  # Heat interval (500 uS = slower but darker)
-
-        # [4]
-        # 50% + 5% * n = 120% (can go higher, but text gets fuzzy)
-        print_density = 14
-        print_break_time = 4  # * 250uS = 1000 uS
-
-        self.write_bytes(self.ASCII_DC2, 35,  # Print density
-                         (print_break_time << 5) | print_density)
-
-        self.dot_print_time = 0.03
-        self.dot_feed_time = 0.0021
+        self.set_default()
 
     def timeout_set(self, delay):
         ''' Sets estimated completion time for a just-issued task.
@@ -191,16 +114,6 @@ class ThermalPrinter(Serial):
 
     def timeout_wait(self):
         ''' Waits (if necessary) for the prior task to complete. '''
-
-        if self.rts_cts:
-            # hardware flow control, we will sleep on byte sending
-            pass
-        else:
-            while (time() - self.resume_time) < 0:
-                pass
-
-    def force_timeout_wait(self):
-        ''' Be patient. '''
 
         while (time() - self.resume_time) < 0:
             pass
@@ -231,19 +144,19 @@ class ThermalPrinter(Serial):
         self.timeout_wait()
         self.timeout_set(len(args) * self.byte_time)
         for data in args:
-#            if isinstance(data, int):
-#                data = (data)
-            data = convert_encoding(data)
+            data = convert_encoding(data, is_raw=True)
             super().write(data)
 
     def println(self, line):
         ''' Send a line to the printer. '''
 
+        # enc = convert_encoding(line)
+        # print(type(line), line, type(enc), enc)
         super().write(convert_encoding(line))
         super().write(b'\n')
 
     def reset(self):
-        ''' reset printer settings. '''
+        ''' Reset printer settings. '''
 
         self.prev_byte = '\n'  # Treat as if prior line is blank
         self.column = 0
@@ -299,7 +212,7 @@ class ThermalPrinter(Serial):
         # Print string
         self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
         super().write(text)
-        self.force_timeout_wait()
+        self.timeout_wait()
         self.prev_byte = '\n'
         self.feed(2)
 
@@ -459,7 +372,7 @@ class ThermalPrinter(Serial):
         else:
             # Feed manually; old firmware feeds excess lines
             while number:
-                self.write(b'\n')
+                super().write(b'\n')
                 number -= 1
 
     def feed_rows(self, rows):
@@ -502,7 +415,7 @@ class ThermalPrinter(Serial):
             2 - thick underline
         '''
 
-        if weight > 2:
+        if not 0 <= weight <= 2:
             weight = 2
         self.write_bytes(self.ASCII_ESC, '-', weight)
 
@@ -531,7 +444,6 @@ class ThermalPrinter(Serial):
         row_bytes = int((width + 7) / 8)
         # 384 pixels max width
         row_bytes_clipped = 48 if row_bytes >= 48 else row_bytes
-        max_chunk_height = 255
         bitmap = bytearray(row_bytes * height)
         pixels = image.load()
 
@@ -551,15 +463,16 @@ class ThermalPrinter(Serial):
                 bitmap[offset + pad] = sum_
 
         idx = 0
-        for row_start in range(0, height, max_chunk_height):
-            chunk_height = min(height - row_start, max_chunk_height)
+        for row_start in range(0, height, 255):
+            chunk_height = min(height - row_start, 255)
             self.write_bytes(18, 42, chunk_height, row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
-                    self.write_bytes(bitmap[idx])
+                    super().write(convert_encoding(bitmap[idx],
+                                                   is_raw=True,
+                                                   is_image=True))
                     idx += 1
                 idx += row_bytes - row_bytes_clipped
-            #self.timeout_set(chunk_height * self.dotPrint_time)
         self.prev_byte = '\n'
 
     def offline(self):
@@ -644,3 +557,47 @@ class ThermalPrinter(Serial):
         ''' Set character spacing. '''
 
         self.write_bytes(self.ASCII_ESC, ' ', spacing)
+
+
+def tests():
+    ''' Tests. '''
+
+    from PIL import Image
+
+    printer = ThermalPrinter()
+
+    # printer.test()
+
+    print('Un booléen inversé au milieu')
+    printer.println('Un booléen inversé au milieu:')
+    printer.justify('c')
+    printer.inverse_on()
+    printer.println(True)
+    printer.inverse_off()
+    printer.feed()
+
+    print('Un nombre souligné à droite')
+    printer.justify('l')
+    printer.println('Un nombre souligné à droite :')
+    printer.justify('r')
+    printer.underline_on()
+    printer.println(22)
+    printer.underline_off()
+    printer.feed()
+
+    print('Une image')
+    printer.justify('l')
+    printer.println('Une image :')
+    printer.print_image(Image.open('../agenda.png'))
+    printer.feed()
+
+    print('Texte en gras')
+    printer.bold_on()
+    printer.println('Voilà en gras !')
+    printer.bold_off()
+    printer.feed(2)
+    return 0
+
+
+if __name__ == '__main__':
+    exit(tests())
