@@ -535,15 +535,14 @@ class ThermalPrinter(Serial):
             (char height of 24, line spacing of 6).
         '''
 
-        if val < 24:
-            val = 24
+        val = max(24, val)
         self.line_spacing = val - 24
         self.write_bytes(self.ASCII_ESC, '3', val)
 
     def tab(self):
         ''' Tabulation. '''
 
-        self.write_bytes('\t')
+        super().write(b'\t')
         self.column = (self.column + 4) % self.max_column
 
     def set_char_spacing(self, spacing):
