@@ -1,0 +1,6 @@
+[Default]
+bears = LineLengthBear, SpaceConsistencyBear, PEP8Bear, PyImportSortBear, PyLintBear, PyUnusedCodeBear
+files = printer.py
+use_spaces = yeah
+
+pylint_disable = locally-disabled
