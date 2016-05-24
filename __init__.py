@@ -489,15 +489,8 @@ class ThermalPrinter(Serial):
 
         self.write_bytes(self.ASCII_ESC, 61, 1)
 
-    def sleep(self):
+    def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state immediately. '''
-
-        self.sleep_after(1)
-
-    def sleep_after(self, seconds):
-        ''' Put the printer into a low-energy state after
-            the given number of seconds.
-        '''
 
         if self.fw_ver >= 264:
             self.write_bytes(self.ASCII_ESC, '8', seconds, seconds >> 8)
@@ -510,10 +503,10 @@ class ThermalPrinter(Serial):
         self.timeout_set(0)
         self.write_bytes(255)
         if self.fw_ver >= 264:
-            sleep(0.05)  # sleep 50ms as in documentation
+            sleep(0.05)  # Sleep 50ms as in documentation
             self.sleep_after(0)  # SLEEP OFF - IMPORTANT!
         else:
-            # sleep longer, issule NULL commands (no-op)
+            # Sleep longer, issue NULL commands (no-op)
             for _ in range(10):
                 self.write_bytes(0)
                 self.timeout_set(0.1)
