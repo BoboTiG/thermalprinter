@@ -14,12 +14,14 @@
     usermod -G dialout -a utilisateur
 '''
 
+from codecs import register_error
+from struct import pack
 from time import sleep, time
 
 from cchardet import detect
-from serial import Serial
+from serial import Serial, to_bytes
 
-__all__ = ['ThermalPrinter', 'convert_encoding']
+__all__ = ['ThermalPrinter', 'convert_encoding', 'custom_replace']
 
 
 __version__ = '1.0.0-dev'
@@ -36,6 +38,21 @@ __copyright__ = '''
 '''
 
 
+def custom_replace(exc):
+    ''' Callback for codecs.register_error(). '''
+
+    if not isinstance(exc, UnicodeEncodeError):
+        raise
+    new = []
+    for char in exc.object[exc.start:exc.end]:
+        if ord(char) == 128:
+            new.append(chr(0))
+        else:
+            new.append(chr(255))
+    return (''.join(new), exc.end)
+
+register_error('custom_replace', custom_replace)
+
 def convert_encoding(data, new='cp1252'):
     ''' Tentative de conversion des caractères accentués
         au format connu par l'imprimante.
@@ -46,8 +63,8 @@ def convert_encoding(data, new='cp1252'):
         if new.lower() != current.lower():
             data = data.decode(current, data).encode(new)
     elif isinstance(data, (float, int, bool)):
-        data = str(data)
-    return data.encode('cp1252', 'replace')
+        data = chr(data)
+    return data.encode('cp1252', 'custom_replace')
 
 
 class ThermalPrinter(Serial):
@@ -70,7 +87,6 @@ class ThermalPrinter(Serial):
     prev_byte = '\n'
     column = 0
     max_column = 32
-    encoding = 'cp1252'
     char_height = 24
     line_spacing = 6
     barcode_height = 50
@@ -82,11 +98,13 @@ class ThermalPrinter(Serial):
         self.heat_time = 80
         self.heat_dots = 7
         self.heat_interval = 2
-        self.rtscts = False  # safer default choice
-        self.baudrate = 19200
-        self.device_name = '/dev/ttyAMA0'
+        self.baud_rate = 19200
+        self.rts_cts = False
         self.fw_ver = 269
-        super().__init__(self.device_name, self.baudrate)
+        super().__init__(port='/dev/ttyAMA0',
+                         baudrate=self.baud_rate,
+                         timeout=10,
+                         rtscts=self.rts_cts)
 
     def configure(self):
         ''' Printer configurations.
@@ -125,9 +143,9 @@ class ThermalPrinter(Serial):
                 (Unsure of the default value for either -- not documented)
         '''
 
-        self.byte_time = 11.0 / float(self.baudrate)  # [1]
+        self.byte_time = 11.0 / float(self.baud_rate)  # [1]
 
-        if self.rtscts:
+        if self.rts_cts:
             # Enable RTS/CTS flow control on printer
             self.write_bytes(self.ASCII_GS, 'a', (1 << 5))
 
@@ -174,7 +192,7 @@ class ThermalPrinter(Serial):
     def timeout_wait(self):
         ''' Waits (if necessary) for the prior task to complete. '''
 
-        if self.rtscts:
+        if self.rts_cts:
             # hardware flow control, we will sleep on byte sending
             pass
         else:
@@ -212,38 +230,17 @@ class ThermalPrinter(Serial):
 
         self.timeout_wait()
         self.timeout_set(len(args) * self.byte_time)
-        for arg in args:
-            if isinstance(arg, int):
-                arg = chr(arg)
-            arg = bytearray(arg, self.encoding)
-            super().write(arg)
+        for data in args:
+#            if isinstance(data, int):
+#                data = (data)
+            data = convert_encoding(data)
+            super().write(data)
 
-    def write(self, *data):
-        ''' Override write() method to keep track of paper feed. '''
+    def println(self, line):
+        ''' Send a line to the printer. '''
 
-        for char in data:
-            if char != 0x13:
-                self.timeout_wait()
-                super().write(char)
-                delay = self.byte_time
-                if char == '\n' or self.column == self.max_column:
-                    # Newline or wrap
-                    if self.prev_byte == '\n':
-                        # Feed line (blank)
-                        delay += self.char_height * self.dot_feed_time
-                        delay += self.line_spacing * self.dot_feed_time
-                    else:
-                        # Text line
-                        delay += self.char_height * self.dot_print_time
-                        delay += self.line_spacing * self.dot_feed_time
-                        self.column = 0
-                        # Treat wrap as newline
-                        # on next pass
-                        char = '\n'
-                else:
-                    self.column += 1
-                self.timeout_set(delay)
-                self.prev_byte = char
+        super().write(convert_encoding(line))
+        super().write(b'\n')
 
     def reset(self):
         ''' reset printer settings. '''
@@ -514,69 +511,7 @@ class ThermalPrinter(Serial):
 
         self.underline_on(0)
 
-    def print_bitmap2(self, width, height, bitmap):
-        ''' Outputs bitmap as a single chunk. '''
-
-        row_bytes = int((width + 7) / 8)  # Round up to next byte boundary
-        row_bytes_clipped = min(row_bytes, 48)  # 384 pixels max width
-        height_clipped = min(height, 4096)  # MAX from  documentation
-
-        # output begin command:
-        # GS v 0 m xL xH yL yH d1...dk
-        mode = 0  # normal, density 203.2 DPI
-        self.write_bytes(self.ASCII_GS, 'v', '0', mode,
-                         row_bytes_clipped & 0xFF,
-                         row_bytes_clipped >> 8, height_clipped & 0xFF,
-                         height_clipped >> 8)
-
-        i = 0
-        for _ in range(height_clipped):
-            for _ in range(row_bytes_clipped):
-                pixel = chr(bitmap[i]).encode('iso-8859-1')
-                super().write(pixel)
-                i += 1
-            i += row_bytes - row_bytes_clipped
-        self.timeout_set(height_clipped * self.dot_print_time)
-        self.prev_byte = '\n'
-        self.feed()
-
-    def print_image2(self, image):
-        ''' Print Image.  Requires Python Imaging Library.  This is
-            specific to the Python port and not present in the Arduino
-            library.  Image will be cropped to 384 pixels width if
-            necessary, and converted to 1-bit w/diffusion dithering.
-            For any other behavior (scale, B&W threshold, etc.), use
-            the Imaging Library to perform such operations before
-            passing the result to this function.
-        '''
-
-        if image.mode != '1':
-            image = image.convert('1')
-
-        width = min(384, image.size[0])
-        height = image.size[1]
-        row_bytes = int((width + 7) / 8)
-        bitmap = bytearray(row_bytes * height)
-        pixels = image.load()
-
-        for line in range(height):
-            number = line * row_bytes
-            xxx = 0
-            for column in range(row_bytes):
-                total = 0
-                bit = 128
-                while bit:
-                    if xxx >= width:
-                        break
-                    if pixels[xxx, line] == 0:
-                        total |= bit
-                    xxx += 1
-                    bit >>= 1
-                bitmap[number + column] = total
-
-        self.print_bitmap(width, height, bitmap)
-
-    def print_image(self, image, laat=False):
+    def print_image(self, image):
         ''' Print Image.  Requires Python Imaging Library. This is
             specific to the Python port and not present in the Arduino
             library.  Image will be cropped to 384 pixels width if
@@ -593,10 +528,10 @@ class ThermalPrinter(Serial):
 
         width = min(image.size[0], 384)
         height = image.size[1]
-        row_bytes = (width + 7) / 8
+        row_bytes = int((width + 7) / 8)
         # 384 pixels max width
         row_bytes_clipped = 48 if row_bytes >= 48 else row_bytes
-        max_chunk_height = 1 if laat else 255
+        max_chunk_height = 255
         bitmap = bytearray(row_bytes * height)
         pixels = image.load()
 
@@ -618,16 +553,13 @@ class ThermalPrinter(Serial):
         idx = 0
         for row_start in range(0, height, max_chunk_height):
             chunk_height = min(height - row_start, max_chunk_height)
-
-            # Timeout wait happens here
-            self.writeBytes(18, 42, chunk_height, row_bytes_clipped)
-
+            self.write_bytes(18, 42, chunk_height, row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
-                    super().write(chr(bitmap[idx]))
+                    self.write_bytes(bitmap[idx])
                     idx += 1
                 idx += row_bytes - row_bytes_clipped
-            self.timeoutSet(chunk_height * self.dotPrintTime)
+            #self.timeout_set(chunk_height * self.dotPrint_time)
         self.prev_byte = '\n'
 
     def offline(self):
@@ -681,7 +613,10 @@ class ThermalPrinter(Serial):
 
         self.write_bytes(self.ASCII_ESC, 118, 0)
         # Bit 2 of response seems to be paper status
-        stat = ord(self.read(1)) & 0b00000100
+        try:
+            stat = ord(self.read(1)) & 0b00000100
+        except TypeError:
+            return True
         # If set, we have paper; if clear, no paper
         return stat == 0
 
@@ -709,9 +644,3 @@ class ThermalPrinter(Serial):
         ''' Set character spacing. '''
 
         self.write_bytes(self.ASCII_ESC, ' ', spacing)
-
-    def println(self, line):
-        ''' Send a line to the printer. '''
-
-        self.write(line)
-        self.write(b'\n')
