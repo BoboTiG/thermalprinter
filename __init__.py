@@ -22,7 +22,7 @@ from serial import Serial
 __all__ = ['ThermalPrinter']
 
 
-__version__ = '1.0.0-dev'
+__version__ = '0.0.1-dev'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
     Copyright (c) 2016, Mickaël Schoentgen
@@ -405,7 +405,7 @@ class ThermalPrinter(Serial):
             self.char_height = 24
             self.max_column = 32
 
-        self.write_bytes(self.ASCII_GS, 33, size, 10)
+        self.write_bytes(self.ASCII_GS, 33, size)
         self.prev_byte = '\n'  # Setting the size adds a linefeed
 
     def underline_on(self, weight=1):
