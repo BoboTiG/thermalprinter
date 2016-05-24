@@ -19,7 +19,7 @@ from time import sleep, time
 from cchardet import detect
 from serial import Serial
 
-__all__ = ['ThermalPrinter', 'convert_encoding', 'custom_replace']
+__all__ = ['ThermalPrinter']
 
 
 __version__ = '1.0.0-dev'
