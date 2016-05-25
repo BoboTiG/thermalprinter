@@ -190,11 +190,11 @@ class ThermalPrinter(Serial):
         self.timeout_set(self.dot_print_time * 24 * 26 + self.dot_feed_time *
                          (8 * 26 + 32))
 
-    UPC_A = 0
-    UPC_E = 1
-    EAN13 = 2
-    EAN8 = 3
-    CODE39 = 4
+    # UPC_A = 0
+    # UPC_E = 1
+    # EAN13 = 2
+    # EAN8 = 3
+    # CODE39 = 4
     I25 = 5
     CODEBAR = 6
     CODE93 = 7
@@ -205,15 +205,17 @@ class ThermalPrinter(Serial):
     def print_barcode(self, text, bc_type):
         ''' Barcode printing. '''
 
+        if not 5 <= bc_type <= 10:
+            print('Error: 5 <= bc_type <= 10.')
+            return
         self.write_bytes(self.ASCII_GS, 72, 2,  # Print label below barcode
                          self.ASCII_GS, 119, 3,  # Barcode width
                          self.ASCII_GS, 107, bc_type)  # Barcode type
         # Print string
         self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
-        super().write(text)
+        super().write(convert_encoding(text, is_raw=True, is_image=True))
         self.timeout_wait()
         self.prev_byte = '\n'
-        self.feed(2)
 
     def set_barcode_height(self, val=50):
         ''' Set the barcode height. '''
@@ -526,34 +528,55 @@ def tests():
 
     # printer.test()
 
-    print('Un booléen inversé au milieu')
-    printer.println('Un booléen inversé au milieu:')
-    printer.justify('c')
-    printer.inverse_on()
-    printer.println(True)
-    printer.inverse_off()
+    printer.feed()
+    printer.print_image(Image.open('gnu.png'))
     printer.feed()
 
-    print('Un nombre souligné à droite')
-    printer.justify('l')
-    printer.println('Un nombre souligné à droite :')
-    printer.justify('r')
-    printer.underline_on()
-    printer.println(22)
-    printer.underline_off()
-    printer.feed()
-
-    print('Une image')
-    printer.justify('l')
-    printer.println('Une image :')
-    printer.print_image(Image.open('../agenda.png'))
-    printer.feed()
-
-    print('Texte en gras')
     printer.bold_on()
-    printer.println('Voilà en gras !')
+    printer.println('Bold')
     printer.bold_off()
-    printer.feed(2)
+
+    printer.double_height_on()
+    printer.println('Double height')
+    printer.double_height_off()
+
+    printer.double_width_on()
+    printer.println('Double width')
+    printer.double_width_off()
+
+    printer.inverse_on()
+    printer.println('Inverse')
+    printer.inverse_off()
+
+    printer.strike_on()
+    printer.println('Strike')
+    printer.strike_off()
+
+    printer.tab()
+    printer.println('Tabulation')
+
+    printer.underline_on()
+    printer.println('Underline')
+    printer.underline_off()
+
+    # Does not work on fw 2.69
+    # printer.upside_down_on()
+    # printer.println('Upside down')
+    # printer.upside_down_off()
+
+    printer.println('A boolean centered:')
+    printer.justify('C')
+    printer.println(True)
+
+    printer.justify('L')
+    printer.println('An integer on the right:')
+    printer.justify('R')
+    printer.println(42)
+
+    printer.justify('L')
+    printer.print_barcode('0123456789', printer.I25)
+
+    printer.feed(4)
     return 0
 
 
