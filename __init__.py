@@ -468,7 +468,7 @@ class ThermalPrinter(Serial):
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
 
-        if seconds > 1:
+        if seconds > 0:
             sleep(seconds)
         self.write_bytes(self.ASCII_ESC, '8', seconds, seconds >> 8)
 
@@ -478,7 +478,7 @@ class ThermalPrinter(Serial):
         self.timeout_set(0)
         self.write_bytes(255)
         sleep(0.05)  # Sleep 50ms as in documentation
-        self.sleep_after(0)  # SLEEP OFF - IMPORTANT!
+        self.sleep(0)  # SLEEP OFF - IMPORTANT!
 
     def has_paper(self):
         ''' Check the status of the paper using the printers self reporting
