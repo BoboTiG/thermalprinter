@@ -4,7 +4,7 @@
 
     Script initial de Phil Burgess, Fried/Ladyada pour Adafruit.
     Script maintenu par Mickaël Schoentgen <mickael@jmsinfo.co>.
-    Dernière mise à jour : 2016-05-24
+    Dernière mise à jour : 2016-05-25
     Python 3.
     Dépendances :
         python3-serial
@@ -219,8 +219,7 @@ class ThermalPrinter(Serial):
     def set_barcode_height(self, val=50):
         ''' Set the barcode height. '''
 
-        if val < 1:
-            val = 1
+        val = max(1, val)
         self.barcode_height = val
         self.write_bytes(self.ASCII_GS, 104, val)
 
@@ -490,8 +489,10 @@ class ThermalPrinter(Serial):
         self.write_bytes(self.ASCII_ESC, 61, 1)
 
     def sleep(self, seconds=1):
-        ''' Put the printer into a low-energy state immediately. '''
+        ''' Put the printer into a low-energy state. '''
 
+        if seconds > 1:
+            sleep(seconds)
         if self.fw_ver >= 264:
             self.write_bytes(self.ASCII_ESC, '8', seconds, seconds >> 8)
         else:
