@@ -165,11 +165,10 @@ class ThermalPrinter(Serial):
         self.line_spacing = 6
         self.barcode_height = 50
         self.write_bytes(self.ASCII_ESC, 64)
-        if self.fw_ver > 264:
-            # Configure tab stops on recent printers
-            self.write_bytes(self.ASCII_ESC, 'D')  # Set tab stops...
-            self.write_bytes(4, 8, 12, 16)  # ...every 4 columns,
-            self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
+        # Configure tab stops on recent printers
+        self.write_bytes(self.ASCII_ESC, 'D')  # Set tab stops ...
+        self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
+        self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
 
     def set_default(self):
         ''' Reset text formatting parameters. '''
@@ -182,7 +181,7 @@ class ThermalPrinter(Serial):
         self.bold_off()
         self.underline_off()
         self.set_barcode_height(50)
-        self.set_size('s')
+        self.set_size('S')
 
     def test(self):
         ''' Print settings as test. '''
@@ -266,18 +265,12 @@ class ThermalPrinter(Serial):
     def inverse_on(self):
         ''' Set inverse mode. '''
 
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_GS, 'B', 1)
-        else:
-            self.set_print_mode(self.INVERSE_MASK)
+        self.write_bytes(self.ASCII_GS, 'B', 1)
 
     def inverse_off(self):
         ''' Unset inverse mode. '''
 
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_GS, 'B', 0)
-        else:
-            self.unset_print_mode(self.INVERSE_MASK)
+        self.write_bytes(self.ASCII_GS, 'B', 0)
 
     def upside_down_on(self):
         ''' Set upside down mode. '''
@@ -303,51 +296,33 @@ class ThermalPrinter(Serial):
         ''' Set double width mode. '''
 
         self.max_column = 16
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_ESC, 14, 1)  # n is undefined in spec
-        else:
-            self.set_print_mode(self.DOUBLE_WIDTH_MASK)
+        self.write_bytes(self.ASCII_ESC, 14, 1)  # n is undefined in spec
 
     def double_width_off(self):
         ''' Unset double width mode. '''
 
         self.max_column = 32
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_ESC, 20, 1)  # n is undefined in spec
-        else:
-            self.unset_print_mode(self.DOUBLE_WIDTH_MASK)
+        self.write_bytes(self.ASCII_ESC, 20, 1)  # n is undefined in spec
 
     def strike_on(self):
         ''' Set strike mode. '''
 
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_ESC, 'G', 1)
-        else:
-            self.set_print_mode(self.STRIKE_MASK)
+        self.write_bytes(self.ASCII_ESC, 'G', 1)
 
     def strike_off(self):
         ''' Unset strike mode. '''
 
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_ESC, 'G', 0)
-        else:
-            self.unset_print_mode(self.STRIKE_MASK)
+        self.write_bytes(self.ASCII_ESC, 'G', 0)
 
     def bold_on(self):
         ''' Set bold mode. Actually can be also set using set_print_mode. '''
 
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_ESC, 'E', 1)
-        else:
-            self.set_print_mode(self.BOLD_MASK)
+        self.write_bytes(self.ASCII_ESC, 'E', 1)
 
     def bold_off(self):
         ''' Unset bold mode. '''
 
-        if self.fw_ver >= 268:
-            self.write_bytes(self.ASCII_ESC, 'E', 0)
-        else:
-            self.unset_print_mode(self.BOLD_MASK)
+        self.write_bytes(self.ASCII_ESC, 'E', 0)
 
     def justify(self, value):
         ''' Set text justification. '''
@@ -391,6 +366,9 @@ class ThermalPrinter(Serial):
         ''' Set text size. '''
 
         value = value.upper()
+        size = 0x00
+        self.char_height = 24
+        self.max_column = 32
         if value == 'L':  # Large: double width and height
             size = 0x11
             self.char_height = 48
@@ -398,10 +376,6 @@ class ThermalPrinter(Serial):
         elif value == 'M':  # Medium: double height
             size = 0x01
             self.char_height = 48
-            self.max_column = 32
-        else:  # Small: standard width and height
-            size = 0x00
-            self.char_height = 24
             self.max_column = 32
 
         self.write_bytes(self.ASCII_GS, 33, size)
@@ -493,24 +467,15 @@ class ThermalPrinter(Serial):
 
         if seconds > 1:
             sleep(seconds)
-        if self.fw_ver >= 264:
-            self.write_bytes(self.ASCII_ESC, '8', seconds, seconds >> 8)
-        else:
-            self.write_bytes(self.ASCII_ESC, '8', seconds)
+        self.write_bytes(self.ASCII_ESC, '8', seconds, seconds >> 8)
 
     def wake(self):
         ''' Wake up the printer. '''
 
         self.timeout_set(0)
         self.write_bytes(255)
-        if self.fw_ver >= 264:
-            sleep(0.05)  # Sleep 50ms as in documentation
-            self.sleep_after(0)  # SLEEP OFF - IMPORTANT!
-        else:
-            # Sleep longer, issue NULL commands (no-op)
-            for _ in range(10):
-                self.write_bytes(0)
-                self.timeout_set(0.1)
+        sleep(0.05)  # Sleep 50ms as in documentation
+        self.sleep_after(0)  # SLEEP OFF - IMPORTANT!
 
     def has_paper(self):
         ''' Check the status of the paper using the printers self reporting
