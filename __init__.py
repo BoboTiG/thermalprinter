@@ -216,6 +216,7 @@ class ThermalPrinter(Serial):
         super().write(convert_encoding(text, is_raw=True, is_image=True))
         self.timeout_wait()
         self.prev_byte = '\n'
+        self.feed(2)
 
     def set_barcode_height(self, val=50):
         ''' Set the barcode height. '''
@@ -576,7 +577,6 @@ def tests():
     printer.justify('L')
     printer.print_barcode('0123456789', printer.I25)
 
-    printer.feed(4)
     return 0
 
 
