@@ -228,7 +228,7 @@ class ThermalPrinter(Serial):
     # === Character commands ===
 
     INVERSE_MASK = (1 << 1)  # Not in 2.6.8 firmware (see inverse_on())
-    UPDOWN_MASK = (1 << 2)
+    # UPDOWN_MASK = (1 << 2)
     BOLD_MASK = (1 << 3)
     DOUBLE_HEIGHT_MASK = (1 << 4)
     DOUBLE_WIDTH_MASK = (1 << 5)
@@ -274,16 +274,6 @@ class ThermalPrinter(Serial):
         ''' Unset inverse mode. '''
 
         self.write_bytes(self.ASCII_GS, 'B', 0)
-
-    def upside_down_on(self):
-        ''' Set upside down mode. '''
-
-        self.set_print_mode(self.UPDOWN_MASK)
-
-    def upside_down_off(self):
-        ''' Unset upside down mode. '''
-
-        self.unset_print_mode(self.UPDOWN_MASK)
 
     def double_height_on(self):
         ''' Set double height mode. '''
@@ -559,11 +549,6 @@ def tests():
     printer.underline_on()
     printer.println('Underline')
     printer.underline_off()
-
-    # Does not work on fw 2.69
-    # printer.upside_down_on()
-    # printer.println('Upside down')
-    # printer.upside_down_off()
 
     printer.println('A boolean centered:')
     printer.justify('C')
