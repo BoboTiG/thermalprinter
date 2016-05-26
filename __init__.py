@@ -240,7 +240,7 @@ class ThermalPrinter(Serial):
         ''' Feeds by the specified number of lines. '''
 
         if not 0 <= number <= 255:
-            number = 1
+            number = 0
         self.write_bytes(Command.ASCII_ESC.value, 100, number)
         self.timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
@@ -332,7 +332,7 @@ class ThermalPrinter(Serial):
         self.write_bytes(Command.ASCII_GS.value, 66, state)
 
     def is_pinned(self):
-        ''' Transmit peripheral devices status. '''
+        ''' TODO FIX. Transmit peripheral devices status. '''
 
         self.write_bytes(Command.ASCII_ESC.value, 117, 0)
         # Bit 1 of response is drawer kick out connector pin 3
@@ -341,7 +341,7 @@ class ThermalPrinter(Serial):
         except TypeError:
             return True
         # If set, we have paper; if clear, no paper
-        return stat == 1
+        return stat == 0
 
     def justify(self, value='L'):
         ''' Set text justification. '''
@@ -364,8 +364,6 @@ class ThermalPrinter(Serial):
     def println(self, line):
         ''' Send a line to the printer. '''
 
-        # enc = convert_encoding(line)
-        # print(type(line), line, type(enc), enc)
         super().write(convert_encoding(line))
         super().write(b'\n')
 
@@ -393,9 +391,7 @@ class ThermalPrinter(Serial):
         self.line_spacing = 6
         self.barcode_height = 50
         self.write_bytes(Command.ASCII_ESC.value, 64)
-        self.write_bytes(Command.ASCII_ESC.value, 'D')  # Set tab stops ...
-        self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
-        self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
+        self.write_bytes(Command.ASCII_ESC.value, 68, 9, 17, 25, 33, 0)
 
     def select_charset(self, charset):
         ''' Select an internal character set. '''
@@ -675,8 +671,9 @@ def tests():
     printer.println(42)
 
     printer.justify('L')
-    printer.barcode('0123456789', BarCode.I25.value)
+    printer.barcode('012345678901', BarCode.EAN13)
 
+    printer.feed(2)
     return 0
 
 
