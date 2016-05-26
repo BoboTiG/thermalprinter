@@ -115,49 +115,22 @@ class ThermalPrinter(Serial):
         self.reset()
         self.set_default()
 
-    def timeout_set(self, delay):
-        ''' Sets estimated completion time for a just-issued task.
+    def test(self):
+        ''' Print settings as test. '''
 
-            Because there's no flow control between the printer and computer,
-            special care must be taken to avoid overrunning the printer's
-            buffer.  Serial output is throttled based on serial speed as well
-            as an estimate of the device's print and feed rates (relatively
-            slow, being bound to moving parts and physical reality).  After
-            an operation is issued to the printer (e.g. bitmap print), a
-            timeout is set before which any other printer operations will be
-            suspended.  This is generally more efficient than using a delay
-            in that it allows the calling code to continue with other duties
-            (e.g. receiving or decoding an image) while the printer
-            physically completes the task.
-        '''
+        self.write_bytes(Command.ASCII_DC2.value, 84)
+        self.timeout_set(self.dot_print_time * 24 * 26 + self.dot_feed_time *
+                         (8 * 26 + 32))
 
-        self.resume_time = time() + delay
+    def bold_on(self):
+        ''' Set bold mode. Actually can be also set using set_print_mode. '''
 
-    def timeout_wait(self):
-        ''' Waits (if necessary) for the prior task to complete. '''
+        self.write_bytes(Command.ASCII_ESC.value, 'E', 1)
 
-        while (time() - self.resume_time) < 0:
-            pass
+    def bold_off(self):
+        ''' Unset bold mode. '''
 
-    def set_times(self, print_time, feed_time):
-        ''' Printer performance may vary based on the power supply voltage,
-            thickness of paper, phase of the moon and other seemingly random
-            variables.  This method sets the times (in microseconds) for the
-            paper to advance one vertical 'dot' when printing and feeding.
-
-            For example, in the default initialized state, normal-sized text
-            is 24 dots tall and the line spacing is 32 dots, so the time for
-            one line to be issued is approximately 24 * print time + 8 * feed
-            time.  The default print and feed times are based on a random
-            test unit, but as stated above your reality may be influenced by
-            many factors.  This lets you tweak the timing to avoid excessive
-            delays and/or overrunning the printer buffer.
-
-            Units are in microseconds.
-        '''
-
-        self.dot_print_time = print_time / 1000000.0
-        self.dot_feed_time = feed_time / 1000000.0
+        self.write_bytes(Command.ASCII_ESC.value, 'E', 0)
 
     def write_bytes(self, *args):
         ''' 'Raw' byte-writing. '''
@@ -176,39 +149,22 @@ class ThermalPrinter(Serial):
         super().write(convert_encoding(line))
         super().write(b'\n')
 
-    def reset(self):
-        ''' Reset printer settings. '''
+    def feed(self, number=1):
+        ''' Feeds by the specified number of lines. '''
 
+        if not 0 <= number <= 255:
+            raise ValueError('Should be 0 <= number <= 255.')
+
+        self.write_bytes(Command.ASCII_ESC.value, 100, number)
+        self.timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
         self.column = 0
-        self.max_column = 32
-        self.char_height = 24
-        self.line_spacing = 6
-        self.barcode_height = 50
-        self.write_bytes(Command.ASCII_ESC.value, 64)
-        self.write_bytes(Command.ASCII_ESC.value, 'D')  # Set tab stops ...
-        self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
-        self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
 
-    def set_default(self):
-        ''' Reset text formatting parameters. '''
+    def tab(self):
+        ''' Tabulation. '''
 
-        self.online()
-        self.justify('L')
-        self.inverse_off()
-        self.double_height_off()
-        self.set_line_height(32)
-        self.bold_off()
-        self.underline_off()
-        self.set_barcode_height(50)
-        self.set_size('S')
-
-    def test(self):
-        ''' Print settings as test. '''
-
-        self.write_bytes(Command.ASCII_DC2.value, 84)
-        self.timeout_set(self.dot_print_time * 24 * 26 + self.dot_feed_time *
-                         (8 * 26 + 32))
+        super().write(b'\t')
+        self.column = (self.column + 4) % self.max_column
 
     def print_barcode(self, text, bc_type):
         ''' Barcode printing. '''
@@ -234,31 +190,6 @@ class ThermalPrinter(Serial):
         val = max(1, val)
         self.barcode_height = val
         self.write_bytes(Command.ASCII_GS.value, 104, val)
-
-    def set_print_mode(self, mask):
-        ''' Set the print mode. '''
-
-        self.print_mode |= mask
-        self.write_print_mode()
-        if self.print_mode & 16:
-            self.char_height = 48
-        else:
-            self.char_height = 24
-
-    def unset_print_mode(self, mask):
-        ''' Unset the print mode.  '''
-
-        self.print_mode &= ~mask
-        self.write_print_mode()
-        if self.print_mode & 16:
-            self.char_height = 48
-        else:
-            self.char_height = 24
-
-    def write_print_mode(self):
-        ''' Write the print mode. '''
-
-        self.write_bytes(Command.ASCII_ESC.value, 33, self.print_mode)
 
     def normal(self):
         ''' Set the print mode to normal. '''
@@ -308,41 +239,6 @@ class ThermalPrinter(Serial):
 
         self.write_bytes(Command.ASCII_ESC.value, 'G', 0)
 
-    def bold_on(self):
-        ''' Set bold mode. Actually can be also set using set_print_mode. '''
-
-        self.write_bytes(Command.ASCII_ESC.value, 'E', 1)
-
-    def bold_off(self):
-        ''' Unset bold mode. '''
-
-        self.write_bytes(Command.ASCII_ESC.value, 'E', 0)
-
-    def justify(self, value='L'):
-        ''' Set text justification. '''
-
-        value = value.upper()
-        pos = 0
-        if value == 'C':
-            pos = 1
-        elif value == 'R':
-            pos = 2
-        self.write_bytes(Command.ASCII_ESC.value, 'a', pos)
-
-    def feed(self, number=1):
-        ''' Feeds by the specified number of lines. '''
-
-        if self.fw_ver >= 270:  # Does not work with v2.69
-            self.write_bytes(Command.ASCII_ESC.value, 'd', number)
-            self.timeout_set(number * self.dot_feed_time * self.char_height)
-            self.prev_byte = '\n'
-            self.column = 0
-        else:
-            # Feed manually; old firmware feeds excess lines
-            while number:
-                super().write(b'\n')
-                number -= 1
-
     def feed_rows(self, rows):
         ''' Feeds by the specified number of individual pixel rows
             WARN: does not work whith mine v2.69
@@ -356,40 +252,32 @@ class ThermalPrinter(Serial):
 
         self.write_bytes(12)
 
-    def set_size(self, value='S'):
-        ''' Set text size. '''
-
-        value = value.upper()
-        size = 0x00
-        self.char_height = 24
-        self.max_column = 32
-        if value == 'L':  # Large: double width and height
-            size = 0x11
-            self.char_height = 48
-            self.max_column = 16
-        elif value == 'M':  # Medium: double height
-            size = 0x01
-            self.char_height = 48
-            self.max_column = 32
-
-        self.write_bytes(Command.ASCII_GS.value, 33, size)
-        self.prev_byte = '\n'  # Setting the size adds a linefeed
-
-    def underline_on(self, weight=1):
-        ''' Underlines of different weights can be produced:
-            0 - no underline
-            1 - normal underline
-            2 - thick underline
+    def has_paper(self):
+        ''' Check the status of the paper using the printers self reporting
+            ability. Doesn't match the datasheet...
+            Returns True for paper, False for no paper.
         '''
 
-        if not 0 <= weight <= 2:
-            weight = 2
-        self.write_bytes(Command.ASCII_ESC.value, '-', weight)
+        self.write_bytes(Command.ASCII_ESC.value, 118, 0)
+        # Bit 2 of response seems to be paper status
+        try:
+            stat = ord(self.read(1)) & 0b00000100
+        except TypeError:
+            return True
+        # If set, we have paper; if clear, no paper
+        return stat == 0
 
-    def underline_off(self):
-        ''' Unset underline mode. '''
+    def justify(self, value='L'):
+        ''' Set text justification. '''
 
-        self.underline_on(0)
+        value = value.upper()
+        if value == 'C':
+            pos = 1
+        elif value == 'R':
+            pos = 2
+        else:
+            pos = 0
+        self.write_bytes(Command.ASCII_ESC.value, 'a', pos)
 
     def print_image(self, image):
         ''' Print Image. Requires Python Imaging Library. This is
@@ -463,35 +351,81 @@ class ThermalPrinter(Serial):
 
         self.write_bytes(Command.ASCII_ESC.value, 61, 1)
 
-    def sleep(self, seconds=1):
-        ''' Put the printer into a low-energy state. '''
+    def timeout_set(self, delay):
+        ''' Sets estimated completion time for a just-issued task.
 
-        if seconds > 0:
-            sleep(seconds)
-        self.write_bytes(Command.ASCII_ESC.value, '8', seconds, seconds >> 8)
-
-    def wake(self):
-        ''' Wake up the printer. '''
-
-        self.timeout_set(0)
-        self.write_bytes(255)
-        sleep(0.05)  # Sleep 50ms as in documentation
-        self.sleep(0)  # SLEEP OFF - IMPORTANT!
-
-    def has_paper(self):
-        ''' Check the status of the paper using the printers self reporting
-            ability. Doesn't match the datasheet...
-            Returns True for paper, False for no paper.
+            Because there's no flow control between the printer and computer,
+            special care must be taken to avoid overrunning the printer's
+            buffer.  Serial output is throttled based on serial speed as well
+            as an estimate of the device's print and feed rates (relatively
+            slow, being bound to moving parts and physical reality).  After
+            an operation is issued to the printer (e.g. bitmap print), a
+            timeout is set before which any other printer operations will be
+            suspended.  This is generally more efficient than using a delay
+            in that it allows the calling code to continue with other duties
+            (e.g. receiving or decoding an image) while the printer
+            physically completes the task.
         '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 118, 0)
-        # Bit 2 of response seems to be paper status
-        try:
-            stat = ord(self.read(1)) & 0b00000100
-        except TypeError:
-            return True
-        # If set, we have paper; if clear, no paper
-        return stat == 0
+        self.resume_time = time() + delay
+
+    def timeout_wait(self):
+        ''' Waits (if necessary) for the prior task to complete. '''
+
+        while (time() - self.resume_time) < 0:
+            pass
+
+    def set_times(self, print_time, feed_time):
+        ''' Printer performance may vary based on the power supply voltage,
+            thickness of paper, phase of the moon and other seemingly random
+            variables.  This method sets the times (in microseconds) for the
+            paper to advance one vertical 'dot' when printing and feeding.
+
+            For example, in the default initialized state, normal-sized text
+            is 24 dots tall and the line spacing is 32 dots, so the time for
+            one line to be issued is approximately 24 * print time + 8 * feed
+            time.  The default print and feed times are based on a random
+            test unit, but as stated above your reality may be influenced by
+            many factors.  This lets you tweak the timing to avoid excessive
+            delays and/or overrunning the printer buffer.
+
+            Units are in microseconds.
+        '''
+
+        self.dot_print_time = print_time / 1000000.0
+        self.dot_feed_time = feed_time / 1000000.0
+
+    def reset(self):
+        ''' Reset printer settings. '''
+
+        self.prev_byte = '\n'
+        self.column = 0
+        self.max_column = 32
+        self.char_height = 24
+        self.line_spacing = 6
+        self.barcode_height = 50
+        self.write_bytes(Command.ASCII_ESC.value, 64)
+        self.write_bytes(Command.ASCII_ESC.value, 'D')  # Set tab stops ...
+        self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
+        self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
+
+    def set_default(self):
+        ''' Reset text formatting parameters. '''
+
+        self.online()
+        self.justify('L')
+        self.inverse_off()
+        self.double_height_off()
+        self.set_line_height(32)
+        self.bold_off()
+        self.underline_off()
+        self.set_barcode_height(50)
+        self.set_size('S')
+
+    def set_char_spacing(self, spacing):
+        ''' Set character spacing. '''
+
+        self.write_bytes(Command.ASCII_ESC.value, ' ', spacing)
 
     def set_line_height(self, val=32):
         ''' Set line height.
@@ -506,16 +440,80 @@ class ThermalPrinter(Serial):
         self.line_spacing = val - 24
         self.write_bytes(Command.ASCII_ESC.value, '3', val)
 
-    def tab(self):
-        ''' Tabulation. '''
+    def set_print_mode(self, mask):
+        ''' Set the print mode. '''
 
-        super().write(b'\t')
-        self.column = (self.column + 4) % self.max_column
+        self.print_mode |= mask
+        self.write_print_mode()
+        if self.print_mode & 16:
+            self.char_height = 48
+        else:
+            self.char_height = 24
 
-    def set_char_spacing(self, spacing):
-        ''' Set character spacing. '''
+    def set_size(self, value='S'):
+        ''' Set text size. '''
 
-        self.write_bytes(Command.ASCII_ESC.value, ' ', spacing)
+        value = value.upper()
+        size = 0x00
+        self.char_height = 24
+        self.max_column = 32
+        if value == 'L':  # Large: double width and height
+            size = 0x11
+            self.char_height = 48
+            self.max_column = 16
+        elif value == 'M':  # Medium: double height
+            size = 0x01
+            self.char_height = 48
+            self.max_column = 32
+
+        self.write_bytes(Command.ASCII_GS.value, 33, size)
+        self.prev_byte = '\n'  # Setting the size adds a linefeed
+
+    def sleep(self, seconds=1):
+        ''' Put the printer into a low-energy state. '''
+
+        if seconds > 0:
+            sleep(seconds)
+        self.write_bytes(Command.ASCII_ESC.value, '8', seconds, seconds >> 8)
+
+    def underline_on(self, weight=1):
+        ''' Underlines of different weights can be produced:
+            0 - no underline
+            1 - normal underline
+            2 - thick underline
+        '''
+
+        if not 0 <= weight <= 2:
+            weight = 2
+        self.write_bytes(Command.ASCII_ESC.value, '-', weight)
+
+    def underline_off(self):
+        ''' Unset underline mode. '''
+
+        self.underline_on(0)
+
+    def unset_print_mode(self, mask):
+        ''' Unset the print mode.  '''
+
+        self.print_mode &= ~mask
+        self.write_print_mode()
+        if self.print_mode & 16:
+            self.char_height = 48
+        else:
+            self.char_height = 24
+
+    def wake(self):
+        ''' Wake up the printer. '''
+
+        self.timeout_set(0)
+        self.write_bytes(255)
+        sleep(0.05)  # Sleep 50ms as in documentation
+        self.sleep(0)  # SLEEP OFF - IMPORTANT!
+
+    def write_print_mode(self):
+        ''' Write the print mode. '''
+
+        self.write_bytes(Command.ASCII_ESC.value, 33, self.print_mode)
 
 
 def tests():
