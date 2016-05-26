@@ -24,7 +24,7 @@ from time import sleep, time
 from cchardet import detect
 from serial import Serial
 
-__all__ = ['BarCode', 'Command', 'ThermalPrinter']
+__all__ = ['BarCode', 'CharSet', 'CodePage', 'Command', 'ThermalPrinter']
 
 
 __version__ = '1.0.0-dev'
@@ -62,17 +62,17 @@ def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
 class BarCode(Enum):
     ''' Available barcode types. '''
 
-    UPC_A = 65
-    UPC_E = 66
-    JAN13 = 67
-    EAN13 = 67
-    JAN8 = 68
-    EAN8 = 68
-    CODE39 = 69
-    ITF = 70
-    CODABAR = 71
-    CODE93 = 72
-    CODE128 = 73
+    UPC_A = (65, (11, 12))
+    UPC_E = (66, (11, 12))
+    JAN13 = (67, (12, 13))
+    EAN13 = (67, (12, 13))
+    JAN8 = (68, (7, 8))
+    EAN8 = (68, (7, 8))
+    CODE39 = (69, (1, 255))
+    ITF = (70, (1, 255))
+    CODABAR = (71, (1, 255))
+    CODE93 = (72, (1, 255))
+    CODE128 = (73, (2, 255))
 
 
 class CharSet(Enum):
@@ -190,26 +190,23 @@ class ThermalPrinter(Serial):
         ''' Barcode printing. '''
 
         if not isinstance(bc_type, BarCode):
-            err = 'Valid barcode are: {}.'.format(
+            err = 'Valid barcodes are: {}.'.format(
                 ', '.join([barcode.name for barcode in BarCode]))
             raise ValueError(err)
 
-        self.write_bytes(Command.ASCII_GS.value, 107, bc_type.value, len(text),
-            convert_encoding(text, is_raw=True, is_image=True))
-        self.timeout_wait()
-        self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
-        self.prev_byte = '\n'
-        return
+        code, (min_, max_) = bc_type.value
+        if not min_ <= len(text) <= max_:
+            err = 'Should be {} <= len(text) <= {}.'.format(min_, max_)
+            raise ValueError(err)
+        elif bc_type is BarCode.ITF and not even(len(text)):
+            raise ValueError('len(text) must be even.')
 
-        self.write_bytes(Command.ASCII_GS.value, 72, 2,  # Label below barcode
-                         Command.ASCII_GS.value, 119, 3,  # Barcode width
-                         Command.ASCII_GS.value, 107, bc_type.value)  # Barcode type
-        # Print string
+        self.write_bytes(
+            Command.ASCII_GS.value, 72, 2,  # Label below barcode
+            Command.ASCII_GS.value, 107, code, len(text), text)
         self.timeout_wait()
         self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
-        super().write(convert_encoding(text, is_raw=True, is_image=True))
         self.prev_byte = '\n'
-        self.feed(2)
 
     def bold(self, state=1):
         ''' Turn emphasized mode on/off. '''
@@ -240,8 +237,7 @@ class ThermalPrinter(Serial):
         ''' Feeds by the specified number of lines. '''
 
         if not 0 <= number <= 255:
-            raise ValueError('Should be 0 <= number <= 255.')
-
+            number = 1
         self.write_bytes(Command.ASCII_ESC.value, 100, number)
         self.timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
@@ -406,17 +402,17 @@ class ThermalPrinter(Serial):
         self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
         self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
 
-    def select_charset(self, charset)
+    def select_charset(self, charset):
         ''' Select an internal character set. '''
 
         if not isinstance(charset, CharSet):
-            err = 'Valid charset are: {}.'.format(
+            err = 'Valid charsets are: {}.'.format(
                 ', '.join([cset.name for cset in CharSet]))
             raise ValueError(err)
 
         self.write_bytes(Command.ASCII_ESC.value, 82, charset.value)
 
-    def select_chinese(self, code=1)
+    def select_chinese(self, code=1):
         ''' Select Chinese code format.
             0: GBK code
             1: UTF-8 code
@@ -427,11 +423,11 @@ class ThermalPrinter(Serial):
             code = 1
         self.write_bytes(Command.ASCII_ESC.value, 57, code)
 
-    def select_codepage(self, codepage)
+    def select_codepage(self, codepage):
         ''' Select character code table. '''
 
         if not isinstance(codepage, CodePage):
-            err = 'Valid codepage are: {}.'.format(
+            err = 'Valid codepages are: {}.'.format(
                 ', '.join([cset.name for cset in CharSet]))
             raise ValueError(err)
 
