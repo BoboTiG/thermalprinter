@@ -103,17 +103,15 @@ class ThermalPrinter(Serial):
     barcode_height = 50
     print_mode = 0
 
-    def __init__(self):
+    def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
         ''' Print init. '''
 
         self.heat_time = 80
         self.heat_dots = 7
         self.heat_interval = 2
-        self.baud_rate = 19200
+        self.baud_rate = baudrate
         self.fw_ver = 269
-        super().__init__(port='/dev/ttyAMA0',
-                         baudrate=self.baud_rate,
-                         timeout=10)
+        super().__init__(port=port, baudrate=baudrate, timeout=10)
         self.reset()
         self.set_default()
 
