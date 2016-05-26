@@ -71,11 +71,11 @@ class Command(Enum):
 class BarCode(Enum):
     ''' Available barcode types. '''
 
-    # UPC_A = 0
-    # UPC_E = 1
-    # EAN13 = 2
-    # EAN8 = 3
-    # CODE39 = 4
+    UPC_A = 0
+    UPC_E = 1
+    EAN13 = 2
+    EAN8 = 3
+    CODE39 = 4
     I25 = 5
     CODEBAR = 6
     CODE93 = 7
@@ -179,14 +179,13 @@ class ThermalPrinter(Serial):
     def reset(self):
         ''' Reset printer settings. '''
 
-        self.prev_byte = '\n'  # Treat as if prior line is blank
+        self.prev_byte = '\n'
         self.column = 0
         self.max_column = 32
         self.char_height = 24
         self.line_spacing = 6
         self.barcode_height = 50
         self.write_bytes(Command.ASCII_ESC.value, 64)
-        # Configure tab stops on recent printers
         self.write_bytes(Command.ASCII_ESC.value, 'D')  # Set tab stops ...
         self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
         self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
@@ -214,16 +213,18 @@ class ThermalPrinter(Serial):
     def print_barcode(self, text, bc_type):
         ''' Barcode printing. '''
 
-        if not 5 <= bc_type <= 10:
-            print('Error: 5 <= bc_type <= 10.')
-            return
+        if not isinstance(bc_type, BarCode):
+            err = 'Invalid barcode type. Valid values are: {}.'.format(
+                ', '.join([barcode.name for barcode in BarCode]))
+            raise ValueError(err)
+
         self.write_bytes(Command.ASCII_GS.value, 72, 2,  # Label below barcode
                          Command.ASCII_GS.value, 119, 3,  # Barcode width
-                         Command.ASCII_GS.value, 107, bc_type)  # Barcode type
+                         Command.ASCII_GS.value, 107, bc_type.value)  # Barcode type
         # Print string
+        self.timeout_wait()
         self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
         super().write(convert_encoding(text, is_raw=True, is_image=True))
-        self.timeout_wait()
         self.prev_byte = '\n'
         self.feed(2)
 
