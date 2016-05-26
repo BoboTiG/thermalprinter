@@ -100,50 +100,50 @@ class CharSet(Enum):
 class CodePage(Enum):
     ''' Character Code Tables. '''
 
-    CP437 = 0
-    KATAKANA = 1
-    CP850 = 2
-    CP860 = 3
-    CP863 = 4
-    CP865 = 5
-    WCP1251 = 6
-    CP866 = 7
-    MIK = 8
-    CP755 = 9
-    IRAN = 10
-    CP862 = 15
-    WCP1252 = 16
-    WCP1253 = 17
-    CP852 = 18
-    CP858 = 19
-    IRAN2 = 20
-    LATVIAN = 21
-    CP864 = 22
-    ISO88591 = 23
-    CP737 = 24
-    WCP1257 = 25
-    THAI = 26
-    CP720 = 27
-    CP855 = 28
-    CP857 = 29
-    WCP1250 = 30
-    CP775 = 31
-    WCP1254 = 32
-    WCP1255 = 33
-    WCP1256 = 34
-    WCP1258 = 35
-    ISO88592 = 36
-    ISO88593 = 37
-    ISO88594 = 38
-    ISO88595 = 39
-    ISO88596 = 40
-    ISO88597 = 41
-    ISO88598 = 42
-    ISO88599 = 43
-    ISO885915 = 44
-    THAI2 = 45
-    CP856 = 46
-    CP874 = 47
+    CP437 = (0, 'U.S.A., Standard Europe')
+    KATAKANA = (1, '')
+    CP850 = (2, 'Multilingual')
+    CP860 = (3, 'Portuguese')
+    CP863 = (4, 'Canadian-French')
+    CP865 = (5, 'Nordic')
+    WCP1251 = (6, 'Cyrillic')
+    CP866 = (7, 'Cyrillic 2')
+    MIK = (8, 'Cyrillic-Bulgarian')
+    CP755 = (9, 'East Europe, Latvian 2')
+    IRAN = (10, '')
+    CP862 = (15, 'Hebrew')
+    WCP1252 = (16, 'Latin 1')
+    WCP1253 = (17, 'Greek')
+    CP852 = (18, 'Latina 2')
+    CP858 = (19, 'Multilingual Latin 1 + euro')
+    IRAN2 = (20, 'Iran 2')
+    LATVIAN = (21, '')
+    CP864 = (22, 'Arabic')
+    ISO88591 = (23, 'West Europe')
+    CP737 = (24, 'Greek')
+    WCP1257 = (25, 'Baltic')
+    THAI = (26, '')
+    CP720 = (27, 'Arabic')
+    CP855 = (28, '')
+    CP857 = (29, 'Turkish')
+    WCP1250 = (30, 'Central Europe')
+    CP775 = (31, '')
+    WCP1254 = (32, 'Turkish')
+    WCP1255 = (33, 'Hebrew')
+    WCP1256 = (34, 'Arabic')
+    WCP1258 = (35, 'Vietnam')
+    ISO88592 = (36, 'Latin 2')
+    ISO88593 = (37, 'Latin 3')
+    ISO88594 = (38, 'Baltic')
+    ISO88595 = (39, 'Cyrillic')
+    ISO88596 = (40, 'Arabic')
+    ISO88597 = (41, 'Greek')
+    ISO88598 = (42, 'Hebrew')
+    ISO88599 = (43, 'Turkish')
+    ISO885915 = (44, 'Latin 3')
+    THAI2 = (45, 'Thai 2')
+    CP856 = (46, '')
+    CP874 = (47, '')
 
 
 class Command(Enum):
@@ -427,11 +427,19 @@ class ThermalPrinter(Serial):
         ''' Select character code table. '''
 
         if not isinstance(codepage, CodePage):
-            err = 'Valid codepages are: {}.'.format(
-                ', '.join([cset.name for cset in CharSet]))
-            raise ValueError(err)
+            codes = ''
+            last = list(CodePage)[-1]
+            for cpage in CodePage:
+                sep = '.' if cpage is last else ', '
+                _, name = cpage.value
+                if name:
+                    codes += '{} ({}){}'.format(cpage.name, name, sep)
+                else:
+                    codes += '{}{}'.format(cpage.name, sep)
+            raise ValueError('Valid codepages are: {}'.format(codes))
 
-        self.write_bytes(Command.ASCII_ESC.value, 116, codepage.value)
+        value, _ = codepage.value
+        self.write_bytes(Command.ASCII_ESC.value, 116, value)
 
     def set_barcode_height(self, val=50):
         ''' Set bar code height. '''
