@@ -24,7 +24,7 @@ from time import sleep, time
 from cchardet import detect
 from serial import Serial
 
-__all__ = ['BarCode', 'CharSet', 'CodePage', 'Command', 'ThermalPrinter']
+__all__ = ['BarCode', 'CharSet', 'CodePage', 'ThermalPrinter']
 
 
 __version__ = '1.0.0-dev'
@@ -60,7 +60,9 @@ def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
 
 
 class BarCode(Enum):
-    ''' Available barcode types. '''
+    ''' Available barcode types.
+        (code, (min len(text), max len(text)))
+    '''
 
     UPC_A = (65, (11, 12))
     UPC_E = (66, (11, 12))
@@ -98,7 +100,9 @@ class CharSet(Enum):
 
 
 class CodePage(Enum):
-    ''' Character Code Tables. '''
+    ''' Character Code Tables.
+        (code, description)
+    '''
 
     CP437 = (0, 'U.S.A., Standard Europe')
     KATAKANA = (1, '')
@@ -190,9 +194,8 @@ class ThermalPrinter(Serial):
         ''' Barcode printing. '''
 
         if not isinstance(bc_type, BarCode):
-            err = 'Valid barcodes are: {}.'.format(
-                ', '.join([barcode.name for barcode in BarCode]))
-            raise ValueError(err)
+            bcodes = ', '.join([barcode.name for barcode in BarCode])
+            raise ValueError('Valid barcodes are: {}.'.format(bcodes))
 
         code, (min_, max_) = bc_type.value
         if not min_ <= len(text) <= max_:
@@ -242,14 +245,6 @@ class ThermalPrinter(Serial):
         self.timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
         self.column = 0
-
-    def feed_rows(self, rows):
-        ''' Feeds by the specified number of individual pixel rows
-            WARN: does not work whith mine v2.69
-        '''
-
-        self.write_bytes(Command.ASCII_ESC.value, 74, rows)
-        self.timeout_set(rows * self.dot_feed_time)
 
     def flush(self):
         ''' Flush. '''
