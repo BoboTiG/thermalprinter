@@ -270,12 +270,12 @@ class ThermalPrinter(Serial):
     def inverse_on(self):
         ''' Set inverse mode. '''
 
-        self.write_bytes(Command.ASCII_GS, 'B', 1)
+        self.write_bytes(Command.ASCII_GS.value, 'B', 1)
 
     def inverse_off(self):
         ''' Unset inverse mode. '''
 
-        self.write_bytes(Command.ASCII_GS, 'B', 0)
+        self.write_bytes(Command.ASCII_GS.value, 'B', 0)
 
     def double_height_on(self):
         ''' Set double height mode. '''
