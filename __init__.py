@@ -1,28 +1,33 @@
 #!/usr/bin/env python
 # coding: utf-8
-''' Gestion de l'imprimante thermique.
+''' Python module to manage the DP-EH600 thermal printer.
 
-    Script initial de Phil Burgess, Fried/Ladyada pour Adafruit.
-    Script maintenu par Mickaël Schoentgen <mickael@jmsinfo.co>.
-    Dernière mise à jour : 2016-05-25
-    Python 3.
-    Dépendances :
+    This module is maintained by Mickaël Schoentgen <mickael@jmsinfo.co>.
+    Based on the work of Phil Burgess and Fried/Ladyada (Adafruit).
+
+    Python 3+ only.
+    Dependencies:
         python3-serial
-        python3-pillow (pour l'impression des images)
-        cchardet (pip)
+        python3-pillow (for pictures printing)
+        cchardet (pip3)
 
-    usermod -G dialout -a utilisateur
+    usermod -G dialout -a $USER
+
+    You can always get the latest version of this module at:
+        https://github.com/BoboTiG/thermalprinter
+    If that URL should fail, try contacting the author.
 '''
 
+from enum import Enum
 from time import sleep, time
 
 from cchardet import detect
 from serial import Serial
 
-__all__ = ['ThermalPrinter']
+__all__ = ['BarCode', 'Command', 'ThermalPrinter']
 
 
-__version__ = '0.0.1-dev'
+__version__ = '1.0.0-dev'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
     Copyright (c) 2016, Mickaël Schoentgen
@@ -34,12 +39,11 @@ __copyright__ = '''
     in supporting documentation or portions thereof, including
     modifications, that you make.
 '''
+__license__ = 'MIT'
 
 
 def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
-    ''' Tentative de conversion des caractères accentués
-        au format connu par l'imprimante.
-    '''
+    ''' Convert data before sending to the printer. '''
 
     if isinstance(data, (bool, int)):
         if is_raw:
@@ -55,18 +59,37 @@ def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
     return data.encode('cp1252', 'replace')
 
 
+class Command(Enum):
+    ''' ASCII character codes used to send commands. '''
+
+    ASCII_DC2 = 18
+    ASCII_ESC = 27
+    ASCII_FS = 28
+    ASCII_GS = 29
+
+
+class BarCode(Enum):
+    ''' Available barcode types. '''
+
+    # UPC_A = 0
+    # UPC_E = 1
+    # EAN13 = 2
+    # EAN8 = 3
+    # CODE39 = 4
+    I25 = 5
+    CODEBAR = 6
+    CODE93 = 7
+    CODE128 = 8
+    CODE11 = 9
+    MSI = 10
+
+
 class ThermalPrinter(Serial):
     ''' I talk to printers. Easy! '''
 
     # pylint: disable=too-many-ancestors
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-public-methods
-
-    # ASCII const character codes used to send commands
-    ASCII_DC2 = 18
-    ASCII_ESC = 27
-    ASCII_FS = 28
-    ASCII_GS = 29
 
     resume_time = 0.0
     byte_time = 0.0
@@ -164,9 +187,9 @@ class ThermalPrinter(Serial):
         self.char_height = 24
         self.line_spacing = 6
         self.barcode_height = 50
-        self.write_bytes(self.ASCII_ESC, 64)
+        self.write_bytes(Command.ASCII_ESC.value, 64)
         # Configure tab stops on recent printers
-        self.write_bytes(self.ASCII_ESC, 'D')  # Set tab stops ...
+        self.write_bytes(Command.ASCII_ESC.value, 'D')  # Set tab stops ...
         self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
         self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
 
@@ -186,21 +209,9 @@ class ThermalPrinter(Serial):
     def test(self):
         ''' Print settings as test. '''
 
-        self.write_bytes(self.ASCII_DC2, 84)
+        self.write_bytes(Command.ASCII_DC2.value, 84)
         self.timeout_set(self.dot_print_time * 24 * 26 + self.dot_feed_time *
                          (8 * 26 + 32))
-
-    # UPC_A = 0
-    # UPC_E = 1
-    # EAN13 = 2
-    # EAN8 = 3
-    # CODE39 = 4
-    I25 = 5
-    CODEBAR = 6
-    CODE93 = 7
-    CODE128 = 8
-    CODE11 = 9
-    MSI = 10
 
     def print_barcode(self, text, bc_type):
         ''' Barcode printing. '''
@@ -208,9 +219,9 @@ class ThermalPrinter(Serial):
         if not 5 <= bc_type <= 10:
             print('Error: 5 <= bc_type <= 10.')
             return
-        self.write_bytes(self.ASCII_GS, 72, 2,  # Print label below barcode
-                         self.ASCII_GS, 119, 3,  # Barcode width
-                         self.ASCII_GS, 107, bc_type)  # Barcode type
+        self.write_bytes(Command.ASCII_GS.value, 72, 2,  # Label below barcode
+                         Command.ASCII_GS.value, 119, 3,  # Barcode width
+                         Command.ASCII_GS.value, 107, bc_type)  # Barcode type
         # Print string
         self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
         super().write(convert_encoding(text, is_raw=True, is_image=True))
@@ -223,23 +234,14 @@ class ThermalPrinter(Serial):
 
         val = max(1, val)
         self.barcode_height = val
-        self.write_bytes(self.ASCII_GS, 104, val)
-
-    # === Character commands ===
-
-    INVERSE_MASK = (1 << 1)  # Not in 2.6.8 firmware (see inverse_on())
-    # UPDOWN_MASK = (1 << 2)
-    BOLD_MASK = (1 << 3)
-    DOUBLE_HEIGHT_MASK = (1 << 4)
-    DOUBLE_WIDTH_MASK = (1 << 5)
-    STRIKE_MASK = (1 << 6)
+        self.write_bytes(Command.ASCII_GS.value, 104, val)
 
     def set_print_mode(self, mask):
         ''' Set the print mode. '''
 
         self.print_mode |= mask
         self.write_print_mode()
-        if self.print_mode & self.DOUBLE_HEIGHT_MASK:
+        if self.print_mode & 16:
             self.char_height = 48
         else:
             self.char_height = 24
@@ -249,7 +251,7 @@ class ThermalPrinter(Serial):
 
         self.print_mode &= ~mask
         self.write_print_mode()
-        if self.print_mode & self.DOUBLE_HEIGHT_MASK:
+        if self.print_mode & 16:
             self.char_height = 48
         else:
             self.char_height = 24
@@ -257,7 +259,7 @@ class ThermalPrinter(Serial):
     def write_print_mode(self):
         ''' Write the print mode. '''
 
-        self.write_bytes(self.ASCII_ESC, 33, self.print_mode)
+        self.write_bytes(Command.ASCII_ESC.value, 33, self.print_mode)
 
     def normal(self):
         ''' Set the print mode to normal. '''
@@ -268,56 +270,56 @@ class ThermalPrinter(Serial):
     def inverse_on(self):
         ''' Set inverse mode. '''
 
-        self.write_bytes(self.ASCII_GS, 'B', 1)
+        self.write_bytes(Command.ASCII_GS, 'B', 1)
 
     def inverse_off(self):
         ''' Unset inverse mode. '''
 
-        self.write_bytes(self.ASCII_GS, 'B', 0)
+        self.write_bytes(Command.ASCII_GS, 'B', 0)
 
     def double_height_on(self):
         ''' Set double height mode. '''
 
-        self.set_print_mode(self.DOUBLE_HEIGHT_MASK)
+        self.set_print_mode(16)
 
     def double_height_off(self):
         ''' Unset double height mode. '''
 
-        self.unset_print_mode(self.DOUBLE_HEIGHT_MASK)
+        self.unset_print_mode(16)
 
     def double_width_on(self):
         ''' Set double width mode. '''
 
         self.max_column = 16
-        self.write_bytes(self.ASCII_ESC, 14, 1)  # n is undefined in spec
+        self.write_bytes(Command.ASCII_ESC.value, 14, 1)
 
     def double_width_off(self):
         ''' Unset double width mode. '''
 
         self.max_column = 32
-        self.write_bytes(self.ASCII_ESC, 20, 1)  # n is undefined in spec
+        self.write_bytes(Command.ASCII_ESC.value, 20, 1)
 
     def strike_on(self):
         ''' Set strike mode. '''
 
-        self.write_bytes(self.ASCII_ESC, 'G', 1)
+        self.write_bytes(Command.ASCII_ESC.value, 'G', 1)
 
     def strike_off(self):
         ''' Unset strike mode. '''
 
-        self.write_bytes(self.ASCII_ESC, 'G', 0)
+        self.write_bytes(Command.ASCII_ESC.value, 'G', 0)
 
     def bold_on(self):
         ''' Set bold mode. Actually can be also set using set_print_mode. '''
 
-        self.write_bytes(self.ASCII_ESC, 'E', 1)
+        self.write_bytes(Command.ASCII_ESC.value, 'E', 1)
 
     def bold_off(self):
         ''' Unset bold mode. '''
 
-        self.write_bytes(self.ASCII_ESC, 'E', 0)
+        self.write_bytes(Command.ASCII_ESC.value, 'E', 0)
 
-    def justify(self, value):
+    def justify(self, value='L'):
         ''' Set text justification. '''
 
         value = value.upper()
@@ -326,13 +328,13 @@ class ThermalPrinter(Serial):
             pos = 1
         elif value == 'R':
             pos = 2
-        self.write_bytes(self.ASCII_ESC, 'a', pos)
+        self.write_bytes(Command.ASCII_ESC.value, 'a', pos)
 
     def feed(self, number=1):
         ''' Feeds by the specified number of lines. '''
 
-        if self.fw_ver >= 270:  # does not work with v2.69
-            self.write_bytes(self.ASCII_ESC, 'd', number)
+        if self.fw_ver >= 270:  # Does not work with v2.69
+            self.write_bytes(Command.ASCII_ESC.value, 'd', number)
             self.timeout_set(number * self.dot_feed_time * self.char_height)
             self.prev_byte = '\n'
             self.column = 0
@@ -347,7 +349,7 @@ class ThermalPrinter(Serial):
             WARN: does not work whith mine v2.69
         '''
 
-        self.write_bytes(self.ASCII_ESC, 74, rows)
+        self.write_bytes(Command.ASCII_ESC.value, 74, rows)
         self.timeout_set(rows * self.dot_feed_time)
 
     def flush(self):
@@ -371,7 +373,7 @@ class ThermalPrinter(Serial):
             self.char_height = 48
             self.max_column = 32
 
-        self.write_bytes(self.ASCII_GS, 33, size)
+        self.write_bytes(Command.ASCII_GS.value, 33, size)
         self.prev_byte = '\n'  # Setting the size adds a linefeed
 
     def underline_on(self, weight=1):
@@ -383,7 +385,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= weight <= 2:
             weight = 2
-        self.write_bytes(self.ASCII_ESC, '-', weight)
+        self.write_bytes(Command.ASCII_ESC.value, '-', weight)
 
     def underline_off(self):
         ''' Unset underline mode. '''
@@ -391,13 +393,17 @@ class ThermalPrinter(Serial):
         self.underline_on(0)
 
     def print_image(self, image):
-        ''' Print Image.  Requires Python Imaging Library. This is
+        ''' Print Image. Requires Python Imaging Library. This is
             specific to the Python port and not present in the Arduino
-            library.  Image will be cropped to 384 pixels width if
+            library. Image will be cropped to 384 pixels width if
             necessary, and converted to 1-bit w/diffusion dithering.
             For any other behavior (scale, B&W threshold, etc.), use
             the Imaging Library to perform such operations before
             passing the result to this function.
+
+            Max width: 384px.
+
+            Returns the number of printed lines.
         '''
 
         # pylint: disable=R0914
@@ -408,7 +414,6 @@ class ThermalPrinter(Serial):
         width = min(image.size[0], 384)
         height = image.size[1]
         row_bytes = int((width + 7) / 8)
-        # 384 pixels max width
         row_bytes_clipped = 48 if row_bytes >= 48 else row_bytes
         bitmap = bytearray(row_bytes * height)
         pixels = image.load()
@@ -429,38 +434,42 @@ class ThermalPrinter(Serial):
                 bitmap[offset + pad] = sum_
 
         idx = 0
+        lines = 0
         for row_start in range(0, height, 255):
             chunk_height = min(height - row_start, 255)
-            self.write_bytes(18, 42, chunk_height, row_bytes_clipped)
+            self.write_bytes(Command.ASCII_DC2.value, 42, chunk_height,
+                             row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
                     super().write(convert_encoding(bitmap[idx],
                                                    is_raw=True,
                                                    is_image=True))
+                    lines += 1
                     idx += 1
                 idx += row_bytes - row_bytes_clipped
         self.prev_byte = '\n'
+        return lines
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
             will be ignored until 'online' is called.
         '''
 
-        self.write_bytes(self.ASCII_ESC, 61, 0)
+        self.write_bytes(Command.ASCII_ESC.value, 61, 0)
 
     def online(self):
         ''' Take the printer online.
             Subsequent print commands will be obeyed.
         '''
 
-        self.write_bytes(self.ASCII_ESC, 61, 1)
+        self.write_bytes(Command.ASCII_ESC.value, 61, 1)
 
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
 
         if seconds > 0:
             sleep(seconds)
-        self.write_bytes(self.ASCII_ESC, '8', seconds, seconds >> 8)
+        self.write_bytes(Command.ASCII_ESC.value, '8', seconds, seconds >> 8)
 
     def wake(self):
         ''' Wake up the printer. '''
@@ -476,7 +485,7 @@ class ThermalPrinter(Serial):
             Returns True for paper, False for no paper.
         '''
 
-        self.write_bytes(self.ASCII_ESC, 118, 0)
+        self.write_bytes(Command.ASCII_ESC.value, 118, 0)
         # Bit 2 of response seems to be paper status
         try:
             stat = ord(self.read(1)) & 0b00000100
@@ -496,7 +505,7 @@ class ThermalPrinter(Serial):
 
         val = max(24, val)
         self.line_spacing = val - 24
-        self.write_bytes(self.ASCII_ESC, '3', val)
+        self.write_bytes(Command.ASCII_ESC.value, '3', val)
 
     def tab(self):
         ''' Tabulation. '''
@@ -507,7 +516,7 @@ class ThermalPrinter(Serial):
     def set_char_spacing(self, spacing):
         ''' Set character spacing. '''
 
-        self.write_bytes(self.ASCII_ESC, ' ', spacing)
+        self.write_bytes(Command.ASCII_ESC.value, ' ', spacing)
 
 
 def tests():
@@ -560,7 +569,7 @@ def tests():
     printer.println(42)
 
     printer.justify('L')
-    printer.print_barcode('0123456789', printer.I25)
+    printer.print_barcode('0123456789', BarCode.I25.value)
 
     return 0
 
