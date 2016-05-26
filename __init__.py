@@ -62,17 +62,88 @@ def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
 class BarCode(Enum):
     ''' Available barcode types. '''
 
-    UPC_A = 0
-    UPC_E = 1
-    EAN13 = 2
-    EAN8 = 3
-    CODE39 = 4
-    I25 = 5
-    CODEBAR = 6
-    CODE93 = 7
-    CODE128 = 8
-    CODE11 = 9
-    MSI = 10
+    UPC_A = 65
+    UPC_E = 66
+    JAN13 = 67
+    EAN13 = 67
+    JAN8 = 68
+    EAN8 = 68
+    CODE39 = 69
+    ITF = 70
+    CODABAR = 71
+    CODE93 = 72
+    CODE128 = 73
+
+
+class CharSet(Enum):
+    ''' Internal character sets. '''
+
+    USA = 0
+    FRANCE = 1
+    GERMANY = 2
+    UK = 3
+    DENMARK = 4
+    SWEDEN = 5
+    ITALY = 6
+    SPAIN = 7
+    JAPAN = 8
+    NORWAY = 9
+    DENMARK2 = 10
+    SPAIN2 = 11
+    LATIN_AMERICAN = 12
+    KOREA = 13
+    SLOVENIA = 14
+    CROTATION = 14
+    CHINA = 15
+
+
+class CodePage(Enum):
+    ''' Character Code Tables. '''
+
+    CP437 = 0
+    KATAKANA = 1
+    CP850 = 2
+    CP860 = 3
+    CP863 = 4
+    CP865 = 5
+    WCP1251 = 6
+    CP866 = 7
+    MIK = 8
+    CP755 = 9
+    IRAN = 10
+    CP862 = 15
+    WCP1252 = 16
+    WCP1253 = 17
+    CP852 = 18
+    CP858 = 19
+    IRAN2 = 20
+    LATVIAN = 21
+    CP864 = 22
+    ISO88591 = 23
+    CP737 = 24
+    WCP1257 = 25
+    THAI = 26
+    CP720 = 27
+    CP855 = 28
+    CP857 = 29
+    WCP1250 = 30
+    CP775 = 31
+    WCP1254 = 32
+    WCP1255 = 33
+    WCP1256 = 34
+    WCP1258 = 35
+    ISO88592 = 36
+    ISO88593 = 37
+    ISO88594 = 38
+    ISO88595 = 39
+    ISO88596 = 40
+    ISO88597 = 41
+    ISO88598 = 42
+    ISO88599 = 43
+    ISO885915 = 44
+    THAI2 = 45
+    CP856 = 46
+    CP874 = 47
 
 
 class Command(Enum):
@@ -115,37 +186,55 @@ class ThermalPrinter(Serial):
         self.reset()
         self.set_default()
 
-    def bold_on(self):
-        ''' Set bold mode. Actually can be also set using set_print_mode. '''
+    def barcode(self, text, bc_type):
+        ''' Barcode printing. '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 'E', 1)
+        if not isinstance(bc_type, BarCode):
+            err = 'Valid barcode are: {}.'.format(
+                ', '.join([barcode.name for barcode in BarCode]))
+            raise ValueError(err)
 
-    def bold_off(self):
-        ''' Unset bold mode. '''
+        self.write_bytes(Command.ASCII_GS.value, 107, bc_type.value, len(text),
+            convert_encoding(text, is_raw=True, is_image=True))
+        self.timeout_wait()
+        self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
+        self.prev_byte = '\n'
+        return
 
-        self.write_bytes(Command.ASCII_ESC.value, 'E', 0)
+        self.write_bytes(Command.ASCII_GS.value, 72, 2,  # Label below barcode
+                         Command.ASCII_GS.value, 119, 3,  # Barcode width
+                         Command.ASCII_GS.value, 107, bc_type.value)  # Barcode type
+        # Print string
+        self.timeout_wait()
+        self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
+        super().write(convert_encoding(text, is_raw=True, is_image=True))
+        self.prev_byte = '\n'
+        self.feed(2)
 
-    def double_height_on(self):
+    def bold(self, state=1):
+        ''' Turn emphasized mode on/off. '''
+
+        if state != 1:
+            state = 0
+        self.write_bytes(Command.ASCII_ESC.value, 69, state)
+
+    def double_height(self, state=1):
         ''' Set double height mode. '''
 
-        self.set_print_mode(16)
+        if state == 1:
+            self.set_print_mode(16)
+        else:
+            self.unset_print_mode(16)
 
-    def double_height_off(self):
-        ''' Unset double height mode. '''
+    def double_width(self, state=1):
+        ''' Select Double Width mode. '''
 
-        self.unset_print_mode(16)
-
-    def double_width_on(self):
-        ''' Set double width mode. '''
-
-        self.max_column = 16
-        self.write_bytes(Command.ASCII_ESC.value, 14, 1)
-
-    def double_width_off(self):
-        ''' Unset double width mode. '''
-
-        self.max_column = 32
-        self.write_bytes(Command.ASCII_ESC.value, 20, 1)
+        if state == 1:
+            self.max_column = 16
+            self.write_bytes(Command.ASCII_ESC.value, 14, 1)
+        else:
+            self.max_column = 32
+            self.write_bytes(Command.ASCII_ESC.value, 20, 1)
 
     def feed(self, number=1):
         ''' Feeds by the specified number of lines. '''
@@ -178,59 +267,13 @@ class ThermalPrinter(Serial):
         '''
 
         self.write_bytes(Command.ASCII_ESC.value, 118, 0)
-        # Bit 2 of response seems to be paper status
+        # Bit 2 of response is paper status
         try:
             stat = ord(self.read(1)) & 0b00000100
         except TypeError:
             return True
         # If set, we have paper; if clear, no paper
         return stat == 0
-
-    def inverse_on(self):
-        ''' Set inverse mode. '''
-
-        self.write_bytes(Command.ASCII_GS.value, 'B', 1)
-
-    def inverse_off(self):
-        ''' Unset inverse mode. '''
-
-        self.write_bytes(Command.ASCII_GS.value, 'B', 0)
-
-    def justify(self, value='L'):
-        ''' Set text justification. '''
-
-        value = value.upper()
-        if value == 'C':
-            pos = 1
-        elif value == 'R':
-            pos = 2
-        else:
-            pos = 0
-        self.write_bytes(Command.ASCII_ESC.value, 'a', pos)
-
-    def normal(self):
-        ''' Set the print mode to normal. '''
-
-        self.print_mode = 0
-        self.write_print_mode()
-
-    def barcode(self, text, bc_type):
-        ''' Barcode printing. '''
-
-        if not isinstance(bc_type, BarCode):
-            err = 'Invalid barcode type. Valid values are: {}.'.format(
-                ', '.join([barcode.name for barcode in BarCode]))
-            raise ValueError(err)
-
-        self.write_bytes(Command.ASCII_GS.value, 72, 2,  # Label below barcode
-                         Command.ASCII_GS.value, 119, 3,  # Barcode width
-                         Command.ASCII_GS.value, 107, bc_type.value)  # Barcode type
-        # Print string
-        self.timeout_wait()
-        self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
-        super().write(convert_encoding(text, is_raw=True, is_image=True))
-        self.prev_byte = '\n'
-        self.feed(2)
 
     def image(self, image):
         ''' Print Image. Requires Python Imaging Library. This is
@@ -290,6 +333,43 @@ class ThermalPrinter(Serial):
         self.prev_byte = '\n'
         return lines
 
+    def inverse(self, state=1):
+        ''' Turn white/black reverse printing mode. '''
+
+        if state != 1:
+            state = 0
+        self.write_bytes(Command.ASCII_GS.value, 66, state)
+
+    def is_pinned(self):
+        ''' Transmit peripheral devices status. '''
+
+        self.write_bytes(Command.ASCII_ESC.value, 117, 0)
+        # Bit 1 of response is drawer kick out connector pin 3
+        try:
+            stat = ord(self.read(1)) & 0b00000001
+        except TypeError:
+            return True
+        # If set, we have paper; if clear, no paper
+        return stat == 1
+
+    def justify(self, value='L'):
+        ''' Set text justification. '''
+
+        value = value.upper()
+        if value == 'C':
+            pos = 1
+        elif value == 'R':
+            pos = 2
+        else:
+            pos = 0
+        self.write_bytes(Command.ASCII_ESC.value, 97, pos)
+
+    def normal(self):
+        ''' Set the print mode to normal. '''
+
+        self.print_mode = 0
+        self.write_print_mode()
+
     def println(self, line):
         ''' Send a line to the printer. '''
 
@@ -326,10 +406,41 @@ class ThermalPrinter(Serial):
         self.write_bytes(4, 8, 12, 16)  # ... every 4 columns,
         self.write_bytes(20, 24, 28, 0)  # 0 marks end-of-list.
 
-    def set_barcode_height(self, val=50):
-        ''' Set the barcode height. '''
+    def select_charset(self, charset)
+        ''' Select an internal character set. '''
 
-        val = max(1, val)
+        if not isinstance(charset, CharSet):
+            err = 'Valid charset are: {}.'.format(
+                ', '.join([cset.name for cset in CharSet]))
+            raise ValueError(err)
+
+        self.write_bytes(Command.ASCII_ESC.value, 82, charset.value)
+
+    def select_chinese(self, code=1)
+        ''' Select Chinese code format.
+            0: GBK code
+            1: UTF-8 code
+            3: BIG5 code
+        '''
+
+        if code not in [0, 1, 3]:
+            code = 1
+        self.write_bytes(Command.ASCII_ESC.value, 57, code)
+
+    def select_codepage(self, codepage)
+        ''' Select character code table. '''
+
+        if not isinstance(codepage, CodePage):
+            err = 'Valid codepage are: {}.'.format(
+                ', '.join([cset.name for cset in CharSet]))
+            raise ValueError(err)
+
+        self.write_bytes(Command.ASCII_ESC.value, 116, codepage.value)
+
+    def set_barcode_height(self, val=50):
+        ''' Set bar code height. '''
+
+        val = min(max(1, val), 255)
         self.barcode_height = val
         self.write_bytes(Command.ASCII_GS.value, 104, val)
 
@@ -338,11 +449,11 @@ class ThermalPrinter(Serial):
 
         self.online()
         self.justify('L')
-        self.inverse_off()
-        self.double_height_off()
+        self.inverse(0)
+        self.double_height(0)
         self.set_line_height(32)
-        self.bold_off()
-        self.underline_off()
+        self.bold(0)
+        self.underline(0)
         self.set_barcode_height(50)
         self.set_size('S')
 
@@ -420,15 +531,12 @@ class ThermalPrinter(Serial):
             sleep(seconds)
         self.write_bytes(Command.ASCII_ESC.value, '8', seconds, seconds >> 8)
 
-    def strike_on(self):
-        ''' Set strike mode. '''
+    def strike(self, state=1):
+        ''' Turn on/off double-strike mode. '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 'G', 1)
-
-    def strike_off(self):
-        ''' Unset strike mode. '''
-
-        self.write_bytes(Command.ASCII_ESC.value, 'G', 0)
+        if state != 1:
+            state = 0
+        self.write_bytes(Command.ASCII_ESC.value, 71, state)
 
     def tab(self):
         ''' Tabulation. '''
@@ -467,21 +575,16 @@ class ThermalPrinter(Serial):
         while (time() - self.resume_time) < 0:
             pass
 
-    def underline_on(self, weight=1):
-        ''' Underlines of different weights can be produced:
-            0 - no underline
-            1 - normal underline
-            2 - thick underline
+    def underline(self, weight=1):
+        ''' Turn underline mode on/off.
+            0: turns off underline mode
+            1: turns on underline mode (1 dot thick)
+            2: turns on underline mode (2 dots thick)
         '''
 
-        if not 0 <= weight <= 2:
-            weight = 2
-        self.write_bytes(Command.ASCII_ESC.value, '-', weight)
-
-    def underline_off(self):
-        ''' Unset underline mode. '''
-
-        self.underline_on(0)
+        if not 0 < weight <= 2:
+            weight = 0
+        self.write_bytes(Command.ASCII_ESC.value, 45, weight)
 
     def unset_print_mode(self, mask):
         ''' Unset the print mode.  '''
@@ -492,6 +595,13 @@ class ThermalPrinter(Serial):
             self.char_height = 48
         else:
             self.char_height = 24
+
+    def upside_down(self, state=1):
+        ''' Turns on/off upside-down printing mode. '''
+
+        if state != 1:
+            state = 0
+        self.write_bytes(Command.ASCII_ESC.value, 129, state)
 
     def wake(self):
         ''' Wake up the printer. '''
@@ -529,32 +639,32 @@ def tests():
     printer.image(Image.open('gnu.png'))
     printer.feed()
 
-    printer.bold_on()
+    printer.bold()
     printer.println('Bold')
-    printer.bold_off()
+    printer.bold(0)
 
-    printer.double_height_on()
+    printer.double_height()
     printer.println('Double height')
-    printer.double_height_off()
+    printer.double_height(0)
 
-    printer.double_width_on()
+    printer.double_width()
     printer.println('Double width')
-    printer.double_width_off()
+    printer.double_width(0)
 
-    printer.inverse_on()
+    printer.inverse()
     printer.println('Inverse')
-    printer.inverse_off()
+    printer.inverse(0)
 
-    printer.strike_on()
+    printer.strike()
     printer.println('Strike')
-    printer.strike_off()
+    printer.strike(0)
 
     printer.tab()
     printer.println('Tabulation')
 
-    printer.underline_on()
+    printer.underline()
     printer.println('Underline')
-    printer.underline_off()
+    printer.underline(0)
 
     printer.println('A boolean centered:')
     printer.justify('C')
