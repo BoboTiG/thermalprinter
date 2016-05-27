@@ -151,7 +151,7 @@ class CodePage(Enum):
 
 
 class Command(Enum):
-    ''' ASCII character codes used to send commands. '''
+    ''' Codes used to send commands. '''
 
     DC2 = 18
     ESC = 27
@@ -393,7 +393,14 @@ class ThermalPrinter(Serial):
         self.write_bytes(Command.ESC, 64)
         self.write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)
 
-    def select_charset(self, charset):
+    def set_barcode_height(self, val=50):
+        ''' Set bar code height. '''
+
+        val = min(max(1, val), 255)
+        self.barcode_height = val
+        self.write_bytes(Command.GS, 104, val)
+
+    def set_charset(self, charset):
         ''' Select an internal character set. '''
 
         if not isinstance(charset, CharSet):
@@ -403,18 +410,7 @@ class ThermalPrinter(Serial):
 
         self.write_bytes(Command.ESC, 82, charset.value)
 
-    def select_chinese(self, code=1):
-        ''' Select Chinese code format.
-            0: GBK code
-            1: UTF-8 code
-            3: BIG5 code
-        '''
-
-        if code not in [0, 1, 3]:
-            code = 1
-        self.write_bytes(Command.ESC, 57, code)
-
-    def select_codepage(self, codepage):
+    def set_codepage(self, codepage):
         ''' Select character code table. '''
 
         if not isinstance(codepage, CodePage):
@@ -431,13 +427,6 @@ class ThermalPrinter(Serial):
 
         value, _ = codepage.value
         self.write_bytes(Command.ESC, 116, value)
-
-    def set_barcode_height(self, val=50):
-        ''' Set bar code height. '''
-
-        val = min(max(1, val), 255)
-        self.barcode_height = val
-        self.write_bytes(Command.GS, 104, val)
 
     def set_default(self):
         ''' Reset text formatting parameters. '''
