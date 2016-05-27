@@ -488,26 +488,6 @@ class ThermalPrinter(Serial):
         self.write_bytes(Command.GS, 33, size)
         self.prev_byte = '\n'  # Setting the size adds a linefeed
 
-    def set_times(self, print_time, feed_time):
-        ''' Printer performance may vary based on the power supply voltage,
-            thickness of paper, phase of the moon and other seemingly random
-            variables.  This method sets the times (in microseconds) for the
-            paper to advance one vertical 'dot' when printing and feeding.
-
-            For example, in the default initialized state, normal-sized text
-            is 24 dots tall and the line spacing is 32 dots, so the time for
-            one line to be issued is approximately 24 * print time + 8 * feed
-            time.  The default print and feed times are based on a random
-            test unit, but as stated above your reality may be influenced by
-            many factors.  This lets you tweak the timing to avoid excessive
-            delays and/or overrunning the printer buffer.
-
-            Units are in microseconds.
-        '''
-
-        self.dot_print_time = print_time / 1000000.0
-        self.dot_feed_time = feed_time / 1000000.0
-
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
 
