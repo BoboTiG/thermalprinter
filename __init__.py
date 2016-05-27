@@ -24,7 +24,7 @@ from time import sleep, time
 from cchardet import detect
 from serial import Serial
 
-__all__ = ['BarCode', 'CharSet', 'CodePage', 'ThermalPrinter']
+__all__ = ['BarCode', 'CharSet', 'Command', 'CodePage', 'ThermalPrinter']
 
 
 __version__ = '1.0.0-dev'
@@ -153,10 +153,10 @@ class CodePage(Enum):
 class Command(Enum):
     ''' ASCII character codes used to send commands. '''
 
-    ASCII_DC2 = 18
-    ASCII_ESC = 27
-    ASCII_FS = 28
-    ASCII_GS = 29
+    DC2 = 18
+    ESC = 27
+    FS = 28
+    GS = 29
 
 
 class ThermalPrinter(Serial):
@@ -205,8 +205,8 @@ class ThermalPrinter(Serial):
             raise ValueError('len(text) must be even.')
 
         self.write_bytes(
-            Command.ASCII_GS.value, 72, 2,  # Label below barcode
-            Command.ASCII_GS.value, 107, code, len(text), text)
+            Command.GS, 72, 2,  # Label below barcode
+            Command.GS, 107, code, len(text), text)
         self.timeout_wait()
         self.timeout_set((self.barcode_height + 40) * self.dot_print_time)
         self.prev_byte = '\n'
@@ -216,7 +216,7 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
-        self.write_bytes(Command.ASCII_ESC.value, 69, state)
+        self.write_bytes(Command.ESC, 69, state)
 
     def double_height(self, state=1):
         ''' Set double height mode. '''
@@ -231,17 +231,17 @@ class ThermalPrinter(Serial):
 
         if state == 1:
             self.max_column = 16
-            self.write_bytes(Command.ASCII_ESC.value, 14, 1)
+            self.write_bytes(Command.ESC, 14, 1)
         else:
             self.max_column = 32
-            self.write_bytes(Command.ASCII_ESC.value, 20, 1)
+            self.write_bytes(Command.ESC, 20, 1)
 
     def feed(self, number=1):
         ''' Feeds by the specified number of lines. '''
 
         if not 0 <= number <= 255:
             number = 0
-        self.write_bytes(Command.ASCII_ESC.value, 100, number)
+        self.write_bytes(Command.ESC, 100, number)
         self.timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
         self.column = 0
@@ -257,7 +257,7 @@ class ThermalPrinter(Serial):
             Returns True for paper, False for no paper.
         '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 118, 0)
+        self.write_bytes(Command.ESC, 118, 0)
         # Bit 2 of response is paper status
         try:
             stat = ord(self.read(1)) & 0b00000100
@@ -311,7 +311,7 @@ class ThermalPrinter(Serial):
         lines = 0
         for row_start in range(0, height, 255):
             chunk_height = min(height - row_start, 255)
-            self.write_bytes(Command.ASCII_DC2.value, 42, chunk_height,
+            self.write_bytes(Command.DC2, 42, chunk_height,
                              row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
@@ -329,12 +329,12 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
-        self.write_bytes(Command.ASCII_GS.value, 66, state)
+        self.write_bytes(Command.GS, 66, state)
 
     def is_pinned(self):
         ''' TODO FIX. Transmit peripheral devices status. '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 117, 0)
+        self.write_bytes(Command.ESC, 117, 0)
         # Bit 1 of response is drawer kick out connector pin 3
         try:
             stat = ord(self.read(1)) & 0b00000001
@@ -353,7 +353,7 @@ class ThermalPrinter(Serial):
             pos = 2
         else:
             pos = 0
-        self.write_bytes(Command.ASCII_ESC.value, 97, pos)
+        self.write_bytes(Command.ESC, 97, pos)
 
     def normal(self):
         ''' Set the print mode to normal. '''
@@ -372,14 +372,14 @@ class ThermalPrinter(Serial):
             will be ignored until 'online' is called.
         '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 61, 0)
+        self.write_bytes(Command.ESC, 61, 0)
 
     def online(self):
         ''' Take the printer online.
             Subsequent print commands will be obeyed.
         '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 61, 1)
+        self.write_bytes(Command.ESC, 61, 1)
 
     def reset(self):
         ''' Reset printer settings. '''
@@ -390,8 +390,8 @@ class ThermalPrinter(Serial):
         self.char_height = 24
         self.line_spacing = 6
         self.barcode_height = 50
-        self.write_bytes(Command.ASCII_ESC.value, 64)
-        self.write_bytes(Command.ASCII_ESC.value, 68, 9, 17, 25, 33, 0)
+        self.write_bytes(Command.ESC, 64)
+        self.write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)
 
     def select_charset(self, charset):
         ''' Select an internal character set. '''
@@ -401,7 +401,7 @@ class ThermalPrinter(Serial):
                 ', '.join([cset.name for cset in CharSet]))
             raise ValueError(err)
 
-        self.write_bytes(Command.ASCII_ESC.value, 82, charset.value)
+        self.write_bytes(Command.ESC, 82, charset.value)
 
     def select_chinese(self, code=1):
         ''' Select Chinese code format.
@@ -412,7 +412,7 @@ class ThermalPrinter(Serial):
 
         if code not in [0, 1, 3]:
             code = 1
-        self.write_bytes(Command.ASCII_ESC.value, 57, code)
+        self.write_bytes(Command.ESC, 57, code)
 
     def select_codepage(self, codepage):
         ''' Select character code table. '''
@@ -430,14 +430,14 @@ class ThermalPrinter(Serial):
             raise ValueError('Valid codepages are: {}'.format(codes))
 
         value, _ = codepage.value
-        self.write_bytes(Command.ASCII_ESC.value, 116, value)
+        self.write_bytes(Command.ESC, 116, value)
 
     def set_barcode_height(self, val=50):
         ''' Set bar code height. '''
 
         val = min(max(1, val), 255)
         self.barcode_height = val
-        self.write_bytes(Command.ASCII_GS.value, 104, val)
+        self.write_bytes(Command.GS, 104, val)
 
     def set_default(self):
         ''' Reset text formatting parameters. '''
@@ -455,7 +455,7 @@ class ThermalPrinter(Serial):
     def set_char_spacing(self, spacing):
         ''' Set character spacing. '''
 
-        self.write_bytes(Command.ASCII_ESC.value, ' ', spacing)
+        self.write_bytes(Command.ESC, ' ', spacing)
 
     def set_line_height(self, val=32):
         ''' Set line height.
@@ -468,7 +468,7 @@ class ThermalPrinter(Serial):
 
         val = max(24, val)
         self.line_spacing = val - 24
-        self.write_bytes(Command.ASCII_ESC.value, '3', val)
+        self.write_bytes(Command.ESC, '3', val)
 
     def set_print_mode(self, mask):
         ''' Set the print mode. '''
@@ -496,7 +496,7 @@ class ThermalPrinter(Serial):
             self.char_height = 48
             self.max_column = 32
 
-        self.write_bytes(Command.ASCII_GS.value, 33, size)
+        self.write_bytes(Command.GS, 33, size)
         self.prev_byte = '\n'  # Setting the size adds a linefeed
 
     def set_times(self, print_time, feed_time):
@@ -524,14 +524,14 @@ class ThermalPrinter(Serial):
 
         if seconds > 0:
             sleep(seconds)
-        self.write_bytes(Command.ASCII_ESC.value, '8', seconds, seconds >> 8)
+        self.write_bytes(Command.ESC, '8', seconds, seconds >> 8)
 
     def strike(self, state=1):
         ''' Turn on/off double-strike mode. '''
 
         if state != 1:
             state = 0
-        self.write_bytes(Command.ASCII_ESC.value, 71, state)
+        self.write_bytes(Command.ESC, 71, state)
 
     def tab(self):
         ''' Tabulation. '''
@@ -542,7 +542,7 @@ class ThermalPrinter(Serial):
     def test(self):
         ''' Print settings as test. '''
 
-        self.write_bytes(Command.ASCII_DC2.value, 84)
+        self.write_bytes(Command.DC2, 84)
         self.timeout_set(self.dot_print_time * 24 * 26 + self.dot_feed_time *
                          (8 * 26 + 32))
 
@@ -579,7 +579,7 @@ class ThermalPrinter(Serial):
 
         if not 0 < weight <= 2:
             weight = 0
-        self.write_bytes(Command.ASCII_ESC.value, 45, weight)
+        self.write_bytes(Command.ESC, 45, weight)
 
     def unset_print_mode(self, mask):
         ''' Unset the print mode.  '''
@@ -596,7 +596,7 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
-        self.write_bytes(Command.ASCII_ESC.value, 129, state)
+        self.write_bytes(Command.ESC, 129, state)
 
     def wake(self):
         ''' Wake up the printer. '''
@@ -612,13 +612,14 @@ class ThermalPrinter(Serial):
         self.timeout_wait()
         self.timeout_set(len(args) * self.byte_time)
         for data in args:
-            data = convert_encoding(data, is_raw=True)
-            super().write(data)
+            if isinstance(data, Command):
+                data = data.value
+            super().write(convert_encoding(data, is_raw=True))
 
     def write_print_mode(self):
         ''' Write the print mode. '''
 
-        self.write_bytes(Command.ASCII_ESC.value, 33, self.print_mode)
+        self.write_bytes(Command.ESC, 33, self.print_mode)
 
 
 def tests():
