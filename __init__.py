@@ -8,7 +8,6 @@
     Python 3+ only.
     Dependencies:
         python3-serial
-        python3-pillow (for pictures printing)
         cchardet (pip3)
 
     usermod -G dialout -a $USER
@@ -185,7 +184,7 @@ class ThermalPrinter(Serial):
     column = 0
     max_column = 32
     char_height = 24
-    line_spacing = 32
+    line_spacing = 6
     barcode_height = 80
     print_mode = 0
 
@@ -196,9 +195,7 @@ class ThermalPrinter(Serial):
         self.heat_dots = 7
         self.heat_interval = 2
         self.baud_rate = baudrate
-        self.fw_ver = 269
         super().__init__(port=port, baudrate=baudrate, timeout=10)
-        # self.reset()
         self.set_default()
 
     def barcode(self, data, bc_type):
@@ -525,11 +522,11 @@ class ThermalPrinter(Serial):
             spacing = 0
         self._write_bytes(Command.ESC, 66, spacing)
 
-    def set_line_spacing(self, spacing=32):
+    def set_line_spacing(self, spacing=6):
         ''' Set line spacing. '''
 
         if not 0 <= spacing <= 255:
-            spacing = 32
+            spacing = 6
         self._write_bytes(Command.ESC, 51, spacing)
 
     def set_size(self, value='S'):
@@ -550,7 +547,7 @@ class ThermalPrinter(Serial):
             self.max_column = 32
 
         self._write_bytes(Command.GS, 33, size)
-        self.prev_byte = '\n'  # Setting the size adds a linefeed
+        self.prev_byte = '\n'
 
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
