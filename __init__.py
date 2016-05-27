@@ -95,7 +95,6 @@ class CharSet(Enum):
     LATIN_AMERICAN = 12
     KOREA = 13
     SLOVENIA = 14
-    CROTATION = 14
     CHINA = 15
 
 
