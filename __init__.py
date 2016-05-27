@@ -435,10 +435,12 @@ class ThermalPrinter(Serial):
         self.set_barcode_height(50)
         self.set_size('S')
 
-    def set_char_spacing(self, spacing):
-        ''' Set character spacing. '''
+    def set_char_spacing(self, spacing=0):
+        ''' Set the right character spacing. '''
 
-        self._write_bytes(Command.ESC, ' ', spacing)
+        if not 0 <= spacing <= 255:
+            spacing = 0
+        self._write_bytes(Command.ESC, 32, spacing)
 
     def set_line_height(self, val=32):
         ''' Set line height.
