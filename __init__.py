@@ -385,7 +385,14 @@ class ThermalPrinter(Serial):
         self.line_spacing = 6
         self.barcode_height = 50
         self._write_bytes(Command.ESC, 64)
-        self._write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)
+        self._write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)  # Tabulations
+
+    def rotate(self, state=1):
+        ''' Turn on/off clockwise rotation of 90°. '''
+
+        if state != 1:
+            state = 0
+        self._write_bytes(Command.ESC, 86, state)
 
     def set_barcode_height(self, val=50):
         ''' Set bar code height. '''
@@ -631,6 +638,10 @@ def tests():
     printer.inverse()
     printer.println('Inverse')
     printer.inverse(0)
+
+    printer.rotate()
+    printer.println('Rotate 90°')
+    printer.rotate(0)
 
     printer.strike()
     printer.println('Strike')
