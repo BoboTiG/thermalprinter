@@ -355,12 +355,6 @@ class ThermalPrinter(Serial):
             pos = 0
         self._write_bytes(Command.ESC, 97, pos)
 
-    def normal(self):
-        ''' Set the print mode to normal. '''
-
-        self.print_mode = 0
-        self._write_print_mode()
-
     def println(self, line):
         ''' Send a line to the printer. '''
 
