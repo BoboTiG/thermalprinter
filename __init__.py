@@ -199,7 +199,7 @@ class ThermalPrinter(Serial):
         self.fw_ver = 269
         super().__init__(port=port, baudrate=baudrate, timeout=10)
         # self.reset()
-        # self.set_default()
+        self.set_default()
 
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
@@ -282,7 +282,7 @@ class ThermalPrinter(Serial):
         ''' Feeds by the specified number of lines. '''
 
         if not 0 <= number <= 255:
-            number = 0
+            return
         self._write_bytes(Command.ESC, 100, number)
         self._timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
@@ -419,7 +419,7 @@ class ThermalPrinter(Serial):
         self.column = 0
         self.max_column = 32
         self.char_height = 24
-        self.line_spacing = 30
+        self.line_spacing = 32
         self.barcode_height = 80
         # self._write_bytes(Command.ESC, 64)
         # self._write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)  # Tabulations
@@ -502,10 +502,10 @@ class ThermalPrinter(Serial):
         self.set_barcode_height()
         self.set_barcode_left_margin()
         self.set_barcode_position()
-        # self.set_barcode_width()
+        self.set_barcode_width()
         self.set_char_spacing()
         self.set_line_spacing()
-        self.set_left_spacing()
+        self.set_left_margin()
         self.set_size()
         self.strike(0)
         self.underline(0)
@@ -518,27 +518,24 @@ class ThermalPrinter(Serial):
             spacing = 0
         self._write_bytes(Command.ESC, 32, spacing)
 
-    def set_left_spacing(self, spacing=0):
-        ''' Set the left spacing. '''
+    def set_left_margin(self, spacing=0):
+        ''' Set the left margin. '''
 
         if not 0 <= spacing <= 47:
             spacing = 0
         self._write_bytes(Command.ESC, 66, spacing)
 
-    def set_line_spacing(self, spacing=30):
+    def set_line_spacing(self, spacing=32):
         ''' Set line spacing. '''
 
         if not 0 <= spacing <= 255:
-            spacing = 30
+            spacing = 32
         self._write_bytes(Command.ESC, 51, spacing)
 
     def set_size(self, value='S'):
         ''' Set text size. '''
 
         value = value.upper()
-        size = 0x00
-        self.char_height = 24
-        self.max_column = 32
         if value == 'L':  # Large: double width and height
             size = 0x11
             self.char_height = 48
@@ -546,6 +543,10 @@ class ThermalPrinter(Serial):
         elif value == 'M':  # Medium: double height
             size = 0x01
             self.char_height = 48
+            self.max_column = 32
+        else:
+            size = 0x00
+            self.char_height = 24
             self.max_column = 32
 
         self._write_bytes(Command.GS, 33, size)
@@ -565,12 +566,6 @@ class ThermalPrinter(Serial):
             state = 0
         self._write_bytes(Command.ESC, 71, state)
 
-    def tab(self):
-        ''' Tabulation. '''
-
-        super().write(b'\t')
-        self.column = (self.column + 4) % self.max_column
-
     def test(self):
         ''' Print settings as test. '''
 
@@ -585,7 +580,7 @@ class ThermalPrinter(Serial):
             2: turns on underline mode (2 dots thick)
         '''
 
-        if not 0 < weight <= 2:
+        if not 0 <= weight <= 2:
             weight = 0
         self._write_bytes(Command.ESC, 45, weight)
 
@@ -693,9 +688,6 @@ def tests():
     printer.strike()
     printer.println('Strike')
     printer.strike(0)
-
-    printer.tab()
-    printer.println('Tabulation')
 
     printer.underline()
     printer.println('Underline')
