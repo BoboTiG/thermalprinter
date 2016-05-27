@@ -515,7 +515,7 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
-        self._write_bytes(Command.ESC, 129, state)
+        self._write_bytes(Command.ESC, 123, state)
 
     def wake(self):
         ''' Wake up the printer. '''
@@ -627,6 +627,10 @@ def tests():
     printer.println('Underline')
     printer.underline(0)
 
+    printer.upside_down()
+    printer.println('Upside down')
+    printer.upside_down(0)
+
     printer.println('A boolean centered:')
     printer.justify('C')
     printer.println(True)
@@ -639,6 +643,7 @@ def tests():
     printer.justify('L')
     printer.barcode('012345678901', BarCode.EAN13)
 
+    printer.println("Voilà, c'est terminé !")
     printer.feed(2)
     return 0
 
