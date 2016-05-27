@@ -24,7 +24,8 @@ from time import sleep, time
 from cchardet import detect
 from serial import Serial
 
-__all__ = ['BarCode', 'CharSet', 'Command', 'CodePage', 'ThermalPrinter']
+__all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
+           'ThermalPrinter']
 
 
 __version__ = '1.0.0-dev'
@@ -60,22 +61,32 @@ def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
 
 
 class BarCode(Enum):
-    ''' Available barcode types.
-        (code, (min len(text), max len(text)))
+    ''' Available bar code types.
+        (code, (min len(text), max len(text)), allowed_chars)
     '''
 
-    UPC_A = (65, (11, 12))
-    UPC_E = (66, (11, 12))
-    JAN13 = (67, (12, 13))
-    EAN13 = (67, (12, 13))
-    JAN8 = (68, (7, 8))
-    EAN8 = (68, (7, 8))
-    CODE39 = (69, (1, 255))
-    ITF = (70, (1, 255))
-    CODABAR = (71, (1, 255))
-    CODE93 = (72, (1, 255))
-    CODE128 = (73, (2, 255))
+    UPC_A = (65, (11, 12), 0)
+    UPC_E = (66, (11, 12), 0)
+    JAN13 = (67, (12, 13), 0)
+    EAN13 = (67, (12, 13), 0)
+    JAN8 = (68, (7, 8), 0)
+    EAN8 = (68, (7, 8), 0)
+    CODE39 = (69, (1, 255), 1)
+    ITF = (70, (1, 255), 0)
+    CODABAR = (71, (1, 255), 2)
+    CODE93 = (72, (1, 255), 3)
+    CODE128 = (73, (2, 255), 3)
 
+
+class BarCodePosition(Enum):
+    ''' Available bar code positions.
+        (code, explication)
+    '''
+
+    HIDDEN = 0
+    ABOVE = 1
+    BELOW = 2
+    BOTH = 3
 
 class CharSet(Enum):
     ''' Internal character sets. '''
@@ -174,8 +185,8 @@ class ThermalPrinter(Serial):
     column = 0
     max_column = 32
     char_height = 24
-    line_spacing = 6
-    barcode_height = 50
+    line_spacing = 32
+    barcode_height = 80
     print_mode = 0
 
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
@@ -187,28 +198,59 @@ class ThermalPrinter(Serial):
         self.baud_rate = baudrate
         self.fw_ver = 269
         super().__init__(port=port, baudrate=baudrate, timeout=10)
-        self.reset()
-        self.set_default()
+        # self.reset()
+        # self.set_default()
 
-    def barcode(self, text, bc_type):
-        ''' Barcode printing. '''
+    def barcode(self, data, bc_type):
+        ''' Bar code printing. '''
+
+        def _range1(a=48, b=57):
+            return [n for n in range(a, b + 1)]
+
+        def _range2():
+            range_ = [32, 36, 37, 43]
+            range_.extend(_range1(45, 57))
+            range_.extend(_range1(65, 90))
+            return range_
+
+        def _range3():
+            range_ = [36, 43]
+            range_.extend(_range1(45, 58))
+            range_.extend(_range1(65, 68))
+            return range_
+
+        def _range4():
+            return _range1(0, 127)
+
+        ranges_ = [_range1, _range2, _range3, _range4]
 
         if not isinstance(bc_type, BarCode):
-            bcodes = ', '.join([barcode.name for barcode in BarCode])
-            raise ValueError('Valid barcodes are: {}.'.format(bcodes))
+            err = ', '.join([barcode.name for barcode in BarCode])
+            raise ValueError('Valid bar codes are: {}.'.format(err))
 
-        code, (min_, max_) = bc_type.value
-        if not min_ <= len(text) <= max_:
-            err = 'Should be {} <= len(text) <= {}.'.format(min_, max_)
+        code, (min_, max_), range_type = bc_type.value
+        data_len = len(data)
+        range_ = ranges_[range_type]()
+
+        if not min_ <= data_len <= max_:
+            err = '[{}] Should be {} <= len(data) <= {} (current: {}).'.format(
+                bc_type.name, min_, max_, data_len)
             raise ValueError(err)
-        elif bc_type is BarCode.ITF and not even(len(text)):
-            raise ValueError('len(text) must be even.')
+        elif bc_type is BarCode.ITF and data_len % 2 != 0:
+            raise ValueError('[ITF] len(data) must be even.')
 
-        self._write_bytes(
-            Command.GS, 72, 2,  # Label below barcode
-            Command.GS, 107, code, len(text), text)
+        if not all(ord(char) in range_ for char in data):
+            if range_type != 3:
+                valid = map(chr, range_)
+            else:
+                valid = map(hex, range_)
+            err = '[{}] Valid characters: {}.'.format(
+                bc_type.name, ', '.join(valid))
+            raise ValueError(err)
+
+        self._write_bytes(Command.GS, 107, code, data_len, data)
         self._timeout_wait()
-        self._timeout_set((self.barcode_height + 40) * self.dot_print_time)
+        self._timeout_set((self.barcode_height + self.line_spacing) * self.dot_print_time)
         self.prev_byte = '\n'
 
     def bold(self, state=1):
@@ -245,11 +287,6 @@ class ThermalPrinter(Serial):
         self._timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
         self.column = 0
-
-    def flush(self):
-        ''' Flush. '''
-
-        self._write_bytes(12)
 
     def has_paper(self):
         ''' Check the status of the paper using the printers self reporting
@@ -382,10 +419,10 @@ class ThermalPrinter(Serial):
         self.column = 0
         self.max_column = 32
         self.char_height = 24
-        self.line_spacing = 6
-        self.barcode_height = 50
-        self._write_bytes(Command.ESC, 64)
-        self._write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)  # Tabulations
+        self.line_spacing = 30
+        self.barcode_height = 80
+        # self._write_bytes(Command.ESC, 64)
+        # self._write_bytes(Command.ESC, 68, 9, 17, 25, 33, 0)  # Tabulations
 
     def rotate(self, state=1):
         ''' Turn on/off clockwise rotation of 90°. '''
@@ -394,12 +431,36 @@ class ThermalPrinter(Serial):
             state = 0
         self._write_bytes(Command.ESC, 86, state)
 
-    def set_barcode_height(self, val=50):
+    def set_barcode_height(self, val=80):
         ''' Set bar code height. '''
 
-        val = min(max(1, val), 255)
+        if not 1 <= val <= 255:
+            val = 80
         self.barcode_height = val
         self._write_bytes(Command.GS, 104, val)
+
+    def set_barcode_left_margin(self, val=0):
+        ''' Set the bar code printed on the left spacing. '''
+
+        if not 0 <= val <= 255:
+            val = 0
+        self._write_bytes(Command.GS, 120, val)
+
+    def set_barcode_position(self, bc_pos=BarCodePosition.BELOW):
+        ''' Set bar code position. '''
+
+        if not isinstance(bc_pos, BarCodePosition):
+            err = ', '.join([pos.name for pos in BarCodePosition])
+            raise ValueError('Valid positions are: {}.'.format(err))
+
+        self._write_bytes(Command.GS, 72, bc_pos.value)
+
+    def set_barcode_width(self, width=3):
+        ''' Set bar code width. '''
+
+        if not 2 <= width <= 6:
+            width = 3
+        self._write_bytes(Command.GS, 119, width)
 
     def set_charset(self, charset):
         ''' Select an internal character set. '''
@@ -430,17 +491,25 @@ class ThermalPrinter(Serial):
         self._write_bytes(Command.ESC, 116, value)
 
     def set_default(self):
-        ''' Reset text formatting parameters. '''
+        ''' Reset formatting parameters. '''
 
         self.online()
-        self.justify('L')
-        self.inverse(0)
-        self.double_height(0)
-        self.set_line_height(32)
         self.bold(0)
+        self.double_height(0)
+        self.inverse(0)
+        self.justify()
+        self.rotate(0)
+        self.set_barcode_height()
+        self.set_barcode_left_margin()
+        self.set_barcode_position()
+        # self.set_barcode_width()
+        self.set_char_spacing()
+        self.set_line_spacing()
+        self.set_left_spacing()
+        self.set_size()
+        self.strike(0)
         self.underline(0)
-        self.set_barcode_height(50)
-        self.set_size('S')
+        self.upside_down(0)
 
     def set_char_spacing(self, spacing=0):
         ''' Set the right character spacing. '''
@@ -455,19 +524,6 @@ class ThermalPrinter(Serial):
         if not 0 <= spacing <= 47:
             spacing = 0
         self._write_bytes(Command.ESC, 66, spacing)
-
-    def set_line_height(self, val=32):
-        ''' Set line height.
-
-            The printer doesn't take into account the current text
-            height when setting line height, making this more akin
-            to inter-line spacing. Default line spacing is 30
-            (char height of 24, line spacing of 6).
-        '''
-
-        val = max(24, val)
-        self.line_spacing = val - 24
-        self._write_bytes(Command.ESC, '3', val)
 
     def set_line_spacing(self, spacing=30):
         ''' Set line spacing. '''
@@ -561,20 +617,7 @@ class ThermalPrinter(Serial):
             self.char_height = 24
 
     def _timeout_set(self, delay):
-        ''' Sets estimated completion time for a just-issued task.
-
-            Because there's no flow control between the printer and computer,
-            special care must be taken to avoid overrunning the printer's
-            buffer.  Serial output is throttled based on serial speed as well
-            as an estimate of the device's print and feed rates (relatively
-            slow, being bound to moving parts and physical reality).  After
-            an operation is issued to the printer (e.g. bitmap print), a
-            timeout is set before which any other printer operations will be
-            suspended.  This is generally more efficient than using a delay
-            in that it allows the calling code to continue with other duties
-            (e.g. receiving or decoding an image) while the printer
-            physically completes the task.
-        '''
+        ''' Sets estimated completion time for a just-issued task. '''
 
         self.resume_time = time() + delay
 
@@ -613,15 +656,19 @@ class ThermalPrinter(Serial):
 def tests():
     ''' Tests. '''
 
-    from PIL import Image
-
     printer = ThermalPrinter()
 
     # printer.test()
 
-    printer.feed()
-    printer.image(Image.open('gnu.png'))
-    printer.feed()
+    try:
+        from PIL import Image
+        printer.feed()
+        printer.image(Image.open('gnu.png'))
+        printer.feed()
+    except ImportError:
+        pass
+
+    # printer.barcode('012345678901', BarCode.EAN13)
 
     printer.bold()
     printer.println('Bold')
@@ -658,6 +705,10 @@ def tests():
     printer.println('Upside down')
     printer.upside_down(0)
 
+    printer.underline(2)
+    printer.println('{0:{1}>{2}}'.format(' ', ' ', printer.max_column))
+    printer.underline(0)
+
     printer.println('A boolean centered:')
     printer.justify('C')
     printer.println(True)
@@ -667,11 +718,10 @@ def tests():
     printer.justify('R')
     printer.println(42)
 
-    printer.justify('L')
-    printer.barcode('012345678901', BarCode.EAN13)
-
+    printer.feed()
+    printer.justify('C')
     printer.println("Voilà, c'est terminé !")
-    printer.feed(2)
+    printer.feed(3)
     return 0
 
 
