@@ -442,6 +442,13 @@ class ThermalPrinter(Serial):
             spacing = 0
         self._write_bytes(Command.ESC, 32, spacing)
 
+    def set_left_spacing(self, spacing=0):
+        ''' Set the left spacing. '''
+
+        if not 0 <= spacing <= 47:
+            spacing = 0
+        self._write_bytes(Command.ESC, 66, spacing)
+
     def set_line_height(self, val=32):
         ''' Set line height.
 
