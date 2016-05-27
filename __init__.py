@@ -184,7 +184,7 @@ class ThermalPrinter(Serial):
     column = 0
     max_column = 32
     char_height = 24
-    line_spacing = 6
+    line_spacing = 30
     barcode_height = 80
     print_mode = 0
 
@@ -196,7 +196,8 @@ class ThermalPrinter(Serial):
         self.heat_interval = 2
         self.baud_rate = baudrate
         super().__init__(port=port, baudrate=baudrate, timeout=10)
-        self.set_default()
+        self._timeout_set(0.5)
+        self.set_defaults()
 
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
@@ -280,6 +281,9 @@ class ThermalPrinter(Serial):
 
         if not 0 <= number <= 255:
             return
+        for _ in range(number):
+            super().write(b'\n')
+        return
         self._write_bytes(Command.ESC, 100, number)
         self._timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
@@ -487,7 +491,7 @@ class ThermalPrinter(Serial):
         value, _ = codepage.value
         self._write_bytes(Command.ESC, 116, value)
 
-    def set_default(self):
+    def set_defaults(self):
         ''' Reset formatting parameters. '''
 
         self.online()
@@ -522,11 +526,11 @@ class ThermalPrinter(Serial):
             spacing = 0
         self._write_bytes(Command.ESC, 66, spacing)
 
-    def set_line_spacing(self, spacing=6):
+    def set_line_spacing(self, spacing=30):
         ''' Set line spacing. '''
 
         if not 0 <= spacing <= 255:
-            spacing = 6
+            spacing = 30
         self._write_bytes(Command.ESC, 51, spacing)
 
     def set_size(self, value='S'):
@@ -603,10 +607,8 @@ class ThermalPrinter(Serial):
 
         self.print_mode |= mask
         self._write_print_mode()
-        if self.print_mode & 16:
-            self.char_height = 48
-        else:
-            self.char_height = 24
+        self.char_height = 48 if self.print_mode & 16 else 24
+        self.max_column = 16 if self.print_mode & 32 else 32
 
     def _timeout_set(self, delay):
         ''' Sets estimated completion time for a just-issued task. '''
@@ -624,10 +626,8 @@ class ThermalPrinter(Serial):
 
         self.print_mode &= ~mask
         self._write_print_mode()
-        if self.print_mode & 16:
-            self.char_height = 48
-        else:
-            self.char_height = 24
+        self.char_height = 48 if self.print_mode & 16 else 24
+        self.max_column = 16 if self.print_mode & 32 else 32
 
     def _write_bytes(self, *args):
         ''' 'Raw' byte-writing. '''
