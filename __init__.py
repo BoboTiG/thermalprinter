@@ -259,7 +259,7 @@ class ThermalPrinter(Serial):
         self._timeout_wait()
         self._timeout_set((self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.prev_byte = '\n'
-        self._lines += int(self._barcode_height / self._line_spacing + 1 )
+        self._lines += self._barcode_height / self._line_spacing + 1
 
     def bold(self, state=True):
         ''' Turn emphasized mode on/off. '''
@@ -386,7 +386,7 @@ class ThermalPrinter(Serial):
         if line:
             self.write(convert_encoding(line))
             self.write(b'\n')
-            self._lines += 0
+            self._lines += 1
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
