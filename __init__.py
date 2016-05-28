@@ -343,7 +343,10 @@ class ThermalPrinter(Serial):
                                                 is_image=True))
                     lines += 1
                     idx += 1
+                self._timeout_wait()
+                self._timeout_set(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
+
         self._prev_byte = '\n'
         return lines
 
