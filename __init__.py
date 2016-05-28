@@ -196,9 +196,20 @@ class ThermalPrinter(Serial):
         self.heat_dots = 7
         self.heat_interval = 2
         self.baud_rate = baudrate
-        super().__init__(port=port, baudrate=baudrate, timeout=10)
+        super().__init__(port=port, baudrate=baudrate)
         self._timeout_set(0.5)
         self.set_defaults()
+
+    def __enter__(self):
+        ''' `with ThermalPrinter() as printer:` '''
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        ''' `with ThermalPrinter() as printer:` '''
+
+        if self.is_open:
+            self.close()
 
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
@@ -656,74 +667,74 @@ class ThermalPrinter(Serial):
 def tests():
     ''' Tests. '''
 
-    printer = ThermalPrinter()
+    with ThermalPrinter() as printer:
+        try:
+            from PIL import Image
+            printer.feed()
+            printer.image(Image.open('gnu.png'))
+            printer.feed()
+        except ImportError:
+            pass
 
-    # printer.test()
+        printer.set_barcode_height()
+        printer.set_barcode_left_margin()
+        printer.set_barcode_position()
+        printer.set_barcode_width()
+        printer.barcode('012345678901', BarCode.EAN13) '''
 
-    '''try:
-        from PIL import Image
+        printer.bold()
+        printer.println('Bold')
+        printer.bold(0)
+
+        printer.double_height()
+        printer.println('Double height')
+        printer.double_height(0)
+
+        printer.double_width()
+        printer.println('Double width')
+        printer.double_width(0)
+
+        printer.inverse()
+        printer.println('Inverse')
+        printer.inverse(0)
+
+        printer.rotate()
+        printer.println('Rotate 90°')
+        printer.rotate(0)
+
+        printer.strike()
+        printer.println('Strike')
+        printer.strike(0)
+
+        printer.underline()
+        printer.println('Underline')
+        printer.underline(0)
+
+        printer.upside_down()
+        printer.println('Upside down')
+        printer.upside_down(0)
+
+        printer.underline(2)
+        printer.println('{0:{1}>{2}}'.format(' ', ' ', printer.max_column))
+        printer.underline(0)
+
+        printer.println('A boolean centered:')
+        printer.justify('C')
+        printer.println(True)
+
+        printer.justify('L')
+        printer.println('An integer on the right:')
+        printer.justify('R')
+        printer.println(42)
+
         printer.feed()
-        printer.image(Image.open('gnu.png'))
-        printer.feed()
-    except ImportError:
-        pass
+        printer.justify('C')
+        printer.println("Voilà !")
+        printer.feed(3)
 
-    printer.set_barcode_height()
-    printer.set_barcode_left_margin()
-    printer.set_barcode_position()
-    printer.set_barcode_width()
-    printer.barcode('012345678901', BarCode.EAN13) '''
+        return 0
 
-    printer.bold()
-    printer.println('Bold')
-    printer.bold(0)
-
-    printer.double_height()
-    printer.println('Double height')
-    printer.double_height(0)
-
-    printer.double_width()
-    printer.println('Double width')
-    printer.double_width(0)
-
-    printer.inverse()
-    printer.println('Inverse')
-    printer.inverse(0)
-
-    printer.rotate()
-    printer.println('Rotate 90°')
-    printer.rotate(0)
-
-    printer.strike()
-    printer.println('Strike')
-    printer.strike(0)
-
-    printer.underline()
-    printer.println('Underline')
-    printer.underline(0)
-
-    printer.upside_down()
-    printer.println('Upside down')
-    printer.upside_down(0)
-
-    printer.underline(2)
-    printer.println('{0:{1}>{2}}'.format(' ', ' ', printer.max_column))
-    printer.underline(0)
-
-    printer.println('A boolean centered:')
-    printer.justify('C')
-    printer.println(True)
-
-    printer.justify('L')
-    printer.println('An integer on the right:')
-    printer.justify('R')
-    printer.println(42)
-
-    printer.feed()
-    printer.justify('C')
-    printer.println("Voilà !")
-    printer.feed(3)
-    return 0
+    return 1
 
 
 if __name__ == '__main__':
