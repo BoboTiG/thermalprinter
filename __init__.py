@@ -246,7 +246,7 @@ class ThermalPrinter(Serial):
 
         self._write_bytes(Command.GS, 107, code, data_len, data)
         self._timeout_wait()
-        self._timeout_set((self.barcode_height + self._line_spacing) * self._dot_print_time)
+        self._timeout_set((self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.prev_byte = '\n'
 
     def bold(self, state=True):
@@ -398,7 +398,7 @@ class ThermalPrinter(Serial):
         ''' Send a line to the printer. '''
 
         self.write(convert_encoding(line))
-        self.write(b'\n')
+        #self.write(b'\n')
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -421,14 +421,8 @@ class ThermalPrinter(Serial):
     def reset(self, start=False):
         ''' Reset printer settings. '''
 
-        # Reset command does not clear the receive buffer, so we do it manually
-        self.reset_input_buffer()
-        self.reset_output_buffer()
-        if not start:
-            self._write_bytes(Command.ESC, 64)  # Reset
-
-        # Reset vars too
-        self._byte_time = 0.033
+        # Reset vars
+        self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
         self._resume_time = 0.0
@@ -459,6 +453,21 @@ class ThermalPrinter(Serial):
         self._strike = False
         self._underline = 0
         self._upside_down = False
+
+        # Reset command does not clear the receive buffer, so we do it manually
+        self.reset_input_buffer()
+        self.reset_output_buffer()
+        if not start:
+            self._write_bytes(Command.ESC, 64)  # Reset
+
+        # Reset print parameters
+        self._write_bytes(Command.ESC, 55,
+                          20,   # Heat dots (20 = balance darkness w/no jams)
+                          60,   # Heat time (default = 45)
+                          250)  # Heat interval (500 uS = slower but darker)
+
+        # Reset print density
+        self.write_bytes(Command.DC2, 35, (4 << 5) | 14)
 
     def rotate(self, state=True):
         ''' Turn on/off clockwise rotation of 90°. '''
@@ -495,8 +504,8 @@ class ThermalPrinter(Serial):
             err = ', '.join([pos.name for pos in BarCodePosition])
             raise ValueError('Valid positions are: {}.'.format(err))
 
-        if bc_pos is not self._bc_pos:
-            self._bc_pos = bc_pos
+        if bc_pos is not self._barcode_position:
+            self._barcode_position = bc_pos
             self._write_bytes(Command.GS, 72, bc_pos.value)
 
     def set_barcode_width(self, width=2):
