@@ -288,20 +288,6 @@ class ThermalPrinter(Serial):
         self._prev_byte = '\n'
         self._column = 0
 
-    def has_paper(self):
-        ''' Check the status of the paper using the printers self reporting
-            ability. Doesn't match the datasheet...
-            Returns True for paper, False for no paper.
-        '''
-
-        self._write_bytes(Command.ESC, 118, 0)
-        if self.in_waiting:
-            # Bit 2 of response is paper status
-            stat = ord(self.read(1)) & 0b00000100
-            self.reset_output_buffer()
-            return stat == 0
-        return True
-
     def image(self, image):
         ''' Print Image. Requires Python Imaging Library. This is
             specific to the Python port and not present in the Arduino
@@ -368,18 +354,6 @@ class ThermalPrinter(Serial):
             self._inverse = state
             self._write_bytes(Command.GS, 66, int(state))
 
-    def is_pinned(self):
-        ''' TODO FIX. Transmit peripheral devices status. '''
-
-        self._write_bytes(Command.ESC, 117, 0)
-        # Bit 1 of response is drawer kick out connector pin 3
-        try:
-            stat = ord(self.read(1)) & 0b00000001
-        except TypeError:
-            return True
-        # If set, we have paper; if clear, no paper
-        return stat == 0
-
     def justify(self, value='L'):
         ''' Set text justification. '''
 
@@ -397,8 +371,9 @@ class ThermalPrinter(Serial):
     def println(self, line):
         ''' Send a line to the printer. '''
 
-        self.write(convert_encoding(line))
-        #self.write(b'\n')
+        if line:
+            self.write(convert_encoding(line))
+            self.write(b'\n')
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -430,13 +405,13 @@ class ThermalPrinter(Serial):
         self.max_column = 32
         self._barcode_height = 80
         self._barcode_left_margin = 0
-        self._barcode_position = BarCodePosition.BELOW
+        self._barcode_position = None
         self._barcode_width = 2
         self._bold = False
-        self._charset = CharSet.USA
+        self._charset = None
         self._char_spacing = 0
         self._char_height = 24
-        self._codepage = CodePage.CP437
+        self._codepage = None
         self._column = 0
         self._double_height = False
         self._double_width = False
@@ -462,12 +437,9 @@ class ThermalPrinter(Serial):
 
         # Reset print parameters
         self._write_bytes(Command.ESC, 55,
-                          20,   # Heat dots (20 = balance darkness w/no jams)
-                          60,   # Heat time (default = 45)
-                          250)  # Heat interval (500 uS = slower but darker)
-
-        # Reset print density
-        self.write_bytes(Command.DC2, 35, (4 << 5) | 14)
+                          3,    # The most heated pojnt (default: 9)
+                          80,   # Heat time (default: 80)
+                          12)   # Heat time interval (default: 2)
 
     def rotate(self, state=True):
         ''' Turn on/off clockwise rotation of 90°. '''
@@ -623,6 +595,29 @@ class ThermalPrinter(Serial):
 
             self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
+    def status(self):
+        ''' Check the printer status. If RX pin is not connected, all values
+            will be set to True.
+
+            Return a dict:
+                movement: False if the movement is not connected.
+                   paper: False is no paper.
+                    temp: False if the temperature exceeds 60°C.
+                 voltage: False if the voltage is higher than 9.5V
+        '''
+
+        ret = { 'movement': True, 'paper': True,
+                'temp': True, 'voltage': True }
+        self._write_bytes(Command.ESC, 118, 0)
+        sleep(0.05)
+        if self.in_waiting:
+            stat = ord(self.read(1))
+            ret['movement'] = stat & 0b00000001 == 1
+            ret['paper'] = stat & 0b00000100 == 0
+            ret['voltage'] = stat & 0b00001000 == 0
+            ret['temp'] = stat & 0b01000000 == 0
+        return ret
+
     def strike(self, state=True):
         ''' Turn on/off double-strike mode. '''
 
@@ -727,10 +722,9 @@ def tests():
         except ImportError:
             pass
 
-        printer.set_barcode_height()
-        printer.set_barcode_left_margin()
-        printer.set_barcode_position()
-        printer.set_barcode_width()
+        printer.set_barcode_height(80)
+        printer.set_barcode_position(BarCodePosition.BELOW)
+        printer.set_barcode_width(3)
         printer.barcode('012345678901', BarCode.EAN13)
 
         printer.bold()
