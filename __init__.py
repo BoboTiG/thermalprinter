@@ -17,6 +17,7 @@
     If that URL should fail, try contacting the author.
 '''
 
+from configparser import SafeConfigParser
 from enum import Enum
 from time import sleep, time
 
@@ -178,6 +179,9 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-public-methods
 
     max_column = 32
+    fo_stats = '/opt/thermalprinter/stats.ini'
+    _lines = 0
+    _feeds = 0
 
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
         ''' Print init. '''
@@ -193,10 +197,16 @@ class ThermalPrinter(Serial):
 
         return self
 
+    def __del__(self):
+        ''' Only for stats. '''
+
+        self._update_stats()
+
     def __exit__(self, exc_type, exc_value, traceback):
         ''' `with ThermalPrinter() as printer:` '''
 
         self.close()
+        self._update_stats()
 
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
@@ -249,6 +259,7 @@ class ThermalPrinter(Serial):
         self._timeout_wait()
         self._timeout_set((self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.prev_byte = '\n'
+        self._lines += int(self._barcode_height / self._line_spacing + 1 )
 
     def bold(self, state=True):
         ''' Turn emphasized mode on/off. '''
@@ -288,6 +299,7 @@ class ThermalPrinter(Serial):
         self._timeout_set(number * self._dot_feed_time * self._char_height)
         self._prev_byte = '\n'
         self._column = 0
+        self._feeds += number
 
     def image(self, image):
         ''' Print Image. Requires Python Imaging Library. This is
@@ -299,8 +311,6 @@ class ThermalPrinter(Serial):
             passing the result to this function.
 
             Max width: 384px.
-
-            Returns the number of printed lines.
         '''
 
         # pylint: disable=R0914
@@ -331,7 +341,6 @@ class ThermalPrinter(Serial):
                 bitmap[offset + pad] = sum_
 
         idx = 0
-        lines = 0
         for row_start in range(0, height, 255):
             chunk_height = min(height - row_start, 255)
             self._write_bytes(Command.DC2, 42, chunk_height,
@@ -341,14 +350,13 @@ class ThermalPrinter(Serial):
                     self.write(convert_encoding(bitmap[idx],
                                                 is_raw=True,
                                                 is_image=True))
-                    lines += 1
+                    self._lines += 1
                     idx += 1
                 self._timeout_wait()
                 self._timeout_set(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
 
         self._prev_byte = '\n'
-        return lines
 
     def inverse(self, state=True):
         ''' Turn white/black reverse printing mode. '''
@@ -378,6 +386,7 @@ class ThermalPrinter(Serial):
         if line:
             self.write(convert_encoding(line))
             self.write(b'\n')
+            self._lines += 0
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -689,6 +698,22 @@ class ThermalPrinter(Serial):
 
         while (time() - self._resume_time) < 0:
             pass
+
+    def _update_stats(self):
+        ''' Statistics update. '''
+
+        if not self.fo_stats or (self._feeds + self._lines) == 0:
+            return
+
+        ini = SafeConfigParser()
+        ini.read(self.fo_stats)
+        self._lines += ini.getint('stats', 'printed_lines')
+        self._feeds += ini.getint('stats', 'line_feeds')
+        ini.set('stats', 'printed_lines', str(self._lines))
+        ini.set('stats', 'line_feeds', str(self._feeds))
+        ini.write(open(self.fo_stats, 'w'))
+        self._lines = 0
+        self._feeds = 0
 
     def _unset_print_mode(self, mask):
         ''' Unset the print mode.  '''
