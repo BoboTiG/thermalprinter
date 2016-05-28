@@ -448,6 +448,9 @@ class ThermalPrinter(Serial):
         if not start:
             self._write_bytes(Command.ESC, 64)  # Reset
 
+        self.set_codepage(CodePage.CP437)
+        self.set_charset(CharSet.USA)
+
         # Reset print parameters
         self._write_bytes(Command.ESC, 55,
                           3,    # The most heated pojnt (default: 9)
@@ -482,7 +485,7 @@ class ThermalPrinter(Serial):
             barcode_left_margin = val
             self._write_bytes(Command.GS, 120, val)
 
-    def set_barcode_position(self, bc_pos=BarCodePosition.BELOW):
+    def set_barcode_position(self, bc_pos=BarCodePosition.HIDDEN):
         ''' Set bar code position. '''
 
         if not isinstance(bc_pos, BarCodePosition):
@@ -539,6 +542,8 @@ class ThermalPrinter(Serial):
         ''' Reset formatting parameters. '''
 
         self.online()
+        self.set_codepage(CodePage.CP437)
+        self.set_charset(CharSet.USA)
         self.bold(False)
         self.double_height(False)
         self.inverse(False)
