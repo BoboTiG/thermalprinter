@@ -87,6 +87,7 @@ class BarCodePosition(Enum):
     BELOW = 2
     BOTH = 3
 
+
 class CharSet(Enum):
     ''' Internal character sets. '''
 
@@ -256,6 +257,7 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
+
         self._write_bytes(Command.ESC, 69, state)
 
     def double_height(self, state=1):
@@ -281,9 +283,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= number <= 255:
             return
-        for _ in range(number):
-            super().write(b'\n')
-        return
+
         self._write_bytes(Command.ESC, 100, number)
         self._timeout_set(number * self.dot_feed_time * self.char_height)
         self.prev_byte = '\n'
@@ -353,9 +353,9 @@ class ThermalPrinter(Serial):
                              row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
-                    super().write(convert_encoding(bitmap[idx],
-                                                   is_raw=True,
-                                                   is_image=True))
+                    self.write(convert_encoding(bitmap[idx],
+                                                is_raw=True,
+                                                is_image=True))
                     lines += 1
                     idx += 1
                 idx += row_bytes - row_bytes_clipped
@@ -391,13 +391,14 @@ class ThermalPrinter(Serial):
             pos = 2
         else:
             pos = 0
+
         self._write_bytes(Command.ESC, 97, pos)
 
     def println(self, line):
         ''' Send a line to the printer. '''
 
-        super().write(convert_encoding(line))
-        super().write(b'\n')
+        self.write(convert_encoding(line))
+        self.write(b'\n')
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -430,6 +431,7 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
+
         self._write_bytes(Command.ESC, 86, state)
 
     def set_barcode_height(self, val=80):
@@ -437,6 +439,7 @@ class ThermalPrinter(Serial):
 
         if not 1 <= val <= 255:
             val = 80
+
         self.barcode_height = val
         self._write_bytes(Command.GS, 104, val)
 
@@ -445,6 +448,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= val <= 255:
             val = 0
+
         self._write_bytes(Command.GS, 120, val)
 
     def set_barcode_position(self, bc_pos=BarCodePosition.BELOW):
@@ -461,6 +465,7 @@ class ThermalPrinter(Serial):
 
         if not 2 <= width <= 6:
             width = 3
+
         self._write_bytes(Command.GS, 119, width)
 
     def set_charset(self, charset):
@@ -500,10 +505,6 @@ class ThermalPrinter(Serial):
         self.inverse(0)
         self.justify()
         self.rotate(0)
-        self.set_barcode_height()
-        self.set_barcode_left_margin()
-        self.set_barcode_position()
-        self.set_barcode_width()
         self.set_char_spacing()
         self.set_line_spacing()
         self.set_left_margin()
@@ -517,6 +518,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= spacing <= 255:
             spacing = 0
+
         self._write_bytes(Command.ESC, 32, spacing)
 
     def set_left_margin(self, spacing=0):
@@ -524,6 +526,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= spacing <= 47:
             spacing = 0
+
         self._write_bytes(Command.ESC, 66, spacing)
 
     def set_line_spacing(self, spacing=30):
@@ -531,6 +534,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= spacing <= 255:
             spacing = 30
+
         self._write_bytes(Command.ESC, 51, spacing)
 
     def set_size(self, value='S'):
@@ -558,13 +562,15 @@ class ThermalPrinter(Serial):
 
         if seconds > 0:
             sleep(seconds)
-        self._write_bytes(Command.ESC, '8', seconds, seconds >> 8)
+
+        self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
     def strike(self, state=1):
         ''' Turn on/off double-strike mode. '''
 
         if state != 1:
             state = 0
+
         self._write_bytes(Command.ESC, 71, state)
 
     def test(self):
@@ -583,6 +589,7 @@ class ThermalPrinter(Serial):
 
         if not 0 <= weight <= 2:
             weight = 0
+
         self._write_bytes(Command.ESC, 45, weight)
 
     def upside_down(self, state=1):
@@ -590,6 +597,7 @@ class ThermalPrinter(Serial):
 
         if state != 1:
             state = 0
+
         self._write_bytes(Command.ESC, 123, state)
 
     def wake(self):
@@ -637,7 +645,7 @@ class ThermalPrinter(Serial):
         for data in args:
             if isinstance(data, Command):
                 data = data.value
-            super().write(convert_encoding(data, is_raw=True))
+            self.write(convert_encoding(data, is_raw=True))
 
     def _write_print_mode(self):
         ''' Write the print mode. '''
@@ -652,7 +660,7 @@ def tests():
 
     # printer.test()
 
-    try:
+    '''try:
         from PIL import Image
         printer.feed()
         printer.image(Image.open('gnu.png'))
@@ -660,7 +668,11 @@ def tests():
     except ImportError:
         pass
 
-    # printer.barcode('012345678901', BarCode.EAN13)
+    printer.set_barcode_height()
+    printer.set_barcode_left_margin()
+    printer.set_barcode_position()
+    printer.set_barcode_width()
+    printer.barcode('012345678901', BarCode.EAN13) '''
 
     printer.bold()
     printer.println('Bold')
@@ -709,7 +721,7 @@ def tests():
 
     printer.feed()
     printer.justify('C')
-    printer.println("Voilà, c'est terminé !")
+    printer.println("Voilà !")
     printer.feed(3)
     return 0
 
