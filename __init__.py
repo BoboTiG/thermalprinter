@@ -186,6 +186,7 @@ class ThermalPrinter(Serial):
         super().__init__(port=port, baudrate=self._baudrate)
         sleep(0.5)
         self.reset(start=True)
+        self.set_defaults()
 
     def __enter__(self):
         ''' `with ThermalPrinter() as printer:` '''
@@ -403,31 +404,31 @@ class ThermalPrinter(Serial):
         self._resume_time = 0.0
 
         self.max_column = 32
-        self._barcode_height = 80
+        self._barcode_height = 0
         self._barcode_left_margin = 0
         self._barcode_position = None
-        self._barcode_width = 2
-        self._bold = False
+        self._barcode_width = 0
+        self._bold = None
         self._charset = None
         self._char_spacing = 0
         self._char_height = 24
         self._codepage = None
         self._column = 0
-        self._double_height = False
-        self._double_width = False
-        self._inverse = False
+        self._double_height = None
+        self._double_width = None
+        self._inverse = None
         self._is_online = True
         self._is_sleeping = False
-        self._justify = 'L'
+        self._justify = ''
         self._left_margin = 0
-        self._line_spacing = 30
+        self._line_spacing = 0
         self._prev_byte = '\n'
         self._print_mode = 0
-        self._rotate = False
-        self._size = 'S'
-        self._strike = False
-        self._underline = 0
-        self._upside_down = False
+        self._rotate = None
+        self._size = ''
+        self._strike = None
+        self._underline = -1
+        self._upside_down = None
 
         # Reset command does not clear the receive buffer, so we do it manually
         self.reset_input_buffer()
