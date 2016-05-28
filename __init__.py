@@ -793,24 +793,7 @@ def tests():
         printer.println('Upside down')
         printer.upside_down(False)
 
-        printer.underline(2)
-        printer.println('{0:{1}>{2}}'.format(' ', ' ', printer.max_column))
-        printer.underline(0)
-
-        printer.println('A boolean centered:')
-        printer.justify('C')
-        printer.println(True)
-
-        printer.justify('L')
-        printer.println('An integer on the right:')
-        printer.justify('R')
-        printer.println(42)
-
-        printer.feed()
-        printer.justify('C')
-        printer.println("Voilà !")
-        printer.feed(3)
-
+        printer.feed(2)
         return 0
 
     return 1
