@@ -259,7 +259,7 @@ class ThermalPrinter(Serial):
         self._timeout_wait()
         self._timeout_set((self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.prev_byte = '\n'
-        self._lines += self._barcode_height / self._line_spacing + 1
+        self._lines += int(self._barcode_height / self._line_spacing) + 1
 
     def bold(self, state=True):
         ''' Turn emphasized mode on/off. '''
@@ -356,6 +356,7 @@ class ThermalPrinter(Serial):
                 self._timeout_set(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
 
+        self._lines += int(height / self._line_spacing) + 1
         self._prev_byte = '\n'
 
     def inverse(self, state=True):
