@@ -236,8 +236,8 @@ class ThermalPrinter(Serial):
 
         self._write_bytes(Command.GS, 107, code, data_len, data)
         self._timeout_wait()
-        self._timeout_set((self._barcode_height + self._line_spacing)
-            * self._dot_print_time)
+        self._timeout_set(
+            (self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
@@ -605,7 +605,7 @@ class ThermalPrinter(Serial):
         '''
 
         ret = {'movement': True, 'paper': True,
-                'temp': True, 'voltage': True}
+               'temp': True, 'voltage': True}
         self._write_bytes(Command.ESC, 118, 0)
         sleep(0.05)
         if self.in_waiting:
