@@ -44,23 +44,6 @@ __copyright__ = '''
 __license__ = 'MIT'
 
 
-def convert_encoding(data, is_raw=False, is_image=False, new='latin-1'):
-    ''' Convert data before sending to the printer. '''
-
-    if isinstance(data, (bool, int)):
-        if is_raw:
-            data = chr(data)
-        else:
-            data = str(data)
-    elif isinstance(data, bytes):
-        current = detect(data)['encoding']
-        if new.lower() != current.lower():
-            data = data.decode(current, data).encode(new)
-    if is_image:
-        return data.encode(new, 'replace')
-    return data.encode('cp1252', 'replace')
-
-
 class BarCode(Enum):
     ''' Available bar code types.
         (code, (min len(text), max len(text)), allowed_chars)
@@ -117,13 +100,12 @@ class CodePage(Enum):
     '''
 
     CP437 = (0, 'the United States of America, European standard')
-    KATAKANA = (1, 'Katakana')
+    CP932 = (1, 'Katakana')
     CP850 = (2, 'Multi language')
     CP860 = (3, 'Portuguese')
     CP863 = (4, 'Canada, French')
     CP865 = (5, 'Western Europe')
     CYRILLIC = (6, 'The Slavic language')
-    WCP1251 = (6, 'The Slavic language')
     CP866 = (7, 'The Slavic 2')
     MIK = (8, 'The Slavic / Bulgaria')
     CP755 = (9, 'Eastern Europe, Latvia 2')
@@ -344,10 +326,7 @@ class ThermalPrinter(Serial):
                               row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
-                    self.write(convert_encoding(bitmap[idx],
-                                                is_raw=True,
-                                                is_image=True))
-                    self._lines += 1
+                    self.write(self._conv(bitmap[idx], is_raw=True))
                     idx += 1
                 self._timeout_wait()
                 self._timeout_set(row_bytes_clipped * self._byte_time)
@@ -382,7 +361,9 @@ class ThermalPrinter(Serial):
         ''' Send a line to the printer. '''
 
         if line:
-            self.write(convert_encoding(line))
+            if isinstance(line, (bool, int)):
+                line = str(line)
+            self.write(self._conv(line))
             self.write(b'\n')
             self._lines += 1
 
@@ -683,6 +664,27 @@ class ThermalPrinter(Serial):
 
     # Private methods
 
+    def _conv(self, data, is_raw=False):
+        ''' Convert data before sending to the printer. '''
+
+        if not self._codepage:
+            raise ValueError('Code page not setted.')
+
+        if isinstance(data, (bool, int)):
+            data = chr(data)
+        elif isinstance(data, bytes):
+            current = detect(data)['encoding']
+            if self._codepage.name.lower() != current.lower():
+                data = data.decode(current, data).encode(self._codepage.name)
+
+        if is_raw:
+            return data.encode('latin-1', 'replace')
+
+        try:
+            return data.encode(self._codepage.name, 'replace')
+        except LookupError:
+            return data.encode('cp1252', 'replace')
+
     def _set_print_mode(self, mask):
         ''' Set the print mode. '''
 
@@ -734,12 +736,13 @@ class ThermalPrinter(Serial):
         for data in args:
             if isinstance(data, Command):
                 data = data.value
-            self.write(convert_encoding(data, is_raw=True))
+            self.write(self._conv(data, is_raw=True))
 
     def _write_print_mode(self):
         ''' Write the print mode. '''
 
         self._write_bytes(Command.ESC, 33, self._print_mode)
+
 
 
 def tests():
