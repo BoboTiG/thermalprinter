@@ -171,9 +171,41 @@ class ThermalPrinter(Serial):
 
         register(self._on_exit)
         self._baudrate = baudrate
+        self._byte_time = 11.0 / float(self._baudrate)
+        self._dot_feed_time = 0.0025
+        self._dot_print_time = 0.033
+        self._resume_time = 0.0
+
+        self._barcode_height = 0
+        self._barcode_left_margin = 0
+        self._barcode_position = None
+        self._barcode_width = 0
+        self._bold = None
+        self._charset = None
+        self._char_spacing = 0
+        self._char_height = 24
+        self._codepage = None
+        self._column = 0
+        self._double_height = None
+        self._double_width = None
+        self._inverse = None
+        self._is_online = True
+        self._is_sleeping = False
+        self._justify = ''
+        self._left_margin = 0
+        self._line_spacing = 0
+        self._prev_byte = '\n'
+        self._print_mode = 0
+        self._rotate = None
+        self._size = ''
+        self._strike = None
+        self._underline = -1
+        self._upside_down = None
+
         super().__init__(port=port, baudrate=self._baudrate)
-        sleep(0.5)
-        self.reset(start=True)
+        sleep(0.5)  # Important
+        self.set_codepage(CodePage.CP850)
+        self.set_charset(CharSet.FRANCE)
         self.set_defaults()
 
     def __enter__(self):
@@ -386,15 +418,10 @@ class ThermalPrinter(Serial):
             self._is_online = True
             self._write_bytes(Command.ESC, 61, 1)
 
-    def reset(self, start=False):
+    def reset(self):
         ''' Reset printer settings. '''
 
         # Reset vars
-        self._byte_time = 11.0 / float(self._baudrate)
-        self._dot_feed_time = 0.0025
-        self._dot_print_time = 0.033
-        self._resume_time = 0.0
-
         self.max_column = 32
         self._barcode_height = 0
         self._barcode_left_margin = 0
@@ -422,11 +449,10 @@ class ThermalPrinter(Serial):
         self._underline = -1
         self._upside_down = None
 
+        self._write_bytes(Command.ESC, 64)  # Reset
         # Reset command does not clear the receive buffer, so we do it manually
         self.reset_input_buffer()
         self.reset_output_buffer()
-        if not start:
-            self._write_bytes(Command.ESC, 64)  # Reset
 
         self.set_codepage(CodePage.CP850)
         self.set_charset(CharSet.FRANCE)
@@ -522,8 +548,8 @@ class ThermalPrinter(Serial):
         ''' Reset formatting parameters. '''
 
         self.online()
-        self.set_codepage(CodePage.CP437)
-        self.set_charset(CharSet.USA)
+        self.set_codepage(CodePage.CP850)
+        self.set_charset(CharSet.FRANCE)
         self.bold(False)
         self.double_height(False)
         self.inverse(False)
