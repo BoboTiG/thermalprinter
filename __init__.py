@@ -17,6 +17,7 @@
     If that URL should fail, try contacting the author.
 '''
 
+from atexit import register
 from configparser import SafeConfigParser
 from enum import Enum
 from time import sleep, time
@@ -179,13 +180,14 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-public-methods
 
     max_column = 32
-    fo_stats = '/opt/thermalprinter/stats.ini'
     _lines = 0
     _feeds = 0
+    fo_stats = '/opt/thermalprinter/stats.ini'
 
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
         ''' Print init. '''
 
+        register(self._on_exit)
         self._baudrate = baudrate
         super().__init__(port=port, baudrate=self._baudrate)
         sleep(0.5)
@@ -197,16 +199,11 @@ class ThermalPrinter(Serial):
 
         return self
 
-    def __del__(self):
-        ''' Only for stats. '''
+    def _on_exit(self):
+        ''' To be sure we keep stats and cleanup. '''
 
         self._update_stats()
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        ''' `with ThermalPrinter() as printer:` '''
-
         self.close()
-        self._update_stats()
 
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
@@ -449,8 +446,8 @@ class ThermalPrinter(Serial):
         if not start:
             self._write_bytes(Command.ESC, 64)  # Reset
 
-        self.set_codepage(CodePage.CP437)
-        self.set_charset(CharSet.USA)
+        self.set_codepage(CodePage.CP850)
+        self.set_charset(CharSet.FRANCE)
 
         # Reset print parameters
         self._write_bytes(Command.ESC, 55,
