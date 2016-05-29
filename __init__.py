@@ -26,7 +26,7 @@ from cchardet import detect
 from serial import Serial
 
 __all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
-           'ThermalPrinter']
+           'ThermalPrinter', 'test_char']
 
 
 __version__ = '1.0.0-dev'
@@ -743,6 +743,19 @@ class ThermalPrinter(Serial):
 
         self._write_bytes(Command.ESC, 33, self._print_mode)
 
+
+
+def test_char(char):
+    ''' Test one charactere with all possible code page. '''
+
+    with ThermalPrinter() as printer:
+        for codepage in list(CodePage):
+            printer.set_codepage(codepage)
+            printer.println('{}: {}'.format(cp.name, char))
+
+        return 0
+
+    return 1
 
 
 def tests():
