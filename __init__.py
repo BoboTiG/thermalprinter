@@ -238,7 +238,7 @@ class ThermalPrinter(Serial):
         self._timeout_wait()
         self._timeout_set(
             (self._barcode_height + self._line_spacing) * self._dot_print_time)
-        self.prev_byte = '\n'
+        self._prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
     def bold(self, state=True):
