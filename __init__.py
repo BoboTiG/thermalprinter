@@ -236,7 +236,8 @@ class ThermalPrinter(Serial):
 
         self._write_bytes(Command.GS, 107, code, data_len, data)
         self._timeout_wait()
-        self._timeout_set((self._barcode_height + self._line_spacing) * self._dot_print_time)
+        self._timeout_set((self._barcode_height + self._line_spacing)
+            * self._dot_print_time)
         self.prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
@@ -461,7 +462,7 @@ class ThermalPrinter(Serial):
             val = 0
 
         if val != self._barcode_left_margin:
-            barcode_left_margin = val
+            self._barcode_left_margin = val
             self._write_bytes(Command.GS, 120, val)
 
     def set_barcode_position(self, bc_pos=BarCodePosition.HIDDEN):
@@ -603,8 +604,8 @@ class ThermalPrinter(Serial):
                  voltage: False if the voltage is higher than 9.5V
         '''
 
-        ret = { 'movement': True, 'paper': True,
-                'temp': True, 'voltage': True }
+        ret = {'movement': True, 'paper': True,
+                'temp': True, 'voltage': True}
         self._write_bytes(Command.ESC, 118, 0)
         sleep(0.05)
         if self.in_waiting:
@@ -744,14 +745,13 @@ class ThermalPrinter(Serial):
         self._write_bytes(Command.ESC, 33, self._print_mode)
 
 
-
 def test_char(char):
     ''' Test one charactere with all possible code page. '''
 
     with ThermalPrinter() as printer:
         for codepage in list(CodePage):
             printer.set_codepage(codepage)
-            printer.println('{}: {}'.format(cp.name, char))
+            printer.println('{}: {}'.format(codepage.name, char))
 
         return 0
 
