@@ -26,7 +26,7 @@ from cchardet import detect
 from serial import Serial
 
 __all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
-           'ThermalPrinter', 'test_char']
+           'ThermalPrinter', 'ThermalPrinterError', 'test_char']
 
 
 __version__ = '1.0.0-dev'
@@ -162,8 +162,6 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-public-methods
 
     max_column = 32
-    _lines = 0
-    _feeds = 0
     fo_stats = '/opt/thermalprinter/stats.ini'
 
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
@@ -174,7 +172,9 @@ class ThermalPrinter(Serial):
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
-        self._resume_time = 0.0
+
+        self._lines = 0
+        self._feeds = 0
 
         self._barcode_height = 0
         self._barcode_left_margin = 0
@@ -183,7 +183,7 @@ class ThermalPrinter(Serial):
         self._bold = None
         self._charset = None
         self._char_spacing = 0
-        self._char_height = 24
+        self._char_height = 0
         self._codepage = None
         self._column = 0
         self._double_height = None
@@ -194,7 +194,7 @@ class ThermalPrinter(Serial):
         self._justify = ''
         self._left_margin = 0
         self._line_spacing = 0
-        self._prev_byte = '\n'
+        self._prev_byte = ''
         self._print_mode = 0
         self._rotate = None
         self._size = ''
@@ -204,8 +204,13 @@ class ThermalPrinter(Serial):
 
         super().__init__(port=port, baudrate=self._baudrate)
         sleep(0.5)  # Important
-        self.set_codepage(CodePage.CP850)
-        self.set_charset(CharSet.FRANCE)
+
+        # Printer settings
+        self._write_bytes(Command.ESC, 55,
+                          3,    # The most heated pojnt (default: 9)
+                          80,   # Heat time (default: 80)
+                          12)   # Heat time interval (default: 2)
+
         self.set_defaults()
 
     def __enter__(self):
@@ -253,9 +258,9 @@ class ThermalPrinter(Serial):
         if not min_ <= data_len <= max_:
             err = '[{}] Should be {} <= len(data) <= {} (current: {}).'.format(
                 bc_type.name, min_, max_, data_len)
-            raise ValueError(err)
+            raise ThermalPrinterError(err)
         elif bc_type is BarCode.ITF and data_len % 2 != 0:
-            raise ValueError('[ITF] len(data) must be even.')
+            raise ThermalPrinterError('[CodePAge.ITF] len(data) must be even.')
 
         if not all(ord(char) in range_ for char in data):
             if range_type != 3:
@@ -264,12 +269,11 @@ class ThermalPrinter(Serial):
                 valid = map(hex, range_)
             err = '[{}] Valid characters: {}.'.format(
                 bc_type.name, ', '.join(valid))
-            raise ValueError(err)
+            raise ThermalPrinterError(err)
 
         self._write_bytes(Command.GS, 107, code, data_len, data)
-        self._timeout_wait()
-        self._timeout_set(
-            (self._barcode_height + self._line_spacing) * self._dot_print_time)
+        sleep((self._barcode_height + self._line_spacing) * \
+              self._dot_print_time)
         self._prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
@@ -308,10 +312,22 @@ class ThermalPrinter(Serial):
             return
 
         self._write_bytes(Command.ESC, 100, number)
-        self._timeout_set(number * self._dot_feed_time * self._char_height)
+        sleep(number * self._dot_feed_time * self._char_height)
         self._prev_byte = '\n'
         self._column = 0
         self._feeds += number
+
+    def flush(self, clear=False):
+        ''' Remove the print data in buffer.
+            Caution: the receive buffer will not be cleared.
+                     Set clear to True if needed.
+        '''
+
+        self._write_bytes(Command.ESC, 64)
+        self.reset_output_buffer()
+        sleep(0.05)
+        if clear:
+            self.reset_input_buffer()
 
     def image(self, image):
         ''' Print Image. Requires Python Imaging Library. This is
@@ -361,8 +377,7 @@ class ThermalPrinter(Serial):
                 for _ in range(row_bytes_clipped):
                     self.write(self._conv(bitmap[idx], is_raw=True))
                     idx += 1
-                self._timeout_wait()
-                self._timeout_set(row_bytes_clipped * self._byte_time)
+                sleep(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
 
         self._lines += int(height / self._line_spacing) + 1
@@ -389,6 +404,24 @@ class ThermalPrinter(Serial):
             else:
                 pos = 0
             self._write_bytes(Command.ESC, 97, pos)
+
+    def print_char(self, char='', number=1, codepage=None):
+        ''' Print one character one or several times in a given code page. '''
+
+        if not codepage:
+            raise ThermalPrinterError('No setted code page.')
+
+        # Save the current code page
+        current = self._codepage
+        if current is not codepage:
+            self.set_codepage(codepage)
+
+        for _ in range(number):
+            self.write(char)
+
+        # restore the original code page
+        if current is not codepage:
+            self.set_codepage(current)
 
     def println(self, line):
         ''' Send a line to the printer. '''
@@ -417,51 +450,6 @@ class ThermalPrinter(Serial):
         if not self._is_online:
             self._is_online = True
             self._write_bytes(Command.ESC, 61, 1)
-
-    def reset(self):
-        ''' Reset printer settings. '''
-
-        # Reset vars
-        self.max_column = 32
-        self._barcode_height = 0
-        self._barcode_left_margin = 0
-        self._barcode_position = None
-        self._barcode_width = 0
-        self._bold = None
-        self._charset = None
-        self._char_spacing = 0
-        self._char_height = 24
-        self._codepage = None
-        self._column = 0
-        self._double_height = None
-        self._double_width = None
-        self._inverse = None
-        self._is_online = True
-        self._is_sleeping = False
-        self._justify = ''
-        self._left_margin = 0
-        self._line_spacing = 0
-        self._prev_byte = '\n'
-        self._print_mode = 0
-        self._rotate = None
-        self._size = ''
-        self._strike = None
-        self._underline = -1
-        self._upside_down = None
-
-        self._write_bytes(Command.ESC, 64)  # Reset
-        # Reset command does not clear the receive buffer, so we do it manually
-        self.reset_input_buffer()
-        self.reset_output_buffer()
-
-        self.set_codepage(CodePage.CP850)
-        self.set_charset(CharSet.FRANCE)
-
-        # Reset print parameters
-        self._write_bytes(Command.ESC, 55,
-                          3,    # The most heated pojnt (default: 9)
-                          80,   # Heat time (default: 80)
-                          12)   # Heat time interval (default: 2)
 
     def rotate(self, state=True):
         ''' Turn on/off clockwise rotation of 90°. '''
@@ -496,7 +484,7 @@ class ThermalPrinter(Serial):
 
         if not isinstance(bc_pos, BarCodePosition):
             err = ', '.join([pos.name for pos in BarCodePosition])
-            raise ValueError('Valid positions are: {}.'.format(err))
+            raise ThermalPrinterError('Valid positions are: {}.'.format(err))
 
         if bc_pos is not self._barcode_position:
             self._barcode_position = bc_pos
@@ -518,7 +506,7 @@ class ThermalPrinter(Serial):
         if not isinstance(charset, CharSet):
             err = 'Valid charsets are: {}.'.format(
                 ', '.join([cset.name for cset in CharSet]))
-            raise ValueError(err)
+            raise ThermalPrinterError(err)
 
         if charset is not self._charset:
             self._charset = charset
@@ -537,12 +525,13 @@ class ThermalPrinter(Serial):
                     codes += '{} ({}){}'.format(cpage.name, name, sep)
                 else:
                     codes += '{}{}'.format(cpage.name, sep)
-            raise ValueError('Valid codepages are: {}'.format(codes))
+            raise ThermalPrinterError('Valid codepages are: {}'.format(codes))
 
         if codepage is not self._codepage:
             self._codepage = codepage
             value, _ = codepage.value
             self._write_bytes(Command.ESC, 116, value)
+            sleep(0.05)
 
     def set_defaults(self):
         ''' Reset formatting parameters. '''
@@ -560,7 +549,7 @@ class ThermalPrinter(Serial):
         self.set_left_margin()
         self.set_size()
         self.strike(False)
-        self.underline(False)
+        self.underline(0)
         self.upside_down(False)
 
     def set_char_spacing(self, spacing=0):
@@ -654,8 +643,8 @@ class ThermalPrinter(Serial):
         ''' Print settings as test. '''
 
         self._write_bytes(Command.DC2, 84)
-        self._timeout_set(self._dot_print_time * 24 * 26 +
-                          self._dot_feed_time * (8 * 26 + 32))
+        sleep(self._dot_print_time * 24 * 26 +
+              self._dot_feed_time * (8 * 26 + 32))
 
     def underline(self, weight=1):
         ''' Turn underline mode on/off.
@@ -684,7 +673,6 @@ class ThermalPrinter(Serial):
 
         if self._is_sleeping:
             self._is_sleeping = False
-            self._timeout_set(0)
             self._write_bytes(255)
             sleep(0.05)    # Sleep 50ms as in documentation
             self.sleep(0)  # SLEEP OFF - IMPORTANT!
@@ -694,23 +682,26 @@ class ThermalPrinter(Serial):
     def _conv(self, data, is_raw=False):
         ''' Convert data before sending to the printer. '''
 
-        if not self._codepage:
-            raise ValueError('Code page not setted.')
-
-        if isinstance(data, (bool, int)):
+        if isinstance(data, bool):
+            data = str(data)
+        elif isinstance(data, int):
             data = chr(data)
         elif isinstance(data, bytes):
+            if not self._codepage:
+                raise ThermalPrinterError('Code page not setted.')
+
             current = detect(data)['encoding']
             if self._codepage.name.lower() != current.lower():
                 data = data.decode(current, data).encode(self._codepage.name)
 
         if is_raw:
-            return data.encode('latin-1', 'replace')
+            return data.encode('latin-1')
 
+        return data.encode(self._codepage.name)
         try:
-            return data.encode(self._codepage.name, 'replace')
+            return data.encode(self._codepage.name)
         except LookupError:
-            return data.encode('cp1252', 'replace')
+            return data.encode('cp1252')
 
     def _set_print_mode(self, mask):
         ''' Set the print mode. '''
@@ -719,17 +710,6 @@ class ThermalPrinter(Serial):
         self._write_print_mode()
         self._char_height = 48 if self._print_mode & 16 else 24
         self.max_column = 16 if self._print_mode & 32 else 32
-
-    def _timeout_set(self, delay):
-        ''' Sets estimated completion time for a just-issued task. '''
-
-        self._resume_time = time() + delay
-
-    def _timeout_wait(self):
-        ''' Waits (if necessary) for the prior task to complete. '''
-
-        while (time() - self._resume_time) < 0:
-            pass
 
     def _update_stats(self):
         ''' Statistics update. '''
@@ -758,8 +738,7 @@ class ThermalPrinter(Serial):
     def _write_bytes(self, *args):
         ''' 'Raw' byte-writing. '''
 
-        self._timeout_wait()
-        self._timeout_set(len(args) * self._byte_time)
+        sleep(len(args) * self._byte_time)
         for data in args:
             if isinstance(data, Command):
                 data = data.value
@@ -769,6 +748,10 @@ class ThermalPrinter(Serial):
         ''' Write the print mode. '''
 
         self._write_bytes(Command.ESC, 33, self._print_mode)
+
+
+class TherrmalPrinterError(Exception):
+    ''' Error. Error. ERRor!/*\..:._ '''
 
 
 def test_char(char):
@@ -803,35 +786,35 @@ def tests():
 
         printer.bold()
         printer.println('Bold')
-        printer.bold(False)
+        printer.bold(0)
 
         printer.double_height()
         printer.println('Double height')
-        printer.double_height(False)
+        printer.double_height(0)
 
         printer.double_width()
         printer.println('Double width')
-        printer.double_width(False)
+        printer.double_width(0)
 
         printer.inverse()
         printer.println('Inverse')
-        printer.inverse(False)
+        printer.inverse(0)
 
         printer.rotate()
         printer.println('Rotate 90°')
-        printer.rotate(False)
+        printer.rotate(0)
 
         printer.strike()
         printer.println('Strike')
-        printer.strike(False)
+        printer.strike(0)
 
         printer.underline()
         printer.println('Underline')
-        printer.underline(False)
+        printer.underline(0)
 
         printer.upside_down()
         printer.println('Upside down')
-        printer.upside_down(False)
+        printer.upside_down(0)
 
         printer.feed(2)
         return 0
