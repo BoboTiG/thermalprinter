@@ -750,7 +750,7 @@ class ThermalPrinter(Serial):
         self._write_bytes(Command.ESC, 33, self._print_mode)
 
 
-class TherrmalPrinterError(Exception):
+class ThermalPrinterError(Exception):
     ''' Error. Error. ERRor!/*\..:._ '''
 
 
