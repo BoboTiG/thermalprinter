@@ -260,7 +260,7 @@ class ThermalPrinter(Serial):
                 bc_type.name, min_, max_, data_len)
             raise ThermalPrinterError(err)
         elif bc_type is BarCode.ITF and data_len % 2 != 0:
-            raise ThermalPrinterError('[CodePAge.ITF] len(data) must be even.')
+            raise ThermalPrinterError('[BarCode.ITF] len(data) must be even.')
 
         if not all(ord(char) in range_ for char in data):
             if range_type != 3:
@@ -409,7 +409,7 @@ class ThermalPrinter(Serial):
         ''' Print one character one or several times in a given code page. '''
 
         if not codepage:
-            raise ThermalPrinterError('No setted code page.')
+            raise ThermalPrinterError('Code page needed.')
 
         # Save the current code page
         current = self._codepage
