@@ -271,7 +271,10 @@ class ThermalPrinter(Serial):
                 bc_type.name, ', '.join(valid))
             raise ThermalPrinterError(err)
 
-        self._write_bytes(Command.GS, 107, code, data_len, data)
+        self._write_bytes(Command.GS, 107, code, data_len)
+        for char in list(data):
+            char = bytes([ord(char)])
+            self.write(char)
         sleep((self._barcode_height + self._line_spacing) * \
               self._dot_print_time)
         self._prev_byte = '\n'
@@ -375,7 +378,7 @@ class ThermalPrinter(Serial):
                               row_bytes_clipped)
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
-                    self.write(self._conv(bitmap[idx], is_raw=True))
+                    self.write(bytes([bitmap[idx]]))
                     idx += 1
                 sleep(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
@@ -742,7 +745,7 @@ class ThermalPrinter(Serial):
         for data in args:
             if isinstance(data, Command):
                 data = data.value
-            self.write(self._conv(data, is_raw=True))
+            self.write(bytes([data]))
 
     def _write_print_mode(self):
         ''' Write the print mode. '''
