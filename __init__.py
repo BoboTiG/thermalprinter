@@ -422,6 +422,8 @@ class ThermalPrinter(Serial):
         for _ in range(number):
             self.write(char)
 
+       sleep(number * self._byte_time)
+
         # restore the original code page
         if current is not codepage:
             self.set_codepage(current)
@@ -435,6 +437,7 @@ class ThermalPrinter(Serial):
             self.write(self._conv(line))
             self.write(b'\n')
             self._lines += 1
+            sleep(len(line) * self._byte_time)
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -682,29 +685,13 @@ class ThermalPrinter(Serial):
 
     # Private methods
 
-    def _conv(self, data, is_raw=False):
+    def _conv(self, data):
         ''' Convert data before sending to the printer. '''
 
-        if isinstance(data, bool):
-            data = str(data)
-        elif isinstance(data, int):
-            data = chr(data)
-        elif isinstance(data, bytes):
-            if not self._codepage:
-                raise ThermalPrinterError('Code page not setted.')
-
-            current = detect(data)['encoding']
-            if self._codepage.name.lower() != current.lower():
-                data = data.decode(current, data).encode(self._codepage.name)
-
-        if is_raw:
-            return data.encode('latin-1')
-
-        return data.encode(self._codepage.name)
-        try:
-            return data.encode(self._codepage.name)
-        except LookupError:
-            return data.encode('cp1252')
+        ret = []
+        for char in list(data):
+            ret.append(ord(char))
+        return bytearray(ret)
 
     def _set_print_mode(self, mask):
         ''' Set the print mode. '''
@@ -780,7 +767,7 @@ def tests():
             printer.image(Image.open('gnu.png'))
             printer.feed()
         except ImportError:
-            pass
+            print('Pillow module not installed, skip picture printing.')
 
         printer.set_barcode_height(80)
         printer.set_barcode_position(BarCodePosition.BELOW)
