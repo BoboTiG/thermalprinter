@@ -183,7 +183,7 @@ class ThermalPrinter(Serial):
         self._bold = None
         self._charset = None
         self._char_spacing = 0
-        self._char_height = 0
+        self._char_height = 24
         self._codepage = None
         self._column = 0
         self._double_height = None
@@ -422,7 +422,7 @@ class ThermalPrinter(Serial):
         for _ in range(number):
             self.write(char)
 
-       sleep(number * self._byte_time)
+        sleep(number * self._dot_feed_time * self._char_height)
 
         # restore the original code page
         if current is not codepage:
@@ -437,7 +437,7 @@ class ThermalPrinter(Serial):
             self.write(self._conv(line))
             self.write(b'\n')
             self._lines += 1
-            sleep(len(line) * self._byte_time)
+            sleep(2 * self._dot_feed_time * self._char_height)
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -690,7 +690,11 @@ class ThermalPrinter(Serial):
 
         ret = []
         for char in list(data):
-            ret.append(ord(char))
+            int_ = ord(char)
+            if int_ > 256:
+                int_ = ord(chr(int_).encode(self._codepage.name,
+                                            errors='replace'))
+            ret.append(int_)
         return bytearray(ret)
 
     def _set_print_mode(self, mask):
