@@ -8,7 +8,6 @@
     Python 3+ only.
     Dependencies:
         pyserial
-        cchardet
 
     usermod -G dialout -a $USER
 
@@ -20,9 +19,8 @@
 from atexit import register
 from configparser import SafeConfigParser
 from enum import Enum
-from time import sleep, time
+from time import sleep
 
-from cchardet import detect
 from serial import Serial
 
 __all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
@@ -75,6 +73,8 @@ class BarCodePosition(Enum):
 
 class CharSet(Enum):
     ''' Internal character sets. '''
+
+    # pylint: disable=invalid-name
 
     USA = 0
     FRANCE = 1
@@ -148,6 +148,8 @@ class CodePage(Enum):
 class Command(Enum):
     ''' Codes used to send commands. '''
 
+    # pylint: disable=invalid-name
+
     DC2 = 18
     ESC = 27
     FS = 28
@@ -160,6 +162,7 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-ancestors
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-public-methods
+    # pylint: disable=too-many-locals
 
     max_column = 32
     fo_stats = '/opt/thermalprinter/stats.ini'
@@ -227,8 +230,10 @@ class ThermalPrinter(Serial):
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
 
-        def _range1(a=48, b=57):
-            return [n for n in range(a, b + 1)]
+        # pylint: disable=bad-builtin
+
+        def _range1(min_=48, max_=57):
+            return [n for n in range(min_, max_ + 1)]
 
         def _range2():
             range_ = [32, 36, 37, 43]
@@ -275,8 +280,8 @@ class ThermalPrinter(Serial):
         for char in list(data):
             char = bytes([ord(char)])
             self.write(char)
-        sleep((self._barcode_height + self._line_spacing) * \
-              self._dot_print_time)
+        sleep(
+            (self._barcode_height + self._line_spacing) * self._dot_print_time)
         self._prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
@@ -294,7 +299,10 @@ class ThermalPrinter(Serial):
         state = bool(state)
         if state is not self._double_height:
             self._double_height = state
-            self._set_print_mode(16) if state else self._unset_print_mode(16)
+            if state:
+                self._set_print_mode(16)
+            else:
+                self._unset_print_mode(16)
 
     def double_width(self, state=True):
         ''' Select Double Width mode. '''
@@ -745,7 +753,7 @@ class ThermalPrinter(Serial):
 
 
 class ThermalPrinterError(Exception):
-    ''' Error. Error. ERRor!/*\..:._ '''
+    ''' Error. Error. ERRor!/*Er..:._ '''
 
 
 def test_char(char):
