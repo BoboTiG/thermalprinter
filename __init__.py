@@ -165,7 +165,7 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-locals
 
     max_column = 32
-    fo_stats = '/opt/thermalprinter/stats.ini'
+    fo_stats = None
 
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
         ''' Print init. '''
