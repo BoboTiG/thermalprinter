@@ -27,7 +27,7 @@ __all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
            'ThermalPrinter', 'ThermalPrinterError', 'test_char']
 
 
-__version__ = '1.0.0-dev'
+__version__ = '0.0.1'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
     Copyright (c) 2016, Mickaël Schoentgen
@@ -285,6 +285,47 @@ class ThermalPrinter(Serial):
         self._prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
+    def barcode_height(self, val=80):
+        ''' Set bar code height. '''
+
+        if not 1 <= val <= 255:
+            val = 80
+
+        if val != self._barcode_height:
+            self._barcode_height = val
+            self._write_bytes(Command.GS, 104, val)
+
+    def barcode_left_margin(self, val=0):
+        ''' Set the bar code printed on the left spacing. '''
+
+        if not 0 <= val <= 255:
+            val = 0
+
+        if val != self._barcode_left_margin:
+            self._barcode_left_margin = val
+            self._write_bytes(Command.GS, 120, val)
+
+    def barcode_position(self, bc_pos=BarCodePosition.HIDDEN):
+        ''' Set bar code position. '''
+
+        if not isinstance(bc_pos, BarCodePosition):
+            err = ', '.join([pos.name for pos in BarCodePosition])
+            raise ThermalPrinterError('Valid positions are: {}.'.format(err))
+
+        if bc_pos is not self._barcode_position:
+            self._barcode_position = bc_pos
+            self._write_bytes(Command.GS, 72, bc_pos.value)
+
+    def barcode_width(self, width=2):
+        ''' Set bar code width. '''
+
+        if not 2 <= width <= 6:
+            width = 2
+
+        if width != self._barcode_width:
+            self._barcode_width = width
+            self._write_bytes(Command.GS, 119, width)
+
     def bold(self, state=True):
         ''' Turn emphasized mode on/off. '''
 
@@ -292,6 +333,53 @@ class ThermalPrinter(Serial):
         if state is not self._bold:
             self._bold = state
             self._write_bytes(Command.ESC, 69, int(state))
+
+    def charset(self, charset=CharSet.USA):
+        ''' Select an internal character set. '''
+
+        if not charset:
+            charset=CharSet.USA
+        elif not isinstance(charset, CharSet):
+            err = 'Valid charsets are: {}.'.format(
+                ', '.join([cset.name for cset in CharSet]))
+            raise ThermalPrinterError(err)
+
+        if charset is not self._charset:
+            self._charset = charset
+            self._write_bytes(Command.ESC, 82, charset.value)
+
+    def char_spacing(self, spacing=0):
+        ''' Set the right character spacing. '''
+
+        if not 0 <= spacing <= 255:
+            spacing = 0
+
+        if spacing != self._char_spacing:
+            self._char_spacing = spacing
+            self._write_bytes(Command.ESC, 32, spacing)
+
+    def codepage(self, codepage=CodePage.CP437):
+        ''' Select character code table. '''
+
+        if not codepage:
+           codepage = CodePage.CP437
+        elif not isinstance(codepage, CodePage):
+            codes = ''
+            last = list(CodePage)[-1]
+            for cpage in CodePage:
+                sep = '.' if cpage is last else ', '
+                _, name = cpage.value
+                if name:
+                    codes += '{} ({}){}'.format(cpage.name, name, sep)
+                else:
+                    codes += '{}{}'.format(cpage.name, sep)
+            raise ThermalPrinterError('Valid codepages are: {}'.format(codes))
+
+        if codepage is not self._codepage:
+            self._codepage = codepage
+            value, _ = codepage.value
+            self._write_bytes(Command.ESC, 116, value)
+            sleep(0.05)
 
     def double_height(self, state=True):
         ''' Set double height mode. '''
@@ -405,6 +493,8 @@ class ThermalPrinter(Serial):
     def justify(self, value='L'):
         ''' Set text justification. '''
 
+        if not value:
+            value = 'L'
         value = value.upper()
         if value != self._justify:
             self._justify = value
@@ -416,16 +506,36 @@ class ThermalPrinter(Serial):
                 pos = 0
             self._write_bytes(Command.ESC, 97, pos)
 
+    def left_margin(self, spacing=0):
+        ''' Set the left margin. '''
+
+        if not 0 <= spacing <= 47:
+            spacing = 0
+
+        if spacing != self._left_margin:
+            self._left_margin = spacing
+            self._write_bytes(Command.ESC, 66, spacing)
+
+    def line_spacing(self, spacing=30):
+        ''' Set line spacing. '''
+
+        if not 0 <= spacing <= 255:
+            spacing = 30
+
+        if spacing != self._line_spacing:
+            self._line_spacing = spacing
+            self._write_bytes(Command.ESC, 51, spacing)
+
     def print_char(self, char='', number=1, codepage=None):
         ''' Print one character one or several times in a given code page. '''
 
-        if not codepage:
+        if not codepage and not self._codepage:
             raise ThermalPrinterError('Code page needed.')
 
         # Save the current code page
         current = self._codepage
         if current is not codepage:
-            self.set_codepage(codepage)
+            self.codepage(codepage)
 
         for _ in range(number):
             self.write(char)
@@ -434,18 +544,39 @@ class ThermalPrinter(Serial):
 
         # restore the original code page
         if current is not codepage:
-            self.set_codepage(current)
+            self.codepage(current)
 
-    def println(self, line):
-        ''' Send a line to the printer. '''
+    def println(self, line, line_feed=True, **kwargs):
+        ''' Send a line to the printer.
+
+            You can pass formatting instructions directly via an argument:
+                println(text, justify='C', inverse=True)
+            This will prevent you to do:
+               justify('C')
+               inverse(True)
+               println(text)
+               inverse(False)
+               justify('L')
+        '''
+
+        # Apply style
+        for style, value in kwargs.items():
+            if hasattr(self, style):
+                getattr(self, style)(value)
 
         if line:
             if isinstance(line, (bool, int)):
                 line = str(line)
             self.write(self._conv(line))
-            self.write(b'\n')
+            if line_feed:
+                self.write(b'\n')
             self._lines += 1
             sleep(2 * self._dot_feed_time * self._char_height)
+
+        # Restore default style
+        for style, value in kwargs.items():
+            if hasattr(self, style):
+                getattr(self, style)(False)
 
     def offline(self):
         ''' Take the printer offline. Print commands sent after this
@@ -473,132 +604,30 @@ class ThermalPrinter(Serial):
             self._rotate = state
             self._write_bytes(Command.ESC, 86, int(state))
 
-    def set_barcode_height(self, val=80):
-        ''' Set bar code height. '''
-
-        if not 1 <= val <= 255:
-            val = 80
-
-        if val != self._barcode_height:
-            self._barcode_height = val
-            self._write_bytes(Command.GS, 104, val)
-
-    def set_barcode_left_margin(self, val=0):
-        ''' Set the bar code printed on the left spacing. '''
-
-        if not 0 <= val <= 255:
-            val = 0
-
-        if val != self._barcode_left_margin:
-            self._barcode_left_margin = val
-            self._write_bytes(Command.GS, 120, val)
-
-    def set_barcode_position(self, bc_pos=BarCodePosition.HIDDEN):
-        ''' Set bar code position. '''
-
-        if not isinstance(bc_pos, BarCodePosition):
-            err = ', '.join([pos.name for pos in BarCodePosition])
-            raise ThermalPrinterError('Valid positions are: {}.'.format(err))
-
-        if bc_pos is not self._barcode_position:
-            self._barcode_position = bc_pos
-            self._write_bytes(Command.GS, 72, bc_pos.value)
-
-    def set_barcode_width(self, width=2):
-        ''' Set bar code width. '''
-
-        if not 2 <= width <= 6:
-            width = 2
-
-        if width != self._barcode_width:
-            self._barcode_width = width
-            self._write_bytes(Command.GS, 119, width)
-
-    def set_charset(self, charset):
-        ''' Select an internal character set. '''
-
-        if not isinstance(charset, CharSet):
-            err = 'Valid charsets are: {}.'.format(
-                ', '.join([cset.name for cset in CharSet]))
-            raise ThermalPrinterError(err)
-
-        if charset is not self._charset:
-            self._charset = charset
-            self._write_bytes(Command.ESC, 82, charset.value)
-
-    def set_codepage(self, codepage):
-        ''' Select character code table. '''
-
-        if not isinstance(codepage, CodePage):
-            codes = ''
-            last = list(CodePage)[-1]
-            for cpage in CodePage:
-                sep = '.' if cpage is last else ', '
-                _, name = cpage.value
-                if name:
-                    codes += '{} ({}){}'.format(cpage.name, name, sep)
-                else:
-                    codes += '{}{}'.format(cpage.name, sep)
-            raise ThermalPrinterError('Valid codepages are: {}'.format(codes))
-
-        if codepage is not self._codepage:
-            self._codepage = codepage
-            value, _ = codepage.value
-            self._write_bytes(Command.ESC, 116, value)
-            sleep(0.05)
-
     def set_defaults(self):
         ''' Reset formatting parameters. '''
 
         self.online()
-        self.set_codepage(CodePage.CP850)
-        self.set_charset(CharSet.FRANCE)
         self.bold(False)
+        self.charset(CharSet.USA)
+        self.char_spacing()
+        self.codepage(CodePage.CP437)
         self.double_height(False)
         self.inverse(False)
         self.justify()
+        self.left_margin()
+        self.line_spacing()
         self.rotate(False)
-        self.set_char_spacing()
-        self.set_line_spacing()
-        self.set_left_margin()
-        self.set_size()
+        self.size()
         self.strike(False)
         self.underline(0)
         self.upside_down(False)
 
-    def set_char_spacing(self, spacing=0):
-        ''' Set the right character spacing. '''
-
-        if not 0 <= spacing <= 255:
-            spacing = 0
-
-        if spacing != self._char_spacing:
-            self._char_spacing = spacing
-            self._write_bytes(Command.ESC, 32, spacing)
-
-    def set_left_margin(self, spacing=0):
-        ''' Set the left margin. '''
-
-        if not 0 <= spacing <= 47:
-            spacing = 0
-
-        if spacing != self._left_margin:
-            self._left_margin = spacing
-            self._write_bytes(Command.ESC, 66, spacing)
-
-    def set_line_spacing(self, spacing=30):
-        ''' Set line spacing. '''
-
-        if not 0 <= spacing <= 255:
-            spacing = 30
-
-        if spacing != self._line_spacing:
-            self._line_spacing = spacing
-            self._write_bytes(Command.ESC, 51, spacing)
-
-    def set_size(self, value='S'):
+    def size(self, value='S'):
         ''' Set text size. '''
 
+        if not value:
+            value = 'S'
         value = value.upper()
         if value != self._size:
             self._size = value
@@ -667,7 +696,7 @@ class ThermalPrinter(Serial):
             2: turns on underline mode (2 dots thick)
         '''
 
-        if not 0 <= weight <= 2:
+        if not weight or not 0 <= weight <= 2:
             weight = 0
 
         if weight != self._underline:
@@ -781,42 +810,19 @@ def tests():
         except ImportError:
             print('Pillow module not installed, skip picture printing.')
 
-        printer.set_barcode_height(80)
-        printer.set_barcode_position(BarCodePosition.BELOW)
-        printer.set_barcode_width(3)
+        printer.barcode_height(80)
+        printer.barcode_position(BarCodePosition.BELOW)
+        printer.barcode_width(3)
         printer.barcode('012345678901', BarCode.EAN13)
 
-        printer.bold()
-        printer.println('Bold')
-        printer.bold(0)
-
-        printer.double_height()
-        printer.println('Double height')
-        printer.double_height(0)
-
-        printer.double_width()
-        printer.println('Double width')
-        printer.double_width(0)
-
-        printer.inverse()
-        printer.println('Inverse')
-        printer.inverse(0)
-
-        printer.rotate()
-        printer.println('Rotate 90°')
-        printer.rotate(0)
-
-        printer.strike()
-        printer.println('Strike')
-        printer.strike(0)
-
-        printer.underline()
-        printer.println('Underline')
-        printer.underline(0)
-
-        printer.upside_down()
-        printer.println('Upside down')
-        printer.upside_down(0)
+        printer.println('Bold', bold=True)
+        printer.println('Double height', double_height=True)
+        printer.println('Double width', double_width=True)
+        printer.println('Inverse', inverse=True)
+        printer.println('Rotate 90°', rotate=True, codepage=CodePage.ISO_8859_1)
+        printer.println('Strike', strike=True)
+        printer.println('Underline', underline=1)
+        printer.println('Upside down', upside_down=True)
 
         printer.feed(2)
         return 0
