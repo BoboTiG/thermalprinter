@@ -24,7 +24,7 @@ from time import sleep
 from serial import Serial
 
 __all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
-           'ThermalPrinter', 'ThermalPrinterError', 'test_char']
+           'ThermalPrinter', 'ThermalPrinterError']
 
 
 __version__ = '0.0.1'
@@ -790,8 +790,8 @@ def test_char(char):
 
     with ThermalPrinter() as printer:
         for codepage in list(CodePage):
-            printer.set_codepage(codepage)
-            printer.println('{}: {}'.format(codepage.name, char))
+            printer.println('{}: {}'.format(codepage.name, char),
+                            codepage=codepage)
 
         return 0
 
