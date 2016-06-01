@@ -210,9 +210,9 @@ class ThermalPrinter(Serial):
 
         # Printer settings
         self._write_bytes(Command.ESC, 55,
-                          3,    # The most heated pojnt (default: 9)
-                          80,   # Heat time (default: 80)
-                          12)   # Heat time interval (default: 2)
+                          3,    # The most heated point (0..255, default: 9)
+                          80,   # Heat time (0..255, default: 80)
+                          12)   # Heat time interval (0..255, default: 2)
 
         self.set_defaults()
 
