@@ -334,11 +334,11 @@ class ThermalPrinter(Serial):
             self._bold = state
             self._write_bytes(Command.ESC, 69, int(state))
 
-    def charset(self, charset=CharSet.USA):
+    def charset(self, charset=None):
         ''' Select an internal character set. '''
 
         if not charset:
-            charset=CharSet.USA
+            charset = CharSet.USA
         elif not isinstance(charset, CharSet):
             err = 'Valid charsets are: {}.'.format(
                 ', '.join([cset.name for cset in CharSet]))
@@ -358,7 +358,7 @@ class ThermalPrinter(Serial):
             self._char_spacing = spacing
             self._write_bytes(Command.ESC, 32, spacing)
 
-    def codepage(self, codepage=CodePage.CP437):
+    def codepage(self, codepage=None):
         ''' Select character code table. '''
 
         if not codepage:
