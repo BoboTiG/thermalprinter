@@ -264,7 +264,7 @@ class ThermalPrinter(Serial):
 
         if not isinstance(bc_type, BarCode):
             err = ', '.join([barcode.name for barcode in BarCode])
-            raise ValueError('Valid bar codes are: {}.'.format(err))
+            raise ThermalPrinterError('Valid bar codes are: {}.'.format(err))
 
         code, (min_, max_), range_type = bc_type.value
         data_len = len(data)
@@ -383,7 +383,8 @@ class ThermalPrinter(Serial):
             fmt = Chinese.UTF_8
         elif not isinstance(fmt, Chinese):
             err = ', '.join([cfmt.name for cfmt in Chinese])
-            raise ValueError('Valid Chinese formats are: {}.'.format(err))
+            raise ThermalPrinterError(
+                'Valid Chinese formats are: {}.'.format(err))
 
         if fmt is not self._chinese_format:
             self._chinese_format = fmt
