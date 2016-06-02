@@ -295,36 +295,38 @@ class ThermalPrinter(Serial):
         self._prev_byte = '\n'
         self._lines += int(self._barcode_height / self._line_spacing) + 1
 
-    def barcode_height(self, val=80):
+    def barcode_height(self, height=80):
         ''' Set bar code height. '''
 
-        if not 1 <= val <= 255:
-            val = 80
+        if not 1 <= height <= 255:
+            height = 80
 
-        if val != self._barcode_height:
-            self._barcode_height = val
-            self._write_bytes(Command.GS, 104, val)
+        if height != self._barcode_height:
+            self._barcode_height = height
+            self._write_bytes(Command.GS, 104, height)
 
-    def barcode_left_margin(self, val=0):
+    def barcode_left_margin(self, margin=0):
         ''' Set the bar code printed on the left spacing. '''
 
-        if not 0 <= val <= 255:
-            val = 0
+        if not 0 <= margin <= 255:
+            margin = 0
 
-        if val != self._barcode_left_margin:
-            self._barcode_left_margin = val
-            self._write_bytes(Command.GS, 120, val)
+        if margin != self._barcode_left_margin:
+            self._barcode_left_margin = margin
+            self._write_bytes(Command.GS, 120, margin)
 
-    def barcode_position(self, bc_pos=BarCodePosition.HIDDEN):
+    def barcode_position(self, position=None):
         ''' Set bar code position. '''
 
-        if not isinstance(bc_pos, BarCodePosition):
+        if not position:
+            position = BarCodePosition.HIDDEN
+        elif not isinstance(position, BarCodePosition):
             err = ', '.join([pos.name for pos in BarCodePosition])
             raise ThermalPrinterError('Valid positions are: {}.'.format(err))
 
-        if bc_pos is not self._barcode_position:
-            self._barcode_position = bc_pos
-            self._write_bytes(Command.GS, 72, bc_pos.value)
+        if position is not self._barcode_position:
+            self._barcode_position = position
+            self._write_bytes(Command.GS, 72, position.value)
 
     def barcode_width(self, width=2):
         ''' Set bar code width. '''
@@ -538,15 +540,15 @@ class ThermalPrinter(Serial):
                 pos = 0
             self._write_bytes(Command.ESC, 97, pos)
 
-    def left_margin(self, spacing=0):
+    def left_margin(self, margin=0):
         ''' Set the left margin. '''
 
-        if not 0 <= spacing <= 47:
-            spacing = 0
+        if not 0 <= margin <= 47:
+            margin = 0
 
-        if spacing != self._left_margin:
-            self._left_margin = spacing
-            self._write_bytes(Command.ESC, 66, spacing)
+        if margin != self._left_margin:
+            self._left_margin = margin
+            self._write_bytes(Command.ESC, 66, margin)
 
     def line_spacing(self, spacing=30):
         ''' Set line spacing. '''
