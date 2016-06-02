@@ -560,6 +560,24 @@ class ThermalPrinter(Serial):
             self._line_spacing = spacing
             self._write_bytes(Command.ESC, 51, spacing)
 
+    def offline(self):
+        ''' Take the printer offline. Print commands sent after this
+            will be ignored until 'online' is called.
+        '''
+
+        if self._is_online:
+            self._is_online = False
+            self._write_bytes(Command.ESC, 61, 0)
+
+    def online(self):
+        ''' Take the printer online.
+            Subsequent print commands will be obeyed.
+        '''
+
+        if not self._is_online:
+            self._is_online = True
+            self._write_bytes(Command.ESC, 61, 1)
+
     def print_char(self, char='', number=1, codepage=None):
         ''' Print one character one or several times in a given code page. '''
 
@@ -611,24 +629,6 @@ class ThermalPrinter(Serial):
         for style, value in kwargs.items():
             if hasattr(self, style):
                 getattr(self, style)(False)
-
-    def offline(self):
-        ''' Take the printer offline. Print commands sent after this
-            will be ignored until 'online' is called.
-        '''
-
-        if self._is_online:
-            self._is_online = False
-            self._write_bytes(Command.ESC, 61, 0)
-
-    def online(self):
-        ''' Take the printer online.
-            Subsequent print commands will be obeyed.
-        '''
-
-        if not self._is_online:
-            self._is_online = True
-            self._write_bytes(Command.ESC, 61, 1)
 
     def rotate(self, state=True):
         ''' Turn on/off clockwise rotation of 90°. '''
