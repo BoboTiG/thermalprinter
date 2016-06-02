@@ -427,7 +427,7 @@ class ThermalPrinter(Serial):
                 self._unset_print_mode(16)
 
     def double_width(self, state=True):
-        ''' Select Double Width mode. '''
+        ''' Select double width mode. '''
 
         state = bool(state)
         if state is not self._double_width:
@@ -463,9 +463,8 @@ class ThermalPrinter(Serial):
             self.reset_input_buffer()
 
     def image(self, image):
-        ''' Print Image. Requires Python Imaging Library. This is
-            specific to the Python port and not present in the Arduino
-            library. Image will be cropped to 384 pixels width if
+        ''' Print Image. Requires Python Imaging Library.
+            Image will be cropped to 384 pixels width if
             necessary, and converted to 1-bit w/diffusion dithering.
             For any other behavior (scale, B&W threshold, etc.), use
             the Imaging Library to perform such operations before
@@ -603,6 +602,7 @@ class ThermalPrinter(Serial):
 
             You can pass formatting instructions directly via an argument:
                 println(text, justify='C', inverse=True)
+
             This will prevent you to do:
                justify('C')
                inverse(True)
@@ -690,9 +690,9 @@ class ThermalPrinter(Serial):
             will be set to True.
 
             Return a dict:
-                movement: False if the movement is not connected.
-                   paper: False is no paper.
-                    temp: False if the temperature exceeds 60°C.
+                movement: False if the movement is not connected
+                   paper: False is no paper
+                    temp: False if the temperature exceeds 60°C
                  voltage: False if the voltage is higher than 9.5V
         '''
 
