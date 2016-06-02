@@ -848,6 +848,8 @@ def tests():
         printer.barcode('012345678901', BarCode.EAN13)
 
         printer.println('Bold', bold=True)
+        printer.println('现代汉语通用字表', chinese=True,
+                        chinese_format=Chinese.BIG5)
         printer.println('Double height', double_height=True)
         printer.println('Double width', double_width=True)
         printer.println('Inverse', inverse=True)
@@ -856,6 +858,9 @@ def tests():
         printer.println('Strike', strike=True)
         printer.println('Underline', underline=1)
         printer.println('Upside down', upside_down=True)
+
+        printer.println('Voilà !', justify='C', strike=True,
+                        underline=2)
 
         printer.feed(2)
         return 0
