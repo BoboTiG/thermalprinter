@@ -23,11 +23,11 @@ from time import sleep
 
 from serial import Serial
 
-__all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Command', 'CodePage',
-           'ThermalPrinter', 'ThermalPrinterError']
+__all__ = ['BarCode', 'BarCodePosition', 'CharSet', 'Chinese', 'Command',
+           'CodePage', 'ThermalPrinter', 'ThermalPrinterError']
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
     Copyright (c) 2016, Mickaël Schoentgen
@@ -92,6 +92,14 @@ class CharSet(Enum):
     KOREA = 13
     SLOVENIA = 14
     CHINA = 15
+
+
+class Chinese(Enum):
+    ''' Chinese formats. '''
+
+    GBK = 0
+    UTF_8 = 1
+    BIG5 = 3
 
 
 class CodePage(Enum):
@@ -187,6 +195,8 @@ class ThermalPrinter(Serial):
         self._charset = None
         self._char_spacing = 0
         self._char_height = 24
+        self._chinese = None
+        self._chinese_format = None
         self._codepage = None
         self._column = 0
         self._double_height = None
@@ -358,11 +368,32 @@ class ThermalPrinter(Serial):
             self._char_spacing = spacing
             self._write_bytes(Command.ESC, 32, spacing)
 
+    def chinese(self, state=True):
+        ''' Select/cancel Chinese mode. '''
+
+        state = bool(state)
+        if state is not self._chinese:
+            self._chinese = state
+            self._write_bytes(Command.FS, 38 if state else 46)
+
+    def chinese_format(self, fmt=None):
+        ''' Selection of the Chinese format. '''
+
+        if not fmt:
+            fmt = Chinese.UTF_8
+        elif not isinstance(fmt, Chinese):
+            err = ', '.join([cfmt.name for cfmt in Chinese])
+            raise ValueError('Valid Chinese formats are: {}.'.format(err))
+
+        if fmt is not self._chinese_format:
+            self._chinese_format = fmt
+            self._write_bytes(Command.ESC, 57, fmt.value)
+
     def codepage(self, codepage=None):
         ''' Select character code table. '''
 
         if not codepage:
-           codepage = CodePage.CP437
+            codepage = CodePage.CP437
         elif not isinstance(codepage, CodePage):
             codes = ''
             last = list(CodePage)[-1]
@@ -819,7 +850,8 @@ def tests():
         printer.println('Double height', double_height=True)
         printer.println('Double width', double_width=True)
         printer.println('Inverse', inverse=True)
-        printer.println('Rotate 90°', rotate=True, codepage=CodePage.ISO_8859_1)
+        printer.println('Rotate 90°', rotate=True,
+                        codepage=CodePage.ISO_8859_1)
         printer.println('Strike', strike=True)
         printer.println('Underline', underline=1)
         printer.println('Upside down', upside_down=True)
