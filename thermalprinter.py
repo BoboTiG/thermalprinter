@@ -450,6 +450,11 @@ class ThermalPrinter(Serial):
             if line_feed:
                 self.write(b'\n')
             self.lines += 1
+
+            # Sizes M and L are double height
+            if self._size != 'S':
+                self.lines += 1
+
             sleep(2 * self._dot_feed_time * self._char_height)
 
         # Restore default style
