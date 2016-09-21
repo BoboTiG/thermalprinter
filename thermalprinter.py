@@ -26,11 +26,23 @@ class ThermalPrinter(Serial):
     feeds = 0
     max_column = 32
 
-    def __init__(self, port='/dev/ttyAMA0', baudrate=19200, heat_time=80):
+    def __init__(self, **kwargs):
         ''' Print init. '''
 
+        try:
+            port = kwargs['port']
+        except KeyError:
+            port = '/dev/ttyAMA0'
+        try:
+            self._baudrate = kwargs['baudrate']
+        except KeyError:
+            self._baudrate = 19200
+        try:
+            heat_time = kwargs['heat_time']
+        except KeyError:
+            heat_time = 80
+
         register(self._on_exit)
-        self._baudrate = baudrate
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
