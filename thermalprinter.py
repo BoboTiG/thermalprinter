@@ -26,7 +26,7 @@ class ThermalPrinter(Serial):
     feeds = 0
     max_column = 32
 
-    def __init__(self, port='/dev/ttyAMA0', baudrate=19200):
+    def __init__(self, port='/dev/ttyAMA0', baudrate=19200, heat_time=80):
         ''' Print init. '''
 
         register(self._on_exit)
@@ -68,9 +68,9 @@ class ThermalPrinter(Serial):
 
         # Printer settings
         self._write_bytes(Command.ESC, 55,
-                          3,    # The most heated point (0..255, default: 9)
-                          80,   # Heat time (0..255, default: 80)
-                          12)   # Heat time interval (0..255, default: 2)
+                          3,  # The most heated point (0..255, default: 9)
+                          heat_time,  # Heat time (0..255, default: 80)
+                          12)  # Heat time interval (0..255, default: 2)
 
         self.set_defaults()
 
