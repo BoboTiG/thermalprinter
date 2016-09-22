@@ -513,7 +513,7 @@ class ThermalPrinter(Serial):
         self.rotate(False)
         self.size()
         self.strike(False)
-        self.underline(0)
+        self.underline()
         self.upside_down(False)
 
     def size(self, value='S'):
@@ -582,7 +582,7 @@ class ThermalPrinter(Serial):
         sleep(self._dot_print_time * 24 * 26 +
               self._dot_feed_time * (8 * 26 + 32))
 
-    def underline(self, weight=1):
+    def underline(self, weight=0):
         ''' Turn underline mode on/off.
             0: turns off underline mode
             1: turns on underline mode (1 dot thick)
