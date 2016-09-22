@@ -149,10 +149,12 @@ class ThermalPrinter(Serial):
         self._prev_byte = '\n'
         self.lines += int(self._barcode_height / self._line_spacing) + 1
 
-    def barcode_height(self, height=80):
+    def barcode_height(self, height=None):
         ''' Set bar code height. '''
 
-        if not 1 <= height <= 255:
+        if height is None:
+            height = 80
+        elif not 1 <= height <= 255:
             raise ThermalPrinterValueError(
                 'height should be between 1 and 255 (default: 80).')
 
@@ -160,10 +162,12 @@ class ThermalPrinter(Serial):
             self._barcode_height = height
             self._write_bytes(Command.GS, 104, height)
 
-    def barcode_left_margin(self, margin=0):
+    def barcode_left_margin(self, margin=None):
         ''' Set the bar code printed on the left spacing. '''
 
-        if not 0 <= margin <= 255:
+        if margin is None:
+            margin = 0
+        elif not 0 <= margin <= 255:
             raise ThermalPrinterValueError(
                 'margin should be between 0 and 255 (default: 0).')
 
@@ -185,10 +189,12 @@ class ThermalPrinter(Serial):
             self._barcode_position = position
             self._write_bytes(Command.GS, 72, position.value)
 
-    def barcode_width(self, width=2):
+    def barcode_width(self, width=None):
         ''' Set bar code width. '''
 
-        if not 2 <= width <= 6:
+        if width is None:
+            width = 2
+        elif not 2 <= width <= 6:
             raise ThermalPrinterValueError(
                 'width should be between 2 and 6 (default: 2).')
 
@@ -196,7 +202,7 @@ class ThermalPrinter(Serial):
             self._barcode_width = width
             self._write_bytes(Command.GS, 119, width)
 
-    def bold(self, state=True):
+    def bold(self, state=False):
         ''' Turn emphasized mode on/off. '''
 
         state = bool(state)
@@ -218,10 +224,12 @@ class ThermalPrinter(Serial):
             self._charset = charset
             self._write_bytes(Command.ESC, 82, charset.value)
 
-    def char_spacing(self, spacing=0):
+    def char_spacing(self, spacing=None):
         ''' Set the right character spacing. '''
 
-        if not 0 <= spacing <= 255:
+        if spacing is None:
+            spacing = 0
+        elif not 0 <= spacing <= 255:
             raise ThermalPrinterValueError(
                 'spacing should be between 0 and 255 (default: 0).')
 
@@ -229,7 +237,7 @@ class ThermalPrinter(Serial):
             self._char_spacing = spacing
             self._write_bytes(Command.ESC, 32, spacing)
 
-    def chinese(self, state=True):
+    def chinese(self, state=False):
         ''' Select/cancel Chinese mode. '''
 
         state = bool(state)
@@ -275,7 +283,7 @@ class ThermalPrinter(Serial):
             self._write_bytes(Command.ESC, 116, value)
             sleep(0.05)
 
-    def double_height(self, state=True):
+    def double_height(self, state=False):
         ''' Set double height mode. '''
 
         state = bool(state)
@@ -286,7 +294,7 @@ class ThermalPrinter(Serial):
             else:
                 self._unset_print_mode(16)
 
-    def double_width(self, state=True):
+    def double_width(self, state=False):
         ''' Select double width mode. '''
 
         state = bool(state)
@@ -376,7 +384,7 @@ class ThermalPrinter(Serial):
         self.lines += int(height / self._line_spacing) + 1
         self._prev_byte = '\n'
 
-    def inverse(self, state=True):
+    def inverse(self, state=False):
         ''' Turn white/black reverse printing mode. '''
 
         state = bool(state)
@@ -387,11 +395,7 @@ class ThermalPrinter(Serial):
     def justify(self, value='L'):
         ''' Set text justification. '''
 
-        if not value:
-            value = 'L'
-        else:
-            value = value.upper()
-
+        value = value.upper()
         if value not in 'LCR':
             err = 'value should be one of L (left, default), C (center)'
             err += '  or R (right).'
@@ -407,10 +411,12 @@ class ThermalPrinter(Serial):
                 pos = 0
             self._write_bytes(Command.ESC, 97, pos)
 
-    def left_margin(self, margin=0):
+    def left_margin(self, margin=None):
         ''' Set the left margin. '''
 
-        if not 0 <= margin <= 47:
+        if margin is None:
+            margin = 0
+        elif not 0 <= margin <= 47:
             raise ThermalPrinterValueError(
                 'margin should be between 0 and 47 (default: 0).')
 
@@ -418,10 +424,12 @@ class ThermalPrinter(Serial):
             self._left_margin = margin
             self._write_bytes(Command.ESC, 66, margin)
 
-    def line_spacing(self, spacing=30):
+    def line_spacing(self, spacing=None):
         ''' Set line spacing. '''
 
-        if not 0 <= spacing <= 255:
+        if spacing is None:
+            spacing = 30
+        elif not 0 <= spacing <= 255:
             raise ThermalPrinterValueError(
                 'spacing should be between 0 and 255 (default: 30).')
 
@@ -485,7 +493,7 @@ class ThermalPrinter(Serial):
         # Restore default style
         for style, value in kwargs.items():
             try:
-                getattr(self, style)(False)
+                getattr(self, style)()
             except TypeError:
                 pass
 
@@ -509,7 +517,7 @@ class ThermalPrinter(Serial):
         if current is not codepage:
             self.codepage(current)
 
-    def rotate(self, state=True):
+    def rotate(self, state=False):
         ''' Turn on/off clockwise rotation of 90°. '''
 
         state = bool(state)
@@ -521,30 +529,26 @@ class ThermalPrinter(Serial):
         ''' Reset formatting parameters. '''
 
         self.online()
-        self.bold(False)
-        self.charset(CharSet.USA)
+        self.bold()
+        self.charset()
         self.char_spacing()
-        self.chinese(False)
-        self.codepage(CodePage.CP437)
-        self.double_height(False)
-        self.inverse(False)
+        self.chinese()
+        self.codepage()
+        self.double_height()
+        self.inverse()
         self.justify()
         self.left_margin()
         self.line_spacing()
-        self.rotate(False)
+        self.rotate()
         self.size()
-        self.strike(False)
+        self.strike()
         self.underline()
-        self.upside_down(False)
+        self.upside_down()
 
     def size(self, value='S'):
         ''' Set text size. '''
 
-        if not value:
-            value = 'S'
-        else:
-            value = value.upper()
-
+        value = value.upper()
         if value not in 'SML':
             err = 'value should be one of S (small, default), M (medium)'
             err += '  or L (large).'
@@ -593,7 +597,7 @@ class ThermalPrinter(Serial):
             ret['temp'] = stat & 0b01000000 == 0
         return ret
 
-    def strike(self, state=True):
+    def strike(self, state=False):
         ''' Turn on/off double-strike mode. '''
 
         state = bool(state)
@@ -623,7 +627,7 @@ class ThermalPrinter(Serial):
             self._underline = weight
             self._write_bytes(Command.ESC, 45, weight)
 
-    def upside_down(self, state=True):
+    def upside_down(self, state=False):
         ''' Turns on/off upside-down printing mode. '''
 
         state = bool(state)
