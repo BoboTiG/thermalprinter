@@ -38,7 +38,7 @@ def tests():
             printer.out('Upside down', upside_down=True)
 
             printer.out('Voilà !', justify='C', strike=True,
-                        underline=2)
+                        underline=2, codepage=CodePage.ISO_8859_1)
 
             printer.feed(2)
             return 0
