@@ -75,6 +75,105 @@ Errors
 If an error occures, the `ThermalPrinterError` exception is raised.
 
 
+Constants
+=========
+
+.. code:: python
+
+    >>> from thermalprinter.helpers import ls
+    >>> ls()
+    ---CONST BarCode
+    Available bar code types:
+    UPC_A   value: 65, 11 <= len(data) <=  12
+    UPC_E   value: 66, 11 <= len(data) <=  12
+    JAN13   value: 67, 12 <= len(data) <=  13
+    JAN8    value: 68,  7 <= len(data) <=   8
+    CODE39  value: 69,  1 <= len(data) <= 255
+    ITF     value: 70,  1 <= len(data) <= 255
+    CODABAR value: 71,  1 <= len(data) <= 255
+    CODE93  value: 72,  1 <= len(data) <= 255
+    CODE128 value: 73,  2 <= len(data) <= 255
+
+    ---CONST BarCodePosition
+    Available bar code positions:
+    HIDDEN value: 0
+    ABOVE  value: 1
+    BELOW  value: 2
+    BOTH   value: 3
+
+    ---CONST CharSet
+    Available internal character sets:
+    USA            value:  0
+    FRANCE         value:  1
+    GERMANY        value:  2
+    UK             value:  3
+    DENMARK        value:  4
+    SWEDEN         value:  5
+    ITALY          value:  6
+    SPAIN          value:  7
+    JAPAN          value:  8
+    NORWAY         value:  9
+    DENMARK2       value: 10
+    SPAIN2         value: 11
+    LATIN_AMERICAN value: 12
+    KOREA          value: 13
+    SLOVENIA       value: 14
+    CHINA          value: 15
+
+    ---CONST Chinese
+    Available Chinese formats:
+    GBK   value: 0
+    UTF_8 value: 1
+    BIG5  value: 3
+
+    ---CONST CodePage
+    Available character code tables:
+    CP437       value:  0, desc: the United States of America, European standard
+    CP932       value:  1, desc: Katakana
+    CP850       value:  2, desc: Multi language
+    CP860       value:  3, desc: Portuguese
+    CP863       value:  4, desc: Canada, French
+    CP865       value:  5, desc: Western Europe
+    CYRILLIC    value:  6, desc: The Slavic language
+    CP866       value:  7, desc: The Slavic 2
+    MIK         value:  8, desc: The Slavic / Bulgaria
+    CP755       value:  9, desc: Eastern Europe, Latvia 2
+    IRAN        value: 10, desc: Iran, Persia
+    CP862       value: 15, desc: Hebrew
+    WCP1252     value: 16, desc: Latin 1
+    WCP1253     value: 17, desc: Greece
+    CP852       value: 18, desc: Latina 2
+    CP858       value: 19, desc: A variety of language Latin 1 + Europe
+    IRAN2       value: 20, desc: Persian
+    LATVIA      value: 21, desc:
+    CP864       value: 22, desc: Arabic
+    ISO_8859_1  value: 23, desc: Western Europe
+    CP737       value: 24, desc: Greece
+    WCP1257     value: 25, desc: The Baltic Sea
+    THAI        value: 26, desc: Thai Wen
+    CP720       value: 27, desc: Arabic
+    CP855       value: 28, desc:
+    CP857       value: 29, desc: Turkish
+    WCP1250     value: 30, desc: Central Europe
+    CP775       value: 31, desc:
+    WCP1254     value: 32, desc: Turkish
+    WCP1255     value: 33, desc: Hebrew
+    WCP1256     value: 34, desc: Arabic
+    WCP1258     value: 35, desc: Vietnamese
+    ISO_8859_2  value: 36, desc: Latin 2
+    ISO_8859_3  value: 37, desc: Latin 3
+    ISO_8859_4  value: 38, desc: Baltic languages
+    ISO_8859_5  value: 39, desc: The Slavic language
+    ISO_8859_6  value: 40, desc: Arabic
+    ISO_8859_7  value: 41, desc: Greece
+    ISO_8859_8  value: 42, desc: Hebrew
+    ISO_8859_9  value: 43, desc: Turkish
+    ISO_8859_15 value: 44, desc: Latin 9
+    THAI2       value: 45, desc: Thai Wen 2
+    CP856       value: 46, desc:
+    CP874       value: 47, desc:
+
+
 ----
 
 API
