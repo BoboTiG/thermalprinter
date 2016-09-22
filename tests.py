@@ -9,9 +9,17 @@ from .exception import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
 
-def tests():
+def tests(heat_time=None):
+    ''' Print all possibilities.
+        Optional argument: heat_time
+
+        >>> from thermalprinter.tests import tests
+        >>> tests()
+        >>> tests(heat_time=120)
+    '''
+
     try:
-        with ThermalPrinter() as printer:
+        with ThermalPrinter(heat_time=heat_time) as printer:
             try:
                 from PIL import Image
                 printer.feed()
