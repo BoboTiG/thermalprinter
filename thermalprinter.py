@@ -78,6 +78,7 @@ class ThermalPrinter(Serial):
                           heat_time,  # Heat time (0..255, default: 80)
                           12)  # Heat time interval (0..255, default: 2)
 
+        self.reset()
         self.set_defaults()
 
     def __enter__(self):
@@ -604,6 +605,11 @@ class ThermalPrinter(Serial):
         if state is not self._strike:
             self._strike = state
             self._write_bytes(Command.ESC, 71, int(state))
+
+    def reset(self):
+        ''' Reset the printer to factory defaults. '''
+
+        self._write_bytes(Command.ESC, 64)
 
     def test(self):
         ''' Print settings as test. '''
