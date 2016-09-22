@@ -46,6 +46,16 @@ Installation
     $ git clone https://github.com/BoboTiG/thermalprinter.git
 
 
+Testing
+=======
+
+.. code:: python
+
+    from thermalprinter.tests import tests
+
+    tests()
+
+
 Instance the class
 ==================
 
