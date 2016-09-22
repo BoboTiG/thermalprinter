@@ -618,17 +618,8 @@ class ThermalPrinter(Serial):
     def _conv(self, data):
         ''' Convert data before sending to the printer. '''
 
-        if self._chinese:
-            return bytes(data, 'utf-8')
-
-        ret = []
-        for char in list(data):
-            int_ = ord(char)
-            if int_ > 256:
-                int_ = ord(chr(int_).encode(self._codepage.name,
-                                            errors='replace'))
-            ret.append(int_)
-        return bytearray(ret)
+        encoding = 'utf-8' if self._chinese else self._codepage.name
+        return bytes(data, encoding, errors='replace')
 
     def _set_print_mode(self, mask):
         ''' Set the print mode. '''
