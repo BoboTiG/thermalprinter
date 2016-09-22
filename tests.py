@@ -57,7 +57,3 @@ def tests(heat_time=80):
         print(ex)
 
     return 1
-
-
-if __name__ == '__main__':
-    exit(tests())
