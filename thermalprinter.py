@@ -503,6 +503,7 @@ class ThermalPrinter(Serial):
         self.bold(False)
         self.charset(CharSet.USA)
         self.char_spacing()
+        self.chinese(False)
         self.codepage(CodePage.CP437)
         self.double_height(False)
         self.inverse(False)
@@ -616,6 +617,9 @@ class ThermalPrinter(Serial):
 
     def _conv(self, data):
         ''' Convert data before sending to the printer. '''
+
+        if self._chinese:
+            return bytes(data, 'utf-8')
 
         ret = []
         for char in list(data):
