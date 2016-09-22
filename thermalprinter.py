@@ -53,6 +53,12 @@ class ThermalPrinter(Serial):
             raise ThermalPrinterValueError(
                 'heated_point should be between 0 and 255 (default: 3).')
 
+        # Few important values
+        self._baudrate = baudrate
+        self._byte_time = 11.0 / float(self._baudrate)
+        self._dot_feed_time = 0.0025
+        self._dot_print_time = 0.033
+
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
         sleep(0.5)  # Important
@@ -62,10 +68,6 @@ class ThermalPrinter(Serial):
         self._write_bytes(
             Command.ESC, 55, heated_point, heat_time, heat_interval)
 
-        self._baudrate = baudrate
-        self._byte_time = 11.0 / float(self._baudrate)
-        self._dot_feed_time = 0.0025
-        self._dot_print_time = 0.033
 
         # Default values
         self._barcode_height = 80
