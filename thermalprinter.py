@@ -463,8 +463,10 @@ class ThermalPrinter(Serial):
 
         # Apply style
         for style, value in kwargs.items():
-            if hasattr(self, style):
+            try:
                 getattr(self, style)(value)
+            except TypeError:
+                pass
 
         if line:
             if isinstance(line, (bool, int)):
@@ -472,18 +474,20 @@ class ThermalPrinter(Serial):
             self.write(self._conv(line))
             if line_feed:
                 self.write(b'\n')
-            self.lines += 1
-
-            # Sizes M and L are double height
-            if self._size != 'S':
                 self.lines += 1
+
+                # Sizes M and L are double height
+                if self._size != 'S':
+                    self.lines += 1
 
             sleep(2 * self._dot_feed_time * self._char_height)
 
         # Restore default style
         for style, value in kwargs.items():
-            if hasattr(self, style):
+            try:
                 getattr(self, style)(False)
+            except TypeError:
+                pass
 
     def print_char(self, char='', number=1, codepage=None):
         ''' Print one character one or several times in a given code page. '''
@@ -561,11 +565,9 @@ class ThermalPrinter(Serial):
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
 
-        if not self._is_sleeping:
+        if not self._is_sleeping and seconds > 0:
             self._is_sleeping = True
-            if seconds > 0:
-                sleep(seconds)
-
+            sleep(seconds)
             self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
     def status(self):
