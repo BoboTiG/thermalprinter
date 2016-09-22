@@ -26,17 +26,11 @@ class ThermalPrinter(Serial):
     feeds = 0
     max_column = 32
 
-    def __init__(self, **kwargs):
+    def __init__(self, port='/dev/ttyAMA0', baudrate=19200, **kwargs):
         ''' Print init. '''
 
-        try:
-            port = kwargs['port']
-        except KeyError:
-            port = '/dev/ttyAMA0'
-        try:
-            self._baudrate = kwargs['baudrate']
-        except KeyError:
-            self._baudrate = 19200
+        self._baudrate = baudrate
+
         try:
             heat_time = kwargs['heat_time']
         except KeyError:
