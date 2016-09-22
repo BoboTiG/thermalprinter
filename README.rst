@@ -31,9 +31,9 @@ This is a clean follow of the technical manual with few helpers. An example is b
         printer.println('Strike', strike=True)
         printer.println('Underline', underline=1)
         printer.println('Upside down', upside_down=True)
-        printer.println('现代汉语通用字表', chinese=True, chinese_format=Chinese.BIG5)
+        printer.println('现代汉语通用字表', chinese=True, chinese_format=Chinese.UTF_8)
 
-        printer.println('Voilà !', justify='C', strike=True, underline=2)
+        printer.println('Voilà !', justify='C', strike=True, underline=2, codepage=CodePage.ISO_8859_1)
 
         printer.feed(2)
 
