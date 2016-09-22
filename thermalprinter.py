@@ -11,7 +11,7 @@ from serial import Serial
 
 from .constants import BarCode, BarCodePosition, CharSet, Chinese, Command, \
     CodePage
-from .exception import ThermalPrinterError
+from .exceptions import ThermalPrinterConstantError, ThermalPrinterValueError
 
 
 class ThermalPrinter(Serial):
@@ -117,7 +117,7 @@ class ThermalPrinter(Serial):
 
         if not isinstance(bc_type, BarCode):
             err = ', '.join([barcode.name for barcode in BarCode])
-            raise ThermalPrinterError('Valid bar codes are: {}.'.format(err))
+            raise ThermalPrinterConstantError('Valid bar codes are: ' + err)
 
         code, (min_, max_), range_type = bc_type.value
         data_len = len(data)
@@ -126,9 +126,10 @@ class ThermalPrinter(Serial):
         if not min_ <= data_len <= max_:
             err = '[{}] Should be {} <= len(data) <= {} (current: {}).'.format(
                 bc_type.name, min_, max_, data_len)
-            raise ThermalPrinterError(err)
+            raise ThermalPrinterValueError(err)
         elif bc_type is BarCode.ITF and data_len % 2 != 0:
-            raise ThermalPrinterError('[BarCode.ITF] len(data) must be even.')
+            raise ThermalPrinterValueError(
+                '[BarCode.ITF] len(data) must be even.')
 
         if not all(ord(char) in range_ for char in data):
             if range_type != 3:
@@ -137,7 +138,7 @@ class ThermalPrinter(Serial):
                 valid = map(hex, range_)
             err = '[{}] Valid characters: {}.'.format(
                 bc_type.name, ', '.join(valid))
-            raise ThermalPrinterError(err)
+            raise ThermalPrinterValueError(err)
 
         self._write_bytes(Command.GS, 107, code, data_len)
         for char in list(data):
@@ -152,7 +153,8 @@ class ThermalPrinter(Serial):
         ''' Set bar code height. '''
 
         if not 1 <= height <= 255:
-            height = 80
+            raise ThermalPrinterValueError(
+                'height should be between 1 and 255 (default: 80).')
 
         if height != self._barcode_height:
             self._barcode_height = height
@@ -162,7 +164,8 @@ class ThermalPrinter(Serial):
         ''' Set the bar code printed on the left spacing. '''
 
         if not 0 <= margin <= 255:
-            margin = 0
+            raise ThermalPrinterValueError(
+                'margin should be between 0 and 255 (default: 0).')
 
         if margin != self._barcode_left_margin:
             self._barcode_left_margin = margin
@@ -175,7 +178,8 @@ class ThermalPrinter(Serial):
             position = BarCodePosition.HIDDEN
         elif not isinstance(position, BarCodePosition):
             err = ', '.join([pos.name for pos in BarCodePosition])
-            raise ThermalPrinterError('Valid positions are: {}.'.format(err))
+            raise ThermalPrinterConstantError(
+                'Valid positions are: {}.'.format(err))
 
         if position is not self._barcode_position:
             self._barcode_position = position
@@ -185,7 +189,8 @@ class ThermalPrinter(Serial):
         ''' Set bar code width. '''
 
         if not 2 <= width <= 6:
-            width = 2
+            raise ThermalPrinterValueError(
+                'width should be between 2 and 6 (default: 2).')
 
         if width != self._barcode_width:
             self._barcode_width = width
@@ -207,7 +212,7 @@ class ThermalPrinter(Serial):
         elif not isinstance(charset, CharSet):
             err = 'Valid charsets are: {}.'.format(
                 ', '.join([cset.name for cset in CharSet]))
-            raise ThermalPrinterError(err)
+            raise ThermalPrinterConstantError(err)
 
         if charset is not self._charset:
             self._charset = charset
@@ -217,7 +222,8 @@ class ThermalPrinter(Serial):
         ''' Set the right character spacing. '''
 
         if not 0 <= spacing <= 255:
-            spacing = 0
+            raise ThermalPrinterValueError(
+                'spacing should be between 0 and 255 (default: 0).')
 
         if spacing != self._char_spacing:
             self._char_spacing = spacing
@@ -238,7 +244,7 @@ class ThermalPrinter(Serial):
             fmt = Chinese.UTF_8
         elif not isinstance(fmt, Chinese):
             err = ', '.join([cfmt.name for cfmt in Chinese])
-            raise ThermalPrinterError(
+            raise ThermalPrinterConstantError(
                 'Valid Chinese formats are: {}.'.format(err))
 
         if fmt is not self._chinese_format:
@@ -260,7 +266,8 @@ class ThermalPrinter(Serial):
                     codes += '{} ({}){}'.format(cpage.name, name, sep)
                 else:
                     codes += '{}{}'.format(cpage.name, sep)
-            raise ThermalPrinterError('Valid codepages are: {}'.format(codes))
+            raise ThermalPrinterConstantError(
+                'Valid codepages are: {}'.format(codes))
 
         if codepage is not self._codepage:
             self._codepage = codepage
@@ -295,7 +302,8 @@ class ThermalPrinter(Serial):
         ''' Feeds by the specified number of lines. '''
 
         if not 0 <= number <= 255:
-            return
+            raise ThermalPrinterValueError(
+                'number should be between 0 and 255 (default: 1).')
 
         self._write_bytes(Command.ESC, 100, number)
         sleep(number * self._dot_feed_time * self._char_height)
@@ -381,7 +389,14 @@ class ThermalPrinter(Serial):
 
         if not value:
             value = 'L'
-        value = value.upper()
+        else:
+            value = value.upper()
+
+        if value not in 'LCR':
+            err = 'value should be one of L (left, default), C (center)'
+            err += '  or R (right).'
+            raise ThermalPrinterValueError(err)
+
         if value != self._justify:
             self._justify = value
             if value == 'C':
@@ -396,7 +411,8 @@ class ThermalPrinter(Serial):
         ''' Set the left margin. '''
 
         if not 0 <= margin <= 47:
-            margin = 0
+            raise ThermalPrinterValueError(
+                'margin should be between 0 and 47 (default: 0).')
 
         if margin != self._left_margin:
             self._left_margin = margin
@@ -406,7 +422,8 @@ class ThermalPrinter(Serial):
         ''' Set line spacing. '''
 
         if not 0 <= spacing <= 255:
-            spacing = 30
+            raise ThermalPrinterValueError(
+                'spacing should be between 0 and 255 (default: 30).')
 
         if spacing != self._line_spacing:
             self._line_spacing = spacing
@@ -472,7 +489,7 @@ class ThermalPrinter(Serial):
         ''' Print one character one or several times in a given code page. '''
 
         if not codepage and not self._codepage:
-            raise ThermalPrinterError('Code page needed.')
+            raise ThermalPrinterConstantError('Code page needed.')
 
         # Save the current code page
         current = self._codepage
@@ -484,7 +501,7 @@ class ThermalPrinter(Serial):
 
         sleep(number * self._dot_feed_time * self._char_height)
 
-        # restore the original code page
+        # Restore the original code page
         if current is not codepage:
             self.codepage(current)
 
@@ -521,7 +538,14 @@ class ThermalPrinter(Serial):
 
         if not value:
             value = 'S'
-        value = value.upper()
+        else:
+            value = value.upper()
+
+        if value not in 'SML':
+            err = 'value should be one of S (small, default), M (medium)'
+            err += '  or L (large).'
+            raise ThermalPrinterValueError(err)
+
         if value != self._size:
             self._size = value
             if value == 'L':    # Large: double width and height
@@ -590,7 +614,8 @@ class ThermalPrinter(Serial):
         '''
 
         if not 0 <= weight <= 2:
-            weight = 0
+            raise ThermalPrinterValueError(
+                'weight should be between 0 and 2 (default: 0).')
 
         if weight != self._underline:
             self._underline = weight

@@ -5,7 +5,7 @@
 '''
 
 from .constants import BarCode, BarCodePosition, Chinese, CodePage
-from .exception import ThermalPrinterError
+from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
 

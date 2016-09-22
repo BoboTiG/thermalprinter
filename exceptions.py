@@ -7,3 +7,11 @@
 
 class ThermalPrinterError(Exception):
     ''' Error handling class. '''
+
+
+class ThermalPrinterConstantError(ThermalPrinterError):
+    ''' Constant error handling class. '''
+
+
+class ThermalPrinterValueError(ThermalPrinterError):
+    ''' Value error handling class. '''

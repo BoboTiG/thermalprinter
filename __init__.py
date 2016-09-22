@@ -18,7 +18,7 @@
 
 from .constants import BarCode, BarCodePosition, CharSet, Chinese, Command, \
     CodePage
-from .exception import ThermalPrinterError
+from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
 __version__ = '0.1.0'
