@@ -22,8 +22,11 @@ def tests(heat_time=None):
         with ThermalPrinter(heat_time=heat_time) as printer:
             try:
                 from PIL import Image
+                from os.path import abspath, dirname, realpath
+
+                cwd = dirname(realpath(abspath(__file__)))
                 printer.feed()
-                printer.image(Image.open('gnu.png'))
+                printer.image(Image.open('{}/gnu.png'.format(cwd)))
                 printer.feed()
             except ImportError:
                 print('Pillow module not installed, skip picture printing.')
