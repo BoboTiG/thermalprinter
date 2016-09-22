@@ -589,7 +589,7 @@ class ThermalPrinter(Serial):
             2: turns on underline mode (2 dots thick)
         '''
 
-        if 0 <= weight <= 2:
+        if not 0 <= weight <= 2:
             weight = 0
 
         if weight != self._underline:
