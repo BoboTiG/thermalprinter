@@ -9,7 +9,7 @@ from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
 
-def tests(heat_time=None):
+def tests(heat_time=80):
     ''' Print all possibilities.
         Optional argument: heat_time
 
