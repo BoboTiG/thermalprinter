@@ -261,7 +261,7 @@ API
 
 .. code:: python
 
-    >>> chinese_format(fmt=Chinese.UTF_8)
+    >>> chinese_format(fmt=None)
     ''' Selection of the Chinese format.
         `fmt` is a value from `Chinese`.
     '''

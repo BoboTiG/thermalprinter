@@ -79,7 +79,7 @@ class ThermalPrinter(Serial):
         self._char_spacing = 0
         self._char_height = 24
         self._chinese = False
-        self._chinese_format = Chinese.UTF_8
+        self._chinese_format = None
         self._codepage = CodePage.CP437
         self._column = 0
         self._double_height = False
@@ -254,7 +254,7 @@ class ThermalPrinter(Serial):
             self._chinese = state
             self._write_bytes(Command.FS, 38 if state else 46)
 
-    def chinese_format(self, fmt=Chinese.UTF_8):
+    def chinese_format(self, fmt=None):
         ''' Selection of the Chinese format. '''
 
         if not isinstance(fmt, Chinese):
