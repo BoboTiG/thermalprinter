@@ -183,7 +183,7 @@ API
 
 .. code:: python
 
-    >>> barcode(bc_type)
+    >>> barcode(data, bc_type)
     ''' Bar code printing.
         `bc_type` is a value from `BarCode`. All checks are done to ensure
         the data validity.
@@ -211,7 +211,7 @@ API
 
 .. code:: python
 
-    >>> barcode_position(position=None)
+    >>> barcode_position(position=BarCodePosition.HIDDEN)
     ''' Set bar code position.
         `position` is a value from `BarCodePosition`.
     '''
@@ -229,14 +229,14 @@ API
 
 .. code:: python
 
-    >>> bold(state=True)
+    >>> bold(state=False)
     ''' Turn emphasized mode on/off. '''
 
 **charset**
 
 .. code:: python
 
-    >>> charset(charset=None)
+    >>> charset(charset=CharSet.USA)
     ''' Select an internal character set.
         `charset` is a value from `CharSet`.
     '''
@@ -254,14 +254,14 @@ API
 
 .. code:: python
 
-    >>> chinese(state=True)
+    >>> chinese(state=False)
     ''' Select/cancel Chinese mode. '''
 
 **chinese_format**
 
 .. code:: python
 
-    >>> chinese_format(fmt=None)
+    >>> chinese_format(fmt=Chinese.UTF_8)
     ''' Selection of the Chinese format.
         `fmt` is a value from `Chinese`.
     '''
@@ -270,7 +270,7 @@ API
 
 .. code:: python
 
-    >>> codepage(codepage=None)
+    >>> codepage(codepage=CodePage.CP437)
     ''' Select character code table.
         `codepage` is a value from `CodePage`.
     '''
@@ -279,14 +279,14 @@ API
 
 .. code:: python
 
-    >>> double_height(state=True)
+    >>> double_height(state=False)
     ''' Set double height mode. '''
 
 **double_width**
 
 .. code:: python
 
-    >>> double_width(state=True)
+    >>> double_width(state=False)
     ''' Select double width mode. '''
 
 **feed**
@@ -317,7 +317,7 @@ API
 
 .. code:: python
 
-    >>> inverse(state=True)
+    >>> inverse(state=False)
     ''' Turn white/black reverse printing mode. '''
 
 **justify**
@@ -368,18 +368,11 @@ API
         Subsequent print commands will be obeyed.
     '''
 
-**print_char**
+**out**
 
 .. code:: python
 
-    >>> print_char(char='', number=1, codepage=None)
-    ''' Print one character one or several times in a given code page. '''
-
-**println**
-
-.. code:: python
-
-    >>> println(data, line_feed=True, **kwargs)
+    >>> out(data, line_feed=True, **kwargs)
     ''' Send a line to the printer.
 
         You can pass formatting instructions directly via an argument:
@@ -389,23 +382,23 @@ API
            justify('C')
            inverse(True)
            println(text)
-           inverse(False)
-           justify('L')
+           inverse()
+           justify()
     '''
+
+**print_char**
+
+.. code:: python
+
+    >>> print_char(char='', number=1, codepage=None)
+    ''' Print one character one or several times in a given code page. '''
 
 **rotate**
 
 .. code:: python
 
-    >>> rotate(state=True)
+    >>> rotate(state=False)
     ''' Turn on/off clockwise rotation of 90°. '''
-
-**set_defaults**
-
-.. code:: python
-
-    >>> set_defaults()
-    ''' Reset formatting parameters. '''
 
 **size**
 
@@ -445,8 +438,15 @@ API
 
 .. code:: python
 
-    >>> strike(state=True)
+    >>> strike(state=False)
     ''' Turn on/off double-strike mode. '''
+
+**reset**
+
+.. code:: python
+
+    >>> reset()
+    ''' Reset the printer to factory defaults. '''
 
 **test**
 
@@ -459,7 +459,7 @@ API
 
 .. code:: python
 
-    >>> underline(weight=1)
+    >>> underline(weight=0)
     ''' Turn underline mode on/off.
         `weight` can be one of:
             0: turns off underline mode
@@ -471,7 +471,7 @@ API
 
 .. code:: python
 
-    >>> upside_down(state=True)
+    >>> upside_down(state=False)
     ''' Turns on/off upside-down printing mode. '''
 
 **wake**

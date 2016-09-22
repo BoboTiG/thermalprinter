@@ -29,57 +29,75 @@ class ThermalPrinter(Serial):
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200, **kwargs):
         ''' Print init. '''
 
-        self._baudrate = baudrate
+        try:
+            heat_time = int(kwargs['heat_time'])
+        except (KeyError, ValueError):
+            heat_time = 80
+        if not 0 <= heat_time <= 255:
+            raise ThermalPrinterValueError(
+                'heat_time should be between 0 and 255 (default: 80).')
 
         try:
-            heat_time = kwargs['heat_time']
-        except KeyError:
-            heat_time = 80
+            heat_interval = int(kwargs['heat_interval'])
+        except (KeyError, ValueError):
+            heat_interval = 12
+        if not 0 <= heat_interval <= 255:
+            raise ThermalPrinterValueError(
+                'heat_interval should be between 0 and 255 (default: 12).')
 
+        try:
+            heated_point = int(kwargs['heated_point'])
+        except (KeyError, ValueError):
+            heated_point = 3
+        if not 0 <= heated_point <= 255:
+            raise ThermalPrinterValueError(
+                'heated_point should be between 0 and 255 (default: 3).')
+
+        # Init the serial
+        super().__init__(port=port, baudrate=self._baudrate)
+        sleep(0.5)  # Important
         register(self._on_exit)
+
+        # Printer settings
+        self._write_bytes(
+            Command.ESC, 55, heated_point, heat_time, heat_interval)
+
+        self._baudrate = baudrate
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
 
-        self._barcode_height = 0
+        # Default values
+        self._barcode_height = 80
         self._barcode_left_margin = 0
-        self._barcode_position = None
+        self._barcode_position = BarCodePosition.HIDDEN
         self._barcode_width = 0
-        self._bold = None
-        self._charset = None
+        self._bold = False
+        self._charset = CharSet.USA
         self._char_spacing = 0
         self._char_height = 24
-        self._chinese = None
-        self._chinese_format = None
-        self._codepage = None
+        self._chinese = False
+        self._chinese_format = Chinese.UTF_8
+        self._codepage = CodePage.CP437
         self._column = 0
-        self._double_height = None
-        self._double_width = None
-        self._inverse = None
+        self._double_height = False
+        self._double_width = False
+        self._inverse = False
         self._is_online = True
         self._is_sleeping = False
-        self._justify = ''
+        self._justify = 'L'
         self._left_margin = 0
-        self._line_spacing = 0
+        self._line_spacing = 30
         self._prev_byte = ''
         self._print_mode = 0
-        self._rotate = None
-        self._size = ''
-        self._strike = None
-        self._underline = -1
-        self._upside_down = None
+        self._rotate = False
+        self._size = 'S'
+        self._strike = False
+        self._underline = 0
+        self._upside_down = False
 
-        super().__init__(port=port, baudrate=self._baudrate)
-        sleep(0.5)  # Important
-
-        # Printer settings
-        self._write_bytes(Command.ESC, 55,
-                          3,  # The most heated point (0..255, default: 9)
-                          heat_time,  # Heat time (0..255, default: 80)
-                          12)  # Heat time interval (0..255, default: 2)
-
+        # Factory settings
         self.reset()
-        self.set_defaults()
 
     def __enter__(self):
         ''' `with ThermalPrinter() as printer:` '''
@@ -150,12 +168,10 @@ class ThermalPrinter(Serial):
         self._prev_byte = '\n'
         self.lines += int(self._barcode_height / self._line_spacing) + 1
 
-    def barcode_height(self, height=None):
+    def barcode_height(self, height=80):
         ''' Set bar code height. '''
 
-        if height is None:
-            height = 80
-        elif not 1 <= height <= 255:
+        if not 1 <= height <= 255:
             raise ThermalPrinterValueError(
                 'height should be between 1 and 255 (default: 80).')
 
@@ -163,12 +179,10 @@ class ThermalPrinter(Serial):
             self._barcode_height = height
             self._write_bytes(Command.GS, 104, height)
 
-    def barcode_left_margin(self, margin=None):
+    def barcode_left_margin(self, margin=0):
         ''' Set the bar code printed on the left spacing. '''
 
-        if margin is None:
-            margin = 0
-        elif not 0 <= margin <= 255:
+        if not 0 <= margin <= 255:
             raise ThermalPrinterValueError(
                 'margin should be between 0 and 255 (default: 0).')
 
@@ -176,12 +190,10 @@ class ThermalPrinter(Serial):
             self._barcode_left_margin = margin
             self._write_bytes(Command.GS, 120, margin)
 
-    def barcode_position(self, position=None):
+    def barcode_position(self, position=BarCodePosition.HIDDEN):
         ''' Set bar code position. '''
 
-        if not position:
-            position = BarCodePosition.HIDDEN
-        elif not isinstance(position, BarCodePosition):
+        if not isinstance(position, BarCodePosition):
             err = ', '.join([pos.name for pos in BarCodePosition])
             raise ThermalPrinterConstantError(
                 'Valid positions are: {}.'.format(err))
@@ -190,12 +202,10 @@ class ThermalPrinter(Serial):
             self._barcode_position = position
             self._write_bytes(Command.GS, 72, position.value)
 
-    def barcode_width(self, width=None):
+    def barcode_width(self, width=2):
         ''' Set bar code width. '''
 
-        if width is None:
-            width = 2
-        elif not 2 <= width <= 6:
+        if not 2 <= width <= 6:
             raise ThermalPrinterValueError(
                 'width should be between 2 and 6 (default: 2).')
 
@@ -211,12 +221,10 @@ class ThermalPrinter(Serial):
             self._bold = state
             self._write_bytes(Command.ESC, 69, int(state))
 
-    def charset(self, charset=None):
+    def charset(self, charset=CharSet.USA):
         ''' Select an internal character set. '''
 
-        if not charset:
-            charset = CharSet.USA
-        elif not isinstance(charset, CharSet):
+        if not isinstance(charset, CharSet):
             err = 'Valid charsets are: {}.'.format(
                 ', '.join([cset.name for cset in CharSet]))
             raise ThermalPrinterConstantError(err)
@@ -225,12 +233,10 @@ class ThermalPrinter(Serial):
             self._charset = charset
             self._write_bytes(Command.ESC, 82, charset.value)
 
-    def char_spacing(self, spacing=None):
+    def char_spacing(self, spacing=0):
         ''' Set the right character spacing. '''
 
-        if spacing is None:
-            spacing = 0
-        elif not 0 <= spacing <= 255:
+        if not 0 <= spacing <= 255:
             raise ThermalPrinterValueError(
                 'spacing should be between 0 and 255 (default: 0).')
 
@@ -246,12 +252,10 @@ class ThermalPrinter(Serial):
             self._chinese = state
             self._write_bytes(Command.FS, 38 if state else 46)
 
-    def chinese_format(self, fmt=None):
+    def chinese_format(self, fmt=Chinese.UTF_8):
         ''' Selection of the Chinese format. '''
 
-        if not fmt:
-            fmt = Chinese.UTF_8
-        elif not isinstance(fmt, Chinese):
+        if not isinstance(fmt, Chinese):
             err = ', '.join([cfmt.name for cfmt in Chinese])
             raise ThermalPrinterConstantError(
                 'Valid Chinese formats are: {}.'.format(err))
@@ -260,12 +264,10 @@ class ThermalPrinter(Serial):
             self._chinese_format = fmt
             self._write_bytes(Command.ESC, 57, fmt.value)
 
-    def codepage(self, codepage=None):
+    def codepage(self, codepage=CodePage.CP437):
         ''' Select character code table. '''
 
-        if not codepage:
-            codepage = CodePage.CP437
-        elif not isinstance(codepage, CodePage):
+        if not isinstance(codepage, CodePage):
             codes = ''
             last = list(CodePage)[-1]
             for cpage in CodePage:
@@ -412,12 +414,10 @@ class ThermalPrinter(Serial):
                 pos = 0
             self._write_bytes(Command.ESC, 97, pos)
 
-    def left_margin(self, margin=None):
+    def left_margin(self, margin=0):
         ''' Set the left margin. '''
 
-        if margin is None:
-            margin = 0
-        elif not 0 <= margin <= 47:
+        if not 0 <= margin <= 47:
             raise ThermalPrinterValueError(
                 'margin should be between 0 and 47 (default: 0).')
 
@@ -425,12 +425,10 @@ class ThermalPrinter(Serial):
             self._left_margin = margin
             self._write_bytes(Command.ESC, 66, margin)
 
-    def line_spacing(self, spacing=None):
+    def line_spacing(self, spacing=30):
         ''' Set line spacing. '''
 
-        if spacing is None:
-            spacing = 30
-        elif not 0 <= spacing <= 255:
+        if not 0 <= spacing <= 255:
             raise ThermalPrinterValueError(
                 'spacing should be between 0 and 255 (default: 30).')
 
@@ -525,26 +523,6 @@ class ThermalPrinter(Serial):
         if state is not self._rotate:
             self._rotate = state
             self._write_bytes(Command.ESC, 86, int(state))
-
-    def set_defaults(self):
-        ''' Reset formatting parameters. '''
-
-        self.online()
-        self.bold()
-        self.charset()
-        self.char_spacing()
-        self.chinese()
-        self.codepage()
-        self.double_height()
-        self.inverse()
-        self.justify()
-        self.left_margin()
-        self.line_spacing()
-        self.rotate()
-        self.size()
-        self.strike()
-        self.underline()
-        self.upside_down()
 
     def size(self, value='S'):
         ''' Set text size. '''
