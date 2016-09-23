@@ -69,6 +69,8 @@ class ThermalPrinter(Serial):
             Command.ESC, 55, heated_point, heat_time, heat_interval)
 
         # Default values
+        self.is_online = True
+        self.is_sleeping = False
         self._barcode_height = 80
         self._barcode_left_margin = 0
         self._barcode_position = BarCodePosition.HIDDEN
@@ -84,8 +86,6 @@ class ThermalPrinter(Serial):
         self._double_height = False
         self._double_width = False
         self._inverse = False
-        self._is_online = True
-        self._is_sleeping = False
         self._justify = 'L'
         self._left_margin = 0
         self._line_spacing = 30
@@ -442,8 +442,8 @@ class ThermalPrinter(Serial):
             will be ignored until 'online' is called.
         '''
 
-        if self._is_online:
-            self._is_online = False
+        if self.is_online:
+            self.is_online = False
             self._write_bytes(Command.ESC, 61, 0)
 
     def online(self):
@@ -451,8 +451,8 @@ class ThermalPrinter(Serial):
             Subsequent print commands will be obeyed.
         '''
 
-        if not self._is_online:
-            self._is_online = True
+        if not self.is_online:
+            self.is_online = True
             self._write_bytes(Command.ESC, 61, 1)
 
     def out(self, line, line_feed=True, **kwargs):
@@ -549,8 +549,8 @@ class ThermalPrinter(Serial):
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
 
-        if not self._is_sleeping and seconds > 0:
-            self._is_sleeping = True
+        if not self.is_sleeping and seconds > 0:
+            self.is_sleeping = True
             sleep(seconds)
             self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
@@ -623,8 +623,8 @@ class ThermalPrinter(Serial):
     def wake(self):
         ''' Wake up the printer. '''
 
-        if self._is_sleeping:
-            self._is_sleeping = False
+        if self.is_sleeping:
+            self.is_sleeping = False
             self._write_bytes(255)
             sleep(0.05)    # Sleep 50ms as in documentation
             self.sleep(0)  # SLEEP OFF - IMPORTANT!
