@@ -17,17 +17,30 @@ def test_char(char):
                 '{}: {}'.format(codepage.name, char), codepage=codepage)
 
 
-def ls(constants=None):
-    ''' Print constants values. '''
+def ls(*constants):
+    ''' Print constants values.
+
+        >>> ls()
+        # all constants printer
+
+        >>> ls(Chinese)
+        # print Chinese constants
+
+        >>> ls(Chinese, CharSet)
+        # print Chinese and CharSet constants
+    '''
 
     # pylint: disable=invalid-name
 
     if not constants:
         constants = [BarCode, BarCodePosition, CharSet, Chinese, CodePage]
 
-    for constant in list(constants):
-        print('---CONST', constant.__name__)
-        print(constant.__doc__.strip())
-        for value in constant:
-            print(value)
-        print()
+    for constant in constants:
+        try:
+            print('---CONST', constant.__name__)
+            print(constant.__doc__.strip())
+            for value in constant:
+                print(value)
+            print()
+        except AttributeError:
+            print('Unknown constant "{}".'.format(constant))
