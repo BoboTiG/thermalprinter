@@ -72,7 +72,11 @@ So the module can be used as simply as:
 Errors
 ======
 
-If an error occures, the `ThermalPrinterError` exception is raised.
+If an error occures, the `ThermalPrinterError` parent exception is raised. There
+are two children exceptions:
+
+- `ThermalPrinterConstantError` for exceptions impacting a constant;
+- `ThermalPrinterValueError` for exceptions impacting a value.
 
 
 Constants
@@ -172,6 +176,14 @@ Constants
     THAI2       value: 45, desc: Thai Wen 2
     CP856       value: 46, desc:
     CP874       value: 47, desc:
+
+    >>> from thermalprinter.constants import Chinese
+    >>> ls(Chinese)
+    ---CONST Chinese
+    Available Chinese formats:
+    GBK   value: 0
+    UTF_8 value: 1
+    BIG5  value: 3
 
 
 ----

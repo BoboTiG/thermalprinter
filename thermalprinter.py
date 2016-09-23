@@ -68,7 +68,6 @@ class ThermalPrinter(Serial):
         self._write_bytes(
             Command.ESC, 55, heated_point, heat_time, heat_interval)
 
-
         # Default values
         self._barcode_height = 80
         self._barcode_left_margin = 0

@@ -17,12 +17,15 @@ def test_char(char):
                 '{}: {}'.format(codepage.name, char), codepage=codepage)
 
 
-def ls():
+def ls(constants=None):
     ''' Print constants values. '''
 
     # pylint: disable=invalid-name
 
-    for constant in [BarCode, BarCodePosition, CharSet, Chinese, CodePage]:
+    if not constants:
+        constants = [BarCode, BarCodePosition, CharSet, Chinese, CodePage]
+
+    for constant in list(constants):
         print('---CONST', constant.__name__)
         print(constant.__doc__.strip())
         for value in constant:
