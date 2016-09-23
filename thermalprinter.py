@@ -110,6 +110,37 @@ class ThermalPrinter(Serial):
 
         self.close()
 
+    def __repr__(self):
+        ''' String representation of the current printer settings
+            and its state.
+        '''
+
+        return '{name}<id=0x{id:x}, is_online={p.is_online}, ' \
+            'is_sleeping={p.is_sleeping}, max_column={p.max_column!r}>(' \
+            'barcode_height={p._barcode_height!r}, ' \
+            'barcode_left_margin={p._barcode_left_margin!r}, ' \
+            'barcode_position={p._barcode_position!r}, ' \
+            'barcode_width={p._barcode_width!r}, ' \
+            'bold={p._bold}, ' \
+            'charset={p._charset!r}, ' \
+            'char_spacing={p._char_spacing!r}, ' \
+            'char_height={p._char_height!r}, ' \
+            'chinese={p._chinese}, ' \
+            'chinese_format={p._chinese_format!r}, ' \
+            'codepage={p._codepage!r}, ' \
+            'double_height={p._double_height!r}, ' \
+            'double_width={p._double_width!r}, ' \
+            'inverse={p._inverse}, ' \
+            'justify={p._justify!r}, ' \
+            'left_margin={p._left_margin!r}, ' \
+            'line_spacing={p._line_spacing!r}, ' \
+            'rotate={p._rotate}, ' \
+            'size={p._size!r}, ' \
+            'strike={p._strike}, ' \
+            'underline={p._underline!r}, ' \
+            'upside_down={p._upside_down}' \
+            ')'.format(name=self.__class__.__name__, id=id(self), p=self)
+
     def barcode(self, data, bc_type):
         ''' Bar code printing. '''
 
