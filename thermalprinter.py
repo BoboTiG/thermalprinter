@@ -113,6 +113,10 @@ class ThermalPrinter(Serial):
     def __repr__(self):
         ''' String representation of the current printer settings
             and its state.
+
+            To know the serial state:
+            >>> printer = ThermalPrinter()
+            >>> super(type(printer), printer).__repr__()
         '''
 
         return '{name}<id=0x{id:x}, is_online={p.is_online}, ' \
