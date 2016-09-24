@@ -74,7 +74,7 @@ class ThermalPrinter(Serial):
         self._barcode_height = 80
         self._barcode_left_margin = 0
         self._barcode_position = BarCodePosition.HIDDEN
-        self._barcode_width = 0
+        self._barcode_width = 2
         self._bold = False
         self._charset = CharSet.USA
         self._char_spacing = 0
@@ -207,7 +207,7 @@ class ThermalPrinter(Serial):
     def barcode_height(self, height=80):
         ''' Set bar code height. '''
 
-        if not 1 <= height <= 255:
+        if not isinstance(height, int) or not 1 <= height <= 255:
             raise ThermalPrinterValueError(
                 'height should be between 1 and 255 (default: 80).')
 
@@ -218,7 +218,7 @@ class ThermalPrinter(Serial):
     def barcode_left_margin(self, margin=0):
         ''' Set the bar code printed on the left spacing. '''
 
-        if not 0 <= margin <= 255:
+        if not isinstance(margin, int) or not 0 <= margin <= 255:
             raise ThermalPrinterValueError(
                 'margin should be between 0 and 255 (default: 0).')
 
@@ -241,7 +241,7 @@ class ThermalPrinter(Serial):
     def barcode_width(self, width=2):
         ''' Set bar code width. '''
 
-        if not 2 <= width <= 6:
+        if not isinstance(width, int) or not 2 <= width <= 6:
             raise ThermalPrinterValueError(
                 'width should be between 2 and 6 (default: 2).')
 
@@ -272,7 +272,7 @@ class ThermalPrinter(Serial):
     def char_spacing(self, spacing=0):
         ''' Set the right character spacing. '''
 
-        if not 0 <= spacing <= 255:
+        if not isinstance(spacing, int) or not 0 <= spacing <= 255:
             raise ThermalPrinterValueError(
                 'spacing should be between 0 and 255 (default: 0).')
 
@@ -348,7 +348,7 @@ class ThermalPrinter(Serial):
     def feed(self, number=1):
         ''' Feeds by the specified number of lines. '''
 
-        if not 0 <= number <= 255:
+        if not isinstance(number, int) or not 0 <= number <= 255:
             raise ThermalPrinterValueError(
                 'number should be between 0 and 255 (default: 1).')
 
@@ -434,12 +434,12 @@ class ThermalPrinter(Serial):
     def justify(self, value='L'):
         ''' Set text justification. '''
 
-        value = value.upper()
-        if value not in 'LCR':
+        if not isinstance(value, str) or value not in 'LCR':
             err = 'value should be one of L (left, default), C (center)'
             err += '  or R (right).'
             raise ThermalPrinterValueError(err)
 
+        value = value.upper()
         if value != self._justify:
             self._justify = value
             if value == 'C':
@@ -453,7 +453,7 @@ class ThermalPrinter(Serial):
     def left_margin(self, margin=0):
         ''' Set the left margin. '''
 
-        if not 0 <= margin <= 47:
+        if not isinstance(margin, int) or not 0 <= margin <= 47:
             raise ThermalPrinterValueError(
                 'margin should be between 0 and 47 (default: 0).')
 
@@ -464,7 +464,7 @@ class ThermalPrinter(Serial):
     def line_spacing(self, spacing=30):
         ''' Set line spacing. '''
 
-        if not 0 <= spacing <= 255:
+        if not isinstance(spacing, int) or not 0 <= spacing <= 255:
             raise ThermalPrinterValueError(
                 'spacing should be between 0 and 255 (default: 30).')
 
@@ -563,12 +563,12 @@ class ThermalPrinter(Serial):
     def size(self, value='S'):
         ''' Set text size. '''
 
-        value = value.upper()
-        if value not in 'SML':
+        if not isinstance(value, str) or value not in 'SML':
             err = 'value should be one of S (small, default), M (medium)'
             err += '  or L (large).'
             raise ThermalPrinterValueError(err)
 
+        value = value.upper()
         if value != self._size:
             self._size = value
             if value == 'L':    # Large: double width and height
@@ -584,10 +584,16 @@ class ThermalPrinter(Serial):
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
 
-        if not self.is_sleeping and seconds > 0:
-            self.is_sleeping = True
-            sleep(seconds)
-            self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
+        if self.is_sleeping:
+            return
+
+        if not isinstance(seconds, int) or seconds < 1:
+            raise ThermalPrinterValueError(
+                'seconds should be higher than 0 (default: 1).')
+
+        self.is_sleeping = True
+        sleep(seconds)
+        self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
     def status(self):
         ''' Check the printer status. If RX pin is not connected, all values
@@ -639,7 +645,7 @@ class ThermalPrinter(Serial):
             2: turns on underline mode (2 dots thick)
         '''
 
-        if not 0 <= weight <= 2:
+        if not isinstance(weight, int) or not 0 <= weight <= 2:
             raise ThermalPrinterValueError(
                 'weight should be between 0 and 2 (default: 0).')
 

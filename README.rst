@@ -7,22 +7,20 @@ This is a clean follow of the technical manual with few helpers. An example is b
 
 .. code:: python
 
+    from PIL import Image
     from ThermalPrinter import *
 
-    with ThermalPrinter() as printer:
-        try:
-            from PIL import Image
-            printer.feed()
-            printer.image(Image.open('gnu.png'))
-            printer.feed()
-        except ImportError:
-            print('Pillow module not installed, skip picture printing.')
+    with ThermalPrinter(port='/dev/ttyAMA0') as printer:
+        # Picture
+        printer.image(Image.open('gnu.png'))
 
+        # Bar codes
         printer.barcode_height(80)
         printer.barcode_position(BarCodePosition.BELOW)
         printer.barcode_width(3)
         printer.barcode('012345678901', BarCode.EAN13)
 
+        # Styles
         printer.println('Bold', bold=True)
         printer.println('Double height', double_height=True)
         printer.println('Double width', double_width=True)
@@ -31,10 +29,14 @@ This is a clean follow of the technical manual with few helpers. An example is b
         printer.println('Strike', strike=True)
         printer.println('Underline', underline=1)
         printer.println('Upside down', upside_down=True)
+
+        # Chinese (almost all alphabets exist)
         printer.println('现代汉语通用字表', chinese=True, chinese_format=Chinese.UTF_8)
 
+        # Accents
         printer.println('Voilà !', justify='C', strike=True, underline=2, codepage=CodePage.ISO_8859_1)
 
+        # Line feeds
         printer.feed(2)
 
 
@@ -49,11 +51,17 @@ Installation
 Testing
 =======
 
-.. code:: python
+Checking code with `pytest`:
 
-    from thermalprinter.tests import tests
+.. code:: shell
 
-    tests()
+    $ py.test-3 tests
+
+Testing printing functions:
+
+.. code:: shell
+
+    $ python3 tests.py
 
 
 Instance the class
@@ -65,7 +73,7 @@ So the module can be used as simply as:
 
     from thermalprinter import ThermalPrinter
 
-    with ThermalPrinter as printer:
+    with ThermalPrinter() as printer:
         # ...
 
 
