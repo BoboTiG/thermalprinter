@@ -24,3 +24,10 @@ def test_changing_good_value(printer):
 def test_changing_bad_value(printer):
         with pytest.raises(ThermalPrinterConstantError):
             printer.codepage('42')
+
+
+def test_changing_but_chinese(printer):
+        printer.codepage()  # Restore default
+        printer.chinese(True)
+        printer.codepage(CodePage.ISO_8859_1)  # Should be ignored
+        assert printer._codepage is CodePage.CP437

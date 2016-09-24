@@ -316,7 +316,7 @@ class ThermalPrinter(Serial):
             raise ThermalPrinterConstantError(
                 'Valid codepages are: {}'.format(codes))
 
-        if codepage is not self._codepage:
+        if not self._chinese and codepage is not self._codepage:
             self._codepage = codepage
             value, _ = codepage.value
             self._write_bytes(Command.ESC, 116, value)
