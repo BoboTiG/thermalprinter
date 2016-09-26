@@ -532,26 +532,6 @@ class ThermalPrinter(Serial):
             except TypeError:
                 pass
 
-    def print_char(self, char='', number=1, codepage=None):
-        ''' Print one character one or several times in a given code page. '''
-
-        if not codepage and not self._codepage:
-            raise ThermalPrinterConstantError('Code page needed.')
-
-        # Save the current code page
-        current = self._codepage
-        if current is not codepage:
-            self.codepage(codepage)
-
-        for _ in range(number):
-            self.write(char)
-
-        sleep(number * self._dot_feed_time * self._char_height)
-
-        # Restore the original code page
-        if current is not codepage:
-            self.codepage(current)
-
     def rotate(self, state=False):
         ''' Turn on/off clockwise rotation of 90°. '''
 

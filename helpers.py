@@ -9,15 +9,6 @@ from .constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage, \
 from .thermalprinter import ThermalPrinter
 
 
-def test_char(char):
-    ''' Test one character with all possible code page. '''
-
-    with ThermalPrinter() as printer:
-        for codepage in list(CodePage):
-            printer.out(
-                '{}: {}'.format(codepage.name, char), codepage=codepage)
-
-
 def ls(*constants):
     ''' Print constants values.
 
@@ -46,3 +37,12 @@ def ls(*constants):
             print()
         except AttributeError:
             print('Unknown constant "{}".'.format(constant))
+
+
+def test_char(char):
+    ''' Test one character with all possible code page. '''
+
+    with ThermalPrinter() as printer:
+        for codepage in list(CodePage):
+            printer.out(
+                '{}: {}'.format(codepage.name, char), codepage=codepage)
