@@ -10,7 +10,7 @@ from time import sleep
 from serial import Serial
 
 from .constants import BarCode, BarCodePosition, CharSet, Chinese, Command, \
-    CodePage
+    CodePage, CodePageConverted
 from .exceptions import ThermalPrinterConstantError, ThermalPrinterValueError
 
 
@@ -676,7 +676,13 @@ class ThermalPrinter(Serial):
         ''' Convert data before sending to the printer. '''
 
         encoding = 'utf-8' if self._chinese else self._codepage.name
-        return bytes(data, encoding, errors='replace')
+        try:
+            return bytes(data, encoding, errors='replace')
+        except LookupError:
+            # Fall back to the most appropriate code page
+            # >>> ls(CodePageConverted)
+            encoding = CodePageConverted[self._codepage.name].value
+            return bytes(data, encoding, errors='replace')
 
     def _set_print_mode(self, mask):
         ''' Set the print mode. '''

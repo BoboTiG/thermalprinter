@@ -93,8 +93,8 @@ class CodePage(Enum):
     CP755 = (9, 'Eastern Europe, Latvia 2')
     IRAN = (10, 'Iran, Persia')
     CP862 = (15, 'Hebrew')
-    WCP1252 = (16, 'Latin 1')
-    WCP1253 = (17, 'Greece')
+    CP1252 = (16, 'Latin 1 [WCP1252]')
+    CP1253 = (17, 'Greece [WCP1253]')
     CP852 = (18, 'Latina 2')
     CP858 = (19, 'A variety of language Latin 1 + Europe')
     IRAN2 = (20, 'Persian')
@@ -102,17 +102,17 @@ class CodePage(Enum):
     CP864 = (22, 'Arabic')
     ISO_8859_1 = (23, 'Western Europe')
     CP737 = (24, 'Greece')
-    WCP1257 = (25, 'The Baltic Sea')
+    CP1257 = (25, 'The Baltic Sea')
     THAI = (26, 'Thai Wen')
     CP720 = (27, 'Arabic')
     CP855 = (28, '')
     CP857 = (29, 'Turkish')
-    WCP1250 = (30, 'Central Europe')
+    CP1250 = (30, 'Central Europe [WCP1250]')
     CP775 = (31, '')
-    WCP1254 = (32, 'Turkish')
-    WCP1255 = (33, 'Hebrew')
-    WCP1256 = (34, 'Arabic')
-    WCP1258 = (35, 'Vietnamese')
+    CP1254 = (32, 'Turkish [WCP1254]')
+    CP1255 = (33, 'Hebrew [WCP1255]')
+    CP1256 = (34, 'Arabic [WCP1256]')
+    CP1258 = (35, 'Vietnamese [WCP1258]')
     ISO_8859_2 = (36, 'Latin 2')
     ISO_8859_3 = (37, 'Latin 3')
     ISO_8859_4 = (38, 'Baltic languages')
@@ -129,6 +129,22 @@ class CodePage(Enum):
     def __str__(self):
         return '{:<11} value: {:>2}, desc: {}'.format(
             self.name, self.value[0], self.value[1])
+
+
+class CodePageConverted(Enum):
+    ''' Some code pages are not available in Python, use these instead: '''
+
+    # (unsupported encoding, best replacement)
+    MIK = 'iso8859-5'
+    CP755 = 'utf-8'
+    IRAN = 'Utf-8'
+    IRAN2 = 'uTf-8'
+    LATVIA = 'utF-8'
+    THAI = 'iso8859-11'
+    THAI2 = 'utf_8'
+
+    def __str__(self):
+        return '{:<11} fallback: {:>2}'.format(self.name, self.value)
 
 
 class Command(Enum):

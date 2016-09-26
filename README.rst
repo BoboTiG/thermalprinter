@@ -152,8 +152,8 @@ Constants
     CP755       value:  9, desc: Eastern Europe, Latvia 2
     IRAN        value: 10, desc: Iran, Persia
     CP862       value: 15, desc: Hebrew
-    WCP1252     value: 16, desc: Latin 1
-    WCP1253     value: 17, desc: Greece
+    CP1252      value: 16, desc: Latin 1 [WCP1252]
+    CP1253      value: 17, desc: Greece [WCP1253]
     CP852       value: 18, desc: Latina 2
     CP858       value: 19, desc: A variety of language Latin 1 + Europe
     IRAN2       value: 20, desc: Persian
@@ -161,17 +161,17 @@ Constants
     CP864       value: 22, desc: Arabic
     ISO_8859_1  value: 23, desc: Western Europe
     CP737       value: 24, desc: Greece
-    WCP1257     value: 25, desc: The Baltic Sea
+    CP1257      value: 25, desc: The Baltic Sea
     THAI        value: 26, desc: Thai Wen
     CP720       value: 27, desc: Arabic
     CP855       value: 28, desc:
     CP857       value: 29, desc: Turkish
-    WCP1250     value: 30, desc: Central Europe
+    CP1250      value: 30, desc: Central Europe [WCP1250]
     CP775       value: 31, desc:
-    WCP1254     value: 32, desc: Turkish
-    WCP1255     value: 33, desc: Hebrew
-    WCP1256     value: 34, desc: Arabic
-    WCP1258     value: 35, desc: Vietnamese
+    CP1254      value: 32, desc: Turkish [WCP1254]
+    CP1255      value: 33, desc: Hebrew [WCP1255]
+    CP1256      value: 34, desc: Arabic [WCP1256]
+    CP1258      value: 35, desc: Vietnamese [WCP1258]
     ISO_8859_2  value: 36, desc: Latin 2
     ISO_8859_3  value: 37, desc: Latin 3
     ISO_8859_4  value: 38, desc: Baltic languages
@@ -184,6 +184,16 @@ Constants
     THAI2       value: 45, desc: Thai Wen 2
     CP856       value: 46, desc:
     CP874       value: 47, desc:
+
+    ---CONST CodePageConverted
+    Some code pages are not available in Python, use these instead:
+    MIK         fallback: iso8859-5
+    CP755       fallback: utf-8
+    IRAN        fallback: utf-8
+    IRAN2       fallback: utf-8
+    LATVIA      fallback: utf-8
+    THAI        fallback: iso8859-11
+    THAI2       fallback: utf-8
 
     >>> from thermalprinter.constants import Chinese
     >>> ls(Chinese)

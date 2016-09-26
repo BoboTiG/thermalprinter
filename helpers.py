@@ -4,7 +4,8 @@
     Source: https://github.com/BoboTiG/thermalprinter
 '''
 
-from .constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage
+from .constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage, \
+    CodePageConverted
 from .thermalprinter import ThermalPrinter
 
 
@@ -33,7 +34,8 @@ def ls(*constants):
     # pylint: disable=invalid-name
 
     if not constants:
-        constants = [BarCode, BarCodePosition, CharSet, Chinese, CodePage]
+        constants = [BarCode, BarCodePosition, CharSet, Chinese, CodePage,
+                     CodePageConverted]
 
     for constant in constants:
         try:
