@@ -77,6 +77,18 @@ So the module can be used as simply as:
         # ...
 
 
+Arguments
+=========
+
+All args are optional:
+
+- `port`: serial port to use, know as device name (default: '/dev/ttyAMA0);
+- `baudrate`: baud rate such as 9600 or 115200 (default: 19200);
+- `heat_time`: for the printer, the most heated point (default: 80);
+- `heat_interval`: for the printer, heat time (default: 12);
+- `heated_point`: for the printer, heat time interval (default: 3).
+
+
 Errors
 ======
 
