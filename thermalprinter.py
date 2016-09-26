@@ -30,28 +30,31 @@ class ThermalPrinter(Serial):
         ''' Print init. '''
 
         try:
-            heat_time = int(kwargs['heat_time'])
-        except (KeyError, ValueError):
-            heat_time = 80
-        if not 0 <= heat_time <= 255:
+            self.heat_time = int(kwargs['heat_time'])
+            assert 0 <= self.heat_time <= 255
+        except KeyError:
+            self.heat_time = 80
+        except (AssertionError, ValueError):
             raise ThermalPrinterValueError(
                 'heat_time should be between 0 and 255 (default: 80).')
 
         try:
-            heat_interval = int(kwargs['heat_interval'])
-        except (KeyError, ValueError):
-            heat_interval = 12
-        if not 0 <= heat_interval <= 255:
+            self.heat_interval = int(kwargs['heat_interval'])
+            assert 0 <= self.heat_interval <= 255
+        except KeyError:
+            self.heat_interval = 12
+        except (AssertionError, ValueError):
             raise ThermalPrinterValueError(
                 'heat_interval should be between 0 and 255 (default: 12).')
 
         try:
-            heated_point = int(kwargs['heated_point'])
-        except (KeyError, ValueError):
-            heated_point = 3
-        if not 0 <= heated_point <= 255:
+            self.most_heated_point = int(kwargs['most_heated_point'])
+            assert 0 <= self.most_heated_point <= 255
+        except KeyError:
+            self.most_heated_point = 3
+        except (AssertionError, ValueError):
             raise ThermalPrinterValueError(
-                'heated_point should be between 0 and 255 (default: 3).')
+                'most_heated_point should be between 0 and 255 (default: 3).')
 
         # Few important values
         self._baudrate = baudrate
@@ -65,37 +68,8 @@ class ThermalPrinter(Serial):
         register(self._on_exit)
 
         # Printer settings
-        self._write_bytes(
-            Command.ESC, 55, heated_point, heat_time, heat_interval)
-
-        # Default values
-        self.is_online = True
-        self.is_sleeping = False
-        self._barcode_height = 80
-        self._barcode_left_margin = 0
-        self._barcode_position = BarCodePosition.HIDDEN
-        self._barcode_width = 2
-        self._bold = False
-        self._charset = CharSet.USA
-        self._char_spacing = 0
-        self._char_height = 24
-        self._chinese = False
-        self._chinese_format = Chinese.GBK
-        self._codepage = CodePage.CP437
-        self._column = 0
-        self._double_height = False
-        self._double_width = False
-        self._inverse = False
-        self._justify = 'L'
-        self._left_margin = 0
-        self._line_spacing = 30
-        self._prev_byte = ''
-        self._print_mode = 0
-        self._rotate = False
-        self._size = 'S'
-        self._strike = False
-        self._underline = 0
-        self._upside_down = False
+        self._write_bytes(Command.ESC, 55, self.most_heated_point,
+                          self.heat_time, self.heat_interval)
 
         # Factory settings
         self.reset()
@@ -119,7 +93,9 @@ class ThermalPrinter(Serial):
             >>> super(type(printer), printer).__repr__()
         '''
 
-        return '{name}<id=0x{id:x}, is_online={p.is_online}, ' \
+        return '{name}<id=0x{id:x}, heat_interval={p.heat_interval}, ' \
+            'most_heated_point={p.most_heated_point}, ' \
+            'heat_time={p.heat_time}, is_online={p.is_online}, ' \
             'is_sleeping={p.is_sleeping}, max_column={p.max_column!r}>(' \
             'barcode_height={p._barcode_height!r}, ' \
             'barcode_left_margin={p._barcode_left_margin!r}, ' \
@@ -610,6 +586,35 @@ class ThermalPrinter(Serial):
         ''' Reset the printer to factory defaults. '''
 
         self._write_bytes(Command.ESC, 64)
+
+        # Default values
+        self.is_online = True
+        self.is_sleeping = False
+        self._barcode_height = 80
+        self._barcode_left_margin = 0
+        self._barcode_position = BarCodePosition.HIDDEN
+        self._barcode_width = 2
+        self._bold = False
+        self._charset = CharSet.USA
+        self._char_spacing = 0
+        self._char_height = 24
+        self._chinese = False
+        self._chinese_format = Chinese.GBK
+        self._codepage = CodePage.CP437
+        self._column = 0
+        self._double_height = False
+        self._double_width = False
+        self._inverse = False
+        self._justify = 'L'
+        self._left_margin = 0
+        self._line_spacing = 30
+        self._prev_byte = ''
+        self._print_mode = 0
+        self._rotate = False
+        self._size = 'S'
+        self._strike = False
+        self._underline = 0
+        self._upside_down = False
 
     def test(self):
         ''' Print settings as test. '''

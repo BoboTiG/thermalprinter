@@ -59,9 +59,17 @@ Checking code with `pytest`:
 
 Testing printing functions:
 
-.. code:: shell
+.. code:: python
 
-    $ python3 tests.py
+    # Testing all kind of avilable stuff:
+    >>> from thermalprinter.tests import tests
+    >>> tests()
+    >>> tests(heat_time=120)
+
+    # Print printer test page
+    from thermalprinter import ThermalPrinter
+    with ThermalPrinter() as printer:
+        printer.test()
 
 
 Instance the class
@@ -84,9 +92,9 @@ All args are optional:
 
 - `port`: serial port to use, know as device name (default: '/dev/ttyAMA0);
 - `baudrate`: baud rate such as 9600 or 115200 (default: 19200);
-- `heat_time`: for the printer, the most heated point (default: 80);
-- `heat_interval`: for the printer, heat time (default: 12);
-- `heated_point`: for the printer, heat time interval (default: 3).
+- `heat_time`: for the printer, heat time (default: 80);
+- `heat_interval`: for the printer, heat time interval (default: 12);
+- `most_heated_point`: for the printer, the most heated point (default: 3).
 
 
 Errors
