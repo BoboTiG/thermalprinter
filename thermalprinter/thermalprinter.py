@@ -121,7 +121,7 @@ class ThermalPrinter(Serial):
             'upside_down={p._upside_down}' \
             ')'.format(name=self.__class__.__name__, id=id(self), p=self)
 
-    def barcode(self, data, bc_type):
+    def barcode(self, data, barcode_type):
         ''' Bar code printing. '''
 
         # pylint: disable=bad-builtin
@@ -146,19 +146,19 @@ class ThermalPrinter(Serial):
 
         ranges_ = [_range1, _range2, _range3, _range4]
 
-        if not isinstance(bc_type, BarCode):
+        if not isinstance(barcode_type, BarCode):
             err = ', '.join([barcode.name for barcode in BarCode])
             raise ThermalPrinterConstantError('Valid bar codes are: ' + err)
 
-        code, (min_, max_), range_type = bc_type.value
+        code, (min_, max_), range_type = barcode_type.value
         data_len = len(data)
         range_ = ranges_[range_type]()
 
         if not min_ <= data_len <= max_:
             err = '[{}] Should be {} <= len(data) <= {} (current: {}).'.format(
-                bc_type.name, min_, max_, data_len)
+                barcode_type.name, min_, max_, data_len)
             raise ThermalPrinterValueError(err)
-        elif bc_type is BarCode.ITF and data_len % 2 != 0:
+        elif barcode_type is BarCode.ITF and data_len % 2 != 0:
             raise ThermalPrinterValueError(
                 '[BarCode.ITF] len(data) must be even.')
 
@@ -168,7 +168,7 @@ class ThermalPrinter(Serial):
             else:
                 valid = map(hex, range_)
             err = '[{}] Valid characters: {}.'.format(
-                bc_type.name, ', '.join(valid))
+                barcode_type.name, ', '.join(valid))
             raise ThermalPrinterValueError(err)
 
         self._write_bytes(Command.GS, 107, code, data_len)
@@ -355,6 +355,9 @@ class ThermalPrinter(Serial):
             passing the result to this function.
 
             Max width: 384px.
+
+            >>> from PIL import Image
+            >>> printer.image(Image.open('picture.png'))
         '''
 
         # pylint: disable=R0914
@@ -467,17 +470,17 @@ class ThermalPrinter(Serial):
             self._write_bytes(Command.ESC, 61, 1)
 
     def out(self, line, line_feed=True, **kwargs):
-        ''' Send a line to the printer.
+        ''' Send line(s) to the printer.
 
             You can pass formatting instructions directly via an argument:
-                println(text, justify='C', inverse=True)
+            >>> out(text, justify='C', inverse=True)
 
             This will prevent you to do:
-               justify('C')
-               inverse(True)
-               println(text)
-               inverse(False)
-               justify('L')
+            >>> justify('C')
+            >>> inverse(True)
+            >>> out(text)
+            >>> inverse(False)
+            >>> justify('L')
         '''
 
         # Apply style

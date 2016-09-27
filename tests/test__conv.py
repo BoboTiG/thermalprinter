@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from ..constants import CodePage
+from thermalprinter.constants import CodePage
 
 
 def test_charset_CP437(printer):

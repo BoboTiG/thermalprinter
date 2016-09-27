@@ -3,8 +3,8 @@
 
 import pytest
 
-from ..constants import Chinese
-from ..exceptions import ThermalPrinterConstantError
+from thermalprinter.constants import Chinese
+from thermalprinter.exceptions import ThermalPrinterConstantError
 
 
 def test_default_value(printer):

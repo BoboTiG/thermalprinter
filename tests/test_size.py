@@ -3,7 +3,7 @@
 
 import pytest
 
-from ..exceptions import ThermalPrinterValueError
+from thermalprinter.exceptions import ThermalPrinterValueError
 
 
 def test_default_value(printer):

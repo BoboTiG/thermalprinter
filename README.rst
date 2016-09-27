@@ -1,7 +1,7 @@
 DP-EH600 thermal printer
 ========================
 
-Python module to manage the DP-EH600 thermal printer. **Python 3+ only** and PEP8 compliant.
+Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit). **Python 3+ only** and PEP8 compliant.
 
 This is a clean follow of the technical manual with few helpers. An example is better than thousand words:
 
@@ -45,26 +45,20 @@ Installation
 
 .. code:: shell
 
-    $ git clone https://github.com/BoboTiG/thermalprinter.git
+    $ pip3 install thermalprinter
 
 
 Testing
 =======
-
-Checking code with `pytest`:
-
-.. code:: shell
-
-    $ py.test-3 tests
 
 Testing printing functions:
 
 .. code:: python
 
     # Testing all kind of avilable stuff:
-    >>> from thermalprinter.tests import tests
-    >>> tests()
-    >>> tests(heat_time=120)
+    from thermalprinter.tests import tests
+    tests()
+    tests(port='/dev/ttyS0', heat_time=120)
 
     # Print printer test page
     from thermalprinter import ThermalPrinter
@@ -233,10 +227,10 @@ API
 
 .. code:: python
 
-    >>> barcode(data, bc_type)
+    >>> barcode(data, barecode_type)
     ''' Bar code printing.
-        `bc_type` is a value from `BarCode`. All checks are done to ensure
-        the data validity.
+        `barecode_type` is a value from `BarCode`. All checks are done to
+        ensure the data validity.
     '''
 
 **barcode_height**

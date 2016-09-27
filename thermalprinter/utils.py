@@ -4,29 +4,30 @@
     Source: https://github.com/BoboTiG/thermalprinter
 '''
 
-from .constants import BarCode, BarCodePosition, Chinese, CodePage
-from .exceptions import ThermalPrinterError
-from .thermalprinter import ThermalPrinter
+from thermalprinter.constants import BarCode, BarCodePosition, Chinese, \
+    CodePage
+from thermalprinter.exceptions import ThermalPrinterError
+from thermalprinter import ThermalPrinter
 
 
-def tests(heat_time=80):
+def testing(port='/dev/ttyAMA0', heat_time=80):
     ''' Print all possibilities.
         Optional argument: heat_time
 
-        >>> from thermalprinter.tests import tests
-        >>> tests()
-        >>> tests(heat_time=120)
+        >>> from thermalprinter.utils import testing
+        >>> testing()
+        >>> testing(port='/dev/ttyS0', heat_time=120)
     '''
 
     try:
-        with ThermalPrinter(heat_time=heat_time) as printer:
+        with ThermalPrinter(port=port, heat_time=heat_time) as printer:
             try:
                 from PIL import Image
                 from os.path import abspath, dirname, realpath
 
                 cwd = dirname(realpath(abspath(__file__)))
                 printer.feed()
-                printer.image(Image.open('{}/gnu.png'.format(cwd)))
+                printer.image(Image.open('{}/../gnu.png'.format(cwd)))
                 printer.feed()
             except ImportError:
                 print('Pillow module not installed, skip picture printing.')
@@ -52,8 +53,5 @@ def tests(heat_time=80):
                         underline=2, codepage=CodePage.ISO_8859_1)
 
             printer.feed(2)
-            return 0
     except ThermalPrinterError as ex:
         print(ex)
-
-    return 1

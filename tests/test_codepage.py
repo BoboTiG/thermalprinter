@@ -3,8 +3,8 @@
 
 import pytest
 
-from ..constants import CodePage
-from ..exceptions import ThermalPrinterConstantError
+from thermalprinter.constants import CodePage
+from thermalprinter.exceptions import ThermalPrinterConstantError
 
 
 def test_default_value(printer):

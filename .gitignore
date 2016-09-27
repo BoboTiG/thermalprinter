@@ -1,5 +1,8 @@
 __pycache__/
 cache/
+.eggs/
 tests/.cache/
+*.egg-info/
 
 *.pyc
+MANIFEST.in

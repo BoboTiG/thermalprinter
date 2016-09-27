@@ -5,12 +5,7 @@ from types import FunctionType
 
 import pytest
 
-from ..thermalprinter import ThermalPrinter
-
-
-class ThermalPrinterFake(ThermalPrinter):
-    def __init__(self, port):
-        super().__init__(port=port)
+from thermalprinter import ThermalPrinter
 
 
 def pytest_addoption(parser):
@@ -25,7 +20,7 @@ def port(request):
 
 @pytest.fixture
 def printer(port):
-    return ThermalPrinterFake(port)
+    return ThermalPrinter(port=port)
 
 
 @pytest.fixture(scope='session')

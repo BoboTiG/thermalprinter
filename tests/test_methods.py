@@ -4,8 +4,9 @@
 from inspect import getargspec, ArgSpec
 from traceback import extract_stack
 
-from ..constants import BarCodePosition, CharSet, Chinese, CodePage
-from ..thermalprinter import ThermalPrinter
+from thermalprinter.constants import BarCodePosition, CharSet, Chinese, \
+    CodePage
+from thermalprinter import ThermalPrinter
 
 
 def test_signature___enter__(methods):
@@ -68,7 +69,7 @@ def test_signature__write_print_mode(methods):
 
 def test_signature_barcode(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    val = ArgSpec(args=['self', 'data', 'bc_type'], varargs=None,
+    val = ArgSpec(args=['self', 'data', 'barcode_type'], varargs=None,
                   keywords=None, defaults=None)
     assert getargspec(ThermalPrinter.barcode) == val
 
