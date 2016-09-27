@@ -15,7 +15,7 @@ def test_print_one_line(printer):
 def test_print_two_line(printer):
     printer.out('This is the line 1,')
     printer.out('and the seconds one.')
-    assert printer.lines == 2
+    assert printer.lines == 2 + 1
 
 
 def test_print_one_line_centered(printer):
