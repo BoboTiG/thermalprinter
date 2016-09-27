@@ -544,12 +544,13 @@ class ThermalPrinter(Serial):
         if self.is_sleeping:
             return
 
-        if not isinstance(seconds, int) or seconds < 1:
+        if not isinstance(seconds, int) or seconds < 0:
             raise ThermalPrinterValueError(
-                'seconds should be higher than 0 (default: 1).')
+                'seconds should be null or positive (default: 0).')
 
-        self.is_sleeping = True
-        sleep(seconds)
+        if seconds:
+            self.is_sleeping = True
+            sleep(seconds)
         self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
     def status(self):

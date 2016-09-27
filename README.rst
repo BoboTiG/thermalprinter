@@ -460,7 +460,7 @@ API
 
 .. code:: python
 
-    >>> sleep(seconds=1)
+    >>> sleep(seconds=0)
     ''' Put the printer into a low-energy state. '''
 
 **status** => dict
