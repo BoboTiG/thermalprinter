@@ -44,5 +44,5 @@ def test_char(char):
 
     with ThermalPrinter() as printer:
         for codepage in list(CodePage):
-            printer.out(
-                '{}: {}'.format(codepage.name, char), codepage=codepage)
+            printer.out('{}: {}'.format(codepage.name, char),
+                        codepage=codepage)

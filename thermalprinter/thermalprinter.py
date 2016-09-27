@@ -192,7 +192,7 @@ class ThermalPrinter(Serial):
             self._write_bytes(Command.GS, 104, height)
 
     def barcode_left_margin(self, margin=0):
-        ''' Set the bar code printed on the left spacing. '''
+        ''' Set the left margin of the bar code. '''
 
         if not isinstance(margin, int) or not 0 <= margin <= 255:
             raise ThermalPrinterValueError(
@@ -203,7 +203,7 @@ class ThermalPrinter(Serial):
             self._write_bytes(Command.GS, 120, margin)
 
     def barcode_position(self, position=BarCodePosition.HIDDEN):
-        ''' Set bar code position. '''
+        ''' Set the bar code position. '''
 
         if not isinstance(position, BarCodePosition):
             err = ', '.join([pos.name for pos in BarCodePosition])
@@ -215,7 +215,7 @@ class ThermalPrinter(Serial):
             self._write_bytes(Command.GS, 72, position.value)
 
     def barcode_width(self, width=2):
-        ''' Set bar code width. '''
+        ''' Set the bar code width. '''
 
         if not isinstance(width, int) or not 2 <= width <= 6:
             raise ThermalPrinterValueError(
@@ -472,7 +472,7 @@ class ThermalPrinter(Serial):
     def out(self, line, line_feed=True, **kwargs):
         ''' Send one line to the printer.
 
-            You can pass formatting instructions directly via an argument:
+            You can pass formatting instructions directly via arguments:
             >>> out(text, justify='C', inverse=True)
 
             This will prevent you to do:
@@ -508,6 +508,41 @@ class ThermalPrinter(Serial):
                 getattr(self, style)()
             except TypeError:
                 pass
+
+    def reset(self):
+        ''' Reset the printer to factory defaults. '''
+
+        self._write_bytes(Command.ESC, 64)
+
+        # Default values
+        self.max_column = 32
+        self.is_online = True
+        self.is_sleeping = False
+        self._barcode_height = 80
+        self._barcode_left_margin = 0
+        self._barcode_position = BarCodePosition.HIDDEN
+        self._barcode_width = 2
+        self._bold = False
+        self._charset = CharSet.USA
+        self._char_spacing = 0
+        self._char_height = 24
+        self._chinese = False
+        self._chinese_format = Chinese.GBK
+        self._codepage = CodePage.CP437
+        self._column = 0
+        self._double_height = False
+        self._double_width = False
+        self._inverse = False
+        self._justify = 'L'
+        self._left_margin = 0
+        self._line_spacing = 30
+        self._prev_byte = ''
+        self._print_mode = 0
+        self._rotate = False
+        self._size = 'S'
+        self._strike = False
+        self._underline = 0
+        self._upside_down = False
 
     def rotate(self, state=False):
         ''' Turn on/off clockwise rotation of 90°. '''
@@ -550,7 +585,6 @@ class ThermalPrinter(Serial):
 
         if seconds:
             self.is_sleeping = True
-            sleep(seconds)
         self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
     def status(self):
@@ -584,43 +618,8 @@ class ThermalPrinter(Serial):
             self._strike = state
             self._write_bytes(Command.ESC, 71, int(state))
 
-    def reset(self):
-        ''' Reset the printer to factory defaults. '''
-
-        self._write_bytes(Command.ESC, 64)
-
-        # Default values
-        self.max_column = 32
-        self.is_online = True
-        self.is_sleeping = False
-        self._barcode_height = 80
-        self._barcode_left_margin = 0
-        self._barcode_position = BarCodePosition.HIDDEN
-        self._barcode_width = 2
-        self._bold = False
-        self._charset = CharSet.USA
-        self._char_spacing = 0
-        self._char_height = 24
-        self._chinese = False
-        self._chinese_format = Chinese.GBK
-        self._codepage = CodePage.CP437
-        self._column = 0
-        self._double_height = False
-        self._double_width = False
-        self._inverse = False
-        self._justify = 'L'
-        self._left_margin = 0
-        self._line_spacing = 30
-        self._prev_byte = ''
-        self._print_mode = 0
-        self._rotate = False
-        self._size = 'S'
-        self._strike = False
-        self._underline = 0
-        self._upside_down = False
-
     def test(self):
-        ''' Print settings as test. '''
+        ''' Print the test page (contains printer's settings). '''
 
         self._write_bytes(Command.DC2, 84)
         sleep(self._dot_print_time * 24 * 26 +
