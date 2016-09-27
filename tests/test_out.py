@@ -51,3 +51,19 @@ def test_print_one_line_float(printer):
 
 def test_print_one_line_complex(printer):
     printer.out(42j)
+
+
+def test_print_one_line_str(printer):
+    printer.out('42')
+
+
+def test_print_one_line_bytes(printer):
+    printer.out(b'42')
+
+
+def test_print_one_line_bytearray(printer):
+    printer.out(bytearray('42', 'utf-8'))
+
+
+def test_print_one_line_memoryview(printer):
+    printer.out(memoryview(b'42'))

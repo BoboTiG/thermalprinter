@@ -470,7 +470,7 @@ class ThermalPrinter(Serial):
             self._write_bytes(Command.ESC, 61, 1)
 
     def out(self, line, line_feed=True, **kwargs):
-        ''' Send line(s) to the printer.
+        ''' Send one line to the printer.
 
             You can pass formatting instructions directly via an argument:
             >>> out(text, justify='C', inverse=True)
@@ -491,8 +491,6 @@ class ThermalPrinter(Serial):
                 pass
 
         if line:
-            if isinstance(line, (bool, int, float, complex)):
-                line = str(line)
             self.write(self._conv(line))
             if line_feed:
                 self.write(b'\n')
@@ -662,6 +660,15 @@ class ThermalPrinter(Serial):
 
     def _conv(self, data):
         ''' Convert data before sending to the printer. '''
+
+        if isinstance(data, (bool, int, float, complex)):
+            data = str(data)
+        elif isinstance(data, bytes):
+            return data
+        elif isinstance(data, bytearray):
+            return bytes(data)
+        elif isinstance(data, memoryview):
+            return data.tobytes()
 
         encoding = 'utf-8' if self._chinese else self._codepage.name
         try:

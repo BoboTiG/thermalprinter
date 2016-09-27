@@ -4,6 +4,38 @@
 from thermalprinter.constants import CodePage
 
 
+def test_type_bool(printer):
+    isinstance(printer._conv(True), bytes)
+
+
+def test_type_int(printer):
+    isinstance(printer._conv(42), bytes)
+
+
+def test_type_float(printer):
+    isinstance(printer._conv(42.0), bytes)
+
+
+def test_type_complex(printer):
+    isinstance(printer._conv(42j), bytes)
+
+
+def test_type_str(printer):
+    isinstance(printer._conv('42'), bytes)
+
+
+def test_type_bytes(printer):
+    isinstance(printer._conv(b'42'), bytes)
+
+
+def test_type_bytearray(printer):
+    isinstance(printer._conv(bytearray('42', 'utf-8')), bytes)
+
+
+def test_type_memoryview(printer):
+    isinstance(printer._conv(memoryview(b'42')), bytes)
+
+
 def test_charset_CP437(printer):
     printer.codepage(CodePage.CP437)
     data = '42 现代汉语通用字表 aeiuoy é@`à'
