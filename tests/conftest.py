@@ -13,12 +13,12 @@ def pytest_addoption(parser):
     parser.addoption('--port', action='store', default='/dev/ttyS0', help=txt)
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def port(request):
     return request.config.getoption('--port')
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def printer(port):
     return ThermalPrinter(port=port)
 
