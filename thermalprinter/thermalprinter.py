@@ -590,6 +590,7 @@ class ThermalPrinter(Serial):
         self._write_bytes(Command.ESC, 64)
 
         # Default values
+        self.max_column = 32
         self.is_online = True
         self.is_sleeping = False
         self._barcode_height = 80
