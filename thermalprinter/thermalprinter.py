@@ -491,7 +491,7 @@ class ThermalPrinter(Serial):
                 pass
 
         if line:
-            if isinstance(line, (bool, int)):
+            if isinstance(line, (bool, int, float, complex)):
                 line = str(line)
             self.write(self._conv(line))
             if line_feed:
