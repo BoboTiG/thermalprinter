@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import pytest
-
 from thermalprinter.constants import Chinese
-from thermalprinter.exceptions import ThermalPrinterValueError
 
 
 def test_print_one_line(printer):

@@ -4,10 +4,49 @@
     Source: https://github.com/BoboTiG/thermalprinter
 '''
 
-from thermalprinter.constants import BarCode, BarCodePosition, Chinese, \
-    CodePage
-from thermalprinter.exceptions import ThermalPrinterError
-from thermalprinter import ThermalPrinter
+from .constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage, \
+    CodePageConverted
+from .exceptions import ThermalPrinterError
+from .thermalprinter import ThermalPrinter
+
+
+def ls(*constants):
+    ''' Print constants values.
+
+        >>> ls()
+        # all constants printer
+
+        >>> ls(Chinese)
+        # print Chinese constants
+
+        >>> ls(Chinese, CharSet)
+        # print Chinese and CharSet constants
+    '''
+
+    # pylint: disable=invalid-name
+
+    if not constants:
+        constants = [BarCode, BarCodePosition, CharSet, Chinese, CodePage,
+                     CodePageConverted]
+
+    for constant in constants:
+        try:
+            print('---CONST', constant.__name__)
+            print(constant.__doc__.strip())
+            for value in constant:
+                print(value)
+            print()
+        except AttributeError:
+            print('Unknown constant "{}".'.format(constant))
+
+
+def test_char(char):
+    ''' Test one character with all possible code page. '''
+
+    with ThermalPrinter() as printer:
+        for codepage in list(CodePage):
+            printer.out('{}: {}'.format(codepage.name, char),
+                        codepage=codepage)
 
 
 def testing(port='/dev/ttyAMA0', heat_time=80):
