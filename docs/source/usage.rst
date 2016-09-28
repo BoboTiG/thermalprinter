@@ -1,17 +1,8 @@
-DP-EH600 thermal printer
-========================
+=====
+Usage
+=====
 
-Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
-
-- **Python 3+ only** and PEP8 compliant;
-- this is a clean follow of the technical manual with few helpers;
-- and there is a `complete, and beautiful, documentation <https://thermalprinter.readthedocs.io>`_ :)
-
----
-
-An example is better than thousand words:
-
-.. code:: python
+An example is better than thousands words::
 
     from PIL import Image
     from ThermalPrinter import *
@@ -46,3 +37,20 @@ An example is better than thousand words:
 
         # Line feeds
         printer.feed(2)
+
+
+Instance the class
+==================
+
+Import the module::
+
+    from thermalprinter import ThermalPrinter
+
+So the module can be used as simply as::
+
+    with ThermalPrinter() as printer:
+        # ...
+
+Or::
+
+    printer = ThermalPrinter()
