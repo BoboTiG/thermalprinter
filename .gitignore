@@ -1,5 +1,6 @@
 __pycache__/
 cache/
+dist/
 docs/build/
 .eggs/
 tests/.cache/
