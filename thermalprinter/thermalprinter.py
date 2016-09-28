@@ -21,6 +21,7 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-public-methods
     # pylint: disable=too-many-locals
+    # pylint: disable=attribute-defined-outside-init
 
     # Counters
     __lines = 0
@@ -125,42 +126,52 @@ class ThermalPrinter(Serial):
 
     @property
     def is_online(self):
+        ''' The printer is online. '''
         return self.__is_online
 
     @is_online.setter
     def is_online(self, *args, **kwargs):
+        ''' Read-only attribute. '''
         pass
 
     @property
     def is_sleeping(self):
+        ''' The printer is sleeping. '''
         return self.__is_sleeping
 
     @is_sleeping.setter
     def is_sleeping(self, *args, **kwargs):
+        ''' Read-only attribute. '''
         pass
 
     @property
     def lines(self):
+        ''' Number of printed lines since the start of the script. '''
         return self.__lines
 
     @lines.setter
     def lines(self, *args, **kwargs):
+        ''' Read-only attribute. '''
         pass
 
     @property
     def feeds(self):
+        ''' Number of printed line feeds since the start of the script. '''
         return self.__feeds
 
     @feeds.setter
     def feeds(self, *args, **kwargs):
+        ''' Read-only attribute. '''
         pass
 
     @property
     def max_column(self):
+        ''' Number of printable characters on one line. '''
         return self.__max_column
 
     @max_column.setter
     def max_column(self, *args, **kwargs):
+        ''' Read-only attribute. '''
         pass
 
     # Module's methods

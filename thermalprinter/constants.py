@@ -7,6 +7,9 @@
 from enum import Enum
 
 
+# pylint: disable=unsubscriptable-object
+
+
 class BarCode(Enum):
     ''' Available bar code types: '''
 
