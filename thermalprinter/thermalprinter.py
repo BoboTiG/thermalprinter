@@ -180,12 +180,12 @@ class ThermalPrinter(Serial):
         self._prev_byte = '\n'
         self.lines += int(self._barcode_height / self._line_spacing) + 1
 
-    def barcode_height(self, height=80):
+    def barcode_height(self, height=162):
         ''' Set bar code height. '''
 
         if not isinstance(height, int) or not 1 <= height <= 255:
             raise ThermalPrinterValueError(
-                'height should be between 1 and 255 (default: 80).')
+                'height should be between 1 and 255 (default: 162).')
 
         if height != self._barcode_height:
             self._barcode_height = height
@@ -214,12 +214,12 @@ class ThermalPrinter(Serial):
             self._barcode_position = position
             self._write_bytes(Command.GS, 72, position.value)
 
-    def barcode_width(self, width=2):
+    def barcode_width(self, width=3):
         ''' Set the bar code width. '''
 
         if not isinstance(width, int) or not 2 <= width <= 6:
             raise ThermalPrinterValueError(
-                'width should be between 2 and 6 (default: 2).')
+                'width should be between 2 and 6 (default: 3).')
 
         if width != self._barcode_width:
             self._barcode_width = width
@@ -518,10 +518,10 @@ class ThermalPrinter(Serial):
         self.max_column = 32
         self.is_online = True
         self.is_sleeping = False
-        self._barcode_height = 80
+        self._barcode_height = 162
         self._barcode_left_margin = 0
         self._barcode_position = BarCodePosition.HIDDEN
-        self._barcode_width = 2
+        self._barcode_width = 3
         self._bold = False
         self._charset = CharSet.USA
         self._char_spacing = 0

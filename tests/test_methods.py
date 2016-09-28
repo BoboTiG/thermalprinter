@@ -77,7 +77,7 @@ def test_signature_barcode(methods):
 def test_signature_barcode_height(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
     val = ArgSpec(args=['self', 'height'], varargs=None, keywords=None,
-                  defaults=(80,))
+                  defaults=(162,))
     assert getargspec(ThermalPrinter.barcode_height) == val
 
 
@@ -98,7 +98,7 @@ def test_signature_barcode_position(methods):
 def test_signature_barcode_width(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
     val = ArgSpec(args=['self', 'width'], varargs=None, keywords=None,
-                  defaults=(2,))
+                  defaults=(3,))
     assert getargspec(ThermalPrinter.barcode_width) == val
 
 
