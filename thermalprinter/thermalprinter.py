@@ -346,10 +346,8 @@ class ThermalPrinter(Serial):
         state = bool(state)
         if state is not self._double_height:
             self._double_height = state
-            if state:
-                self._set_print_mode(16)
-            else:
-                self._unset_print_mode(16)
+            self._char_height = 48 if state else 24
+            self._write_bytes(Command.ESC, 33, 16 if state else 0)
 
     def double_width(self, state=False):
         ''' Select double width mode. '''
@@ -577,7 +575,6 @@ class ThermalPrinter(Serial):
         self._left_margin = 0
         self._line_spacing = 30
         self._prev_byte = ''
-        self._print_mode = 0
         self._rotate = False
         self._size = 'S'
         self._strike = False
@@ -720,22 +717,6 @@ class ThermalPrinter(Serial):
             encoding = CodePageConverted[self._codepage.name].value
             return bytes(data, encoding, errors='replace')
 
-    def _set_print_mode(self, mask):
-        ''' Set the print mode. '''
-
-        self._print_mode |= mask
-        self._write_print_mode()
-        self._char_height = 48 if self._print_mode & 16 else 24
-        self.max_column = 16 if self._print_mode & 32 else 32
-
-    def _unset_print_mode(self, mask):
-        ''' Unset the print mode.  '''
-
-        self._print_mode &= ~mask
-        self._write_print_mode()
-        self._char_height = 48 if self._print_mode & 16 else 24
-        self.max_column = 16 if self._print_mode & 32 else 32
-
     def _write_bytes(self, *args):
         ''' 'Raw' byte-writing. '''
 
@@ -744,8 +725,3 @@ class ThermalPrinter(Serial):
             if isinstance(data, Command):
                 data = data.value
             self.write(bytes([data]))
-
-    def _write_print_mode(self):
-        ''' Write the print mode. '''
-
-        self._write_bytes(Command.ESC, 33, self._print_mode)

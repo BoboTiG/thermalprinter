@@ -41,30 +41,10 @@ def test_signature__on_exit(methods):
     assert getargspec(ThermalPrinter._on_exit) == val
 
 
-def test_signature__set_print_mode(methods):
-    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    val = ArgSpec(args=['self', 'mask'], varargs=None, keywords=None,
-                  defaults=None)
-    assert getargspec(ThermalPrinter._set_print_mode) == val
-
-
-def test_signature__unset_print_mode(methods):
-    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    val = ArgSpec(args=['self', 'mask'], varargs=None, keywords=None,
-                  defaults=None)
-    assert getargspec(ThermalPrinter._unset_print_mode) == val
-
-
 def test_signature__write_bytes(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
     val = ArgSpec(args=['self'], varargs='args', keywords=None, defaults=None)
     assert getargspec(ThermalPrinter._write_bytes) == val
-
-
-def test_signature__write_print_mode(methods):
-    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    val = ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
-    assert getargspec(ThermalPrinter._write_print_mode) == val
 
 
 def test_signature_barcode(methods):
