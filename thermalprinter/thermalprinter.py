@@ -22,9 +22,9 @@ class ThermalPrinter(Serial):
     # pylint: disable=too-many-public-methods
     # pylint: disable=too-many-locals
 
-    lines = 0
-    feeds = 0
-    max_column = 32
+    __lines = 0
+    __feeds = 0
+    __max_column = 32
 
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200, **kwargs):
         ''' Print init. '''
@@ -121,6 +121,48 @@ class ThermalPrinter(Serial):
             'upside_down={p._upside_down}' \
             ')'.format(name=self.__class__.__name__, id=id(self), p=self)
 
+    # Protect some attributes to being modified outside this class.
+
+    @property
+    def is_online(self):
+        return self.__is_online
+
+    @is_online.setter
+    def is_online(self, *args, **kwargs):
+        pass
+
+    @property
+    def is_sleeping(self):
+        return self.__is_sleeping
+
+    @is_sleeping.setter
+    def is_sleeping(self, *args, **kwargs):
+        pass
+
+    @property
+    def lines(self):
+        return self.__lines
+
+    @lines.setter
+    def lines(self, *args, **kwargs):
+        pass
+
+    @property
+    def feeds(self):
+        return self.__feeds
+
+    @feeds.setter
+    def feeds(self, *args, **kwargs):
+        pass
+
+    @property
+    def max_column(self):
+        return self.__max_column
+
+    @max_column.setter
+    def max_column(self, *args, **kwargs):
+        pass
+
     def barcode(self, data, barcode_type):
         ''' Bar code printing. '''
 
@@ -178,7 +220,7 @@ class ThermalPrinter(Serial):
         sleep(
             (self._barcode_height + self._line_spacing) * self._dot_print_time)
         self._prev_byte = '\n'
-        self.lines += int(self._barcode_height / self._line_spacing) + 1
+        self.__lines += int(self._barcode_height / self._line_spacing) + 1
 
     def barcode_height(self, height=162):
         ''' Set bar code height. '''
@@ -315,10 +357,7 @@ class ThermalPrinter(Serial):
         state = bool(state)
         if state is not self._double_width:
             self._double_width = state
-            if state:
-                self.max_column = 16
-            else:
-                self.max_column = 32
+            self.__max_column = 16 if state else 32
             self._write_bytes(Command.ESC, 14 if state else 20, 1)
 
     def feed(self, number=1):
@@ -332,7 +371,7 @@ class ThermalPrinter(Serial):
         sleep(number * self._dot_feed_time * self._char_height)
         self._prev_byte = '\n'
         self._column = 0
-        self.feeds += number
+        self.__feeds += number
 
     def flush(self, clear=False):
         ''' Remove the print data in buffer.
@@ -399,7 +438,7 @@ class ThermalPrinter(Serial):
                 sleep(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
 
-        self.lines += int(height / self._line_spacing) + 1
+        self.__lines += int(height / self._line_spacing) + 1
         self._prev_byte = '\n'
 
     def inverse(self, state=False):
@@ -457,7 +496,7 @@ class ThermalPrinter(Serial):
         '''
 
         if self.is_online:
-            self.is_online = False
+            self.__is_online = False
             self._write_bytes(Command.ESC, 61, 0)
 
     def online(self):
@@ -466,7 +505,7 @@ class ThermalPrinter(Serial):
         '''
 
         if not self.is_online:
-            self.is_online = True
+            self.__is_online = True
             self._write_bytes(Command.ESC, 61, 1)
 
     def out(self, line, line_feed=True, **kwargs):
@@ -494,11 +533,11 @@ class ThermalPrinter(Serial):
             self.write(self._conv(line))
             if line_feed:
                 self.write(b'\n')
-                self.lines += 1
+                self.__lines += 1
 
                 # Sizes M and L are double height
                 if self._size != 'S':
-                    self.lines += 1
+                    self.__lines += 1
 
             sleep(2 * self._dot_feed_time * self._char_height)
 
@@ -515,9 +554,10 @@ class ThermalPrinter(Serial):
         self._write_bytes(Command.ESC, 64)
 
         # Default values
-        self.max_column = 32
-        self.is_online = True
-        self.is_sleeping = False
+        self.__max_column = 32
+        self.__is_online = True
+        self.__is_sleeping = False
+
         self._barcode_height = 162
         self._barcode_left_margin = 0
         self._barcode_position = BarCodePosition.HIDDEN
@@ -564,11 +604,11 @@ class ThermalPrinter(Serial):
         if value != self._size:
             self._size = value
             if value == 'L':    # Large: double width and height
-                size, self._char_height, self.max_column = 0x11, 48, 16
+                size, self._char_height, self.__max_column = 0x11, 48, 16
             elif value == 'M':  # Medium: double height
-                size, self._char_height, self.max_column = 0x01, 48, 32
+                size, self._char_height, self.__max_column = 0x01, 48, 32
             else:
-                size, self._char_height, self.max_column = 0x00, 24, 32
+                size, self._char_height, self.__max_column = 0x00, 24, 32
 
             self._write_bytes(Command.GS, 33, size)
             self._prev_byte = '\n'
@@ -584,7 +624,7 @@ class ThermalPrinter(Serial):
                 'seconds should be null or positive (default: 0).')
 
         if seconds:
-            self.is_sleeping = True
+            self.__is_sleeping = True
         self._write_bytes(Command.ESC, 56, seconds, seconds >> 8)
 
     def status(self):
@@ -652,7 +692,7 @@ class ThermalPrinter(Serial):
         ''' Wake up the printer. '''
 
         if self.is_sleeping:
-            self.is_sleeping = False
+            self.__is_sleeping = False
             self._write_bytes(255)
             sleep(0.05)    # Sleep 50ms as in documentation
             self.sleep(0)  # SLEEP OFF - IMPORTANT!
