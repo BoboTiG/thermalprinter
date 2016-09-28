@@ -28,23 +28,10 @@ def test_signature___repr__(methods):
     assert getargspec(ThermalPrinter.__repr__) == val
 
 
-def test_signature__conv(methods):
-    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    val = ArgSpec(args=['self', 'data'], varargs=None, keywords=None,
-                  defaults=None)
-    assert getargspec(ThermalPrinter._conv) == val
-
-
 def test_signature__on_exit(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
     val = ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
     assert getargspec(ThermalPrinter._on_exit) == val
-
-
-def test_signature__write_bytes(methods):
-    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    val = ArgSpec(args=['self'], varargs='args', keywords=None, defaults=None)
-    assert getargspec(ThermalPrinter._write_bytes) == val
 
 
 def test_signature_barcode(methods):
@@ -213,6 +200,12 @@ def test_signature_rotate(methods):
     assert getargspec(ThermalPrinter.rotate) == val
 
 
+def test_signature_send_command(methods):
+    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
+    val = ArgSpec(args=['self'], varargs='args', keywords=None, defaults=None)
+    assert getargspec(ThermalPrinter.send_command) == val
+
+
 def test_signature_size(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
     val = ArgSpec(args=['self', 'value'], varargs=None, keywords=None,
@@ -250,6 +243,13 @@ def test_signature_test(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
     val = ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
     assert getargspec(ThermalPrinter.test) == val
+
+
+def test_signature_to_bytes(methods):
+    methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
+    val = ArgSpec(args=['self', 'data'], varargs=None, keywords=None,
+                  defaults=None)
+    assert getargspec(ThermalPrinter.to_bytes) == val
 
 
 def test_signature_underline(methods):
