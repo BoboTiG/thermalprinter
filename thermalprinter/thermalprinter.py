@@ -219,7 +219,6 @@ class ThermalPrinter(Serial):
             self.write(char)
         sleep(
             (self._barcode_height + self._line_spacing) * self._dot_print_time)
-        self._prev_byte = '\n'
         self.__lines += int(self._barcode_height / self._line_spacing) + 1
 
     def barcode_height(self, height=162):
@@ -367,7 +366,6 @@ class ThermalPrinter(Serial):
 
         self._write_bytes(Command.ESC, 100, number)
         sleep(number * self._dot_feed_time * self._char_height)
-        self._prev_byte = '\n'
         self._column = 0
         self.__feeds += number
 
@@ -437,7 +435,6 @@ class ThermalPrinter(Serial):
                 idx += row_bytes - row_bytes_clipped
 
         self.__lines += int(height / self._line_spacing) + 1
-        self._prev_byte = '\n'
 
     def inverse(self, state=False):
         ''' Turn white/black reverse printing mode. '''
@@ -574,7 +571,6 @@ class ThermalPrinter(Serial):
         self._justify = 'L'
         self._left_margin = 0
         self._line_spacing = 30
-        self._prev_byte = ''
         self._rotate = False
         self._size = 'S'
         self._strike = False
@@ -608,7 +604,6 @@ class ThermalPrinter(Serial):
                 size, self._char_height, self.__max_column = 0x00, 24, 32
 
             self._write_bytes(Command.GS, 33, size)
-            self._prev_byte = '\n'
 
     def sleep(self, seconds=1):
         ''' Put the printer into a low-energy state. '''
