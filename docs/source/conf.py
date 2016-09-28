@@ -21,9 +21,6 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-from thermalprinter import __version__
-
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -63,7 +60,7 @@ author = 'Tiger-222'
 # built documents.
 #
 # The short X.Y version.
-version = __version__
+version = '0.10.0'
 # The full version, including alpha/beta/rc tags.
 release = 'latest'
 
