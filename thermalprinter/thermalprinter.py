@@ -127,7 +127,7 @@ class ThermalPrinter(Serial):
         # pylint: disable=bad-builtin
 
         def _range1(min_=48, max_=57):
-            return [n for n in range(min_, max_ + 1)]
+            return set(range(min_, max_ + 1))
 
         def _range2():
             range_ = [32, 36, 37, 43]
