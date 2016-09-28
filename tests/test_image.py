@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import pytest
+from os.path import abspath, dirname, realpath
 
-from thermalprinter.constants import BarCode
-from thermalprinter.exceptions import ThermalPrinterConstantError, \
-    ThermalPrinterValueError
+import pytest
+from PIL import Image
+
+
+def test_empty_values(printer):
+    with pytest.raises(TypeError):
+        printer.image()
+
+
+def test_good(printer):
+    cwd = dirname(realpath(abspath(__file__)))
+    printer.image(Image.open('{}/../gnu.png'.format(cwd)))
