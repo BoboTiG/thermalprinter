@@ -10,7 +10,7 @@ classifiers = [
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
     'Intended Audience :: Information Technology',
-    'License :: OSI Approved :: zlib/libpng License',
+    'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
     'Operating System :: POSIX :: Linux',
     'Programming Language :: Python :: 3',
@@ -30,7 +30,7 @@ config = {
     'long_description': open('README.rst').read(),
     'classifiers': classifiers,
     'platforms': ['Linux'],
-    'license': 'mit',
+    'license': 'MIT',
     'install_requires': ['pyserial >= 3.0'],
 }
 
