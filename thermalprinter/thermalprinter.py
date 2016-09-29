@@ -451,7 +451,6 @@ class ThermalPrinter(Serial):
 
         self.send_command(Command.ESC, 100, number)
         sleep(number * self._dot_feed_time * self._char_height)
-        self._column = 0
         self.__feeds += number
 
     def flush(self, clear=False):
@@ -609,7 +608,6 @@ class ThermalPrinter(Serial):
         self._chinese = False
         self._chinese_format = Chinese.GBK
         self._codepage = CodePage.CP437
-        self._column = 0
         self._double_height = False
         self._double_width = False
         self._inverse = False
