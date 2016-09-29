@@ -70,34 +70,35 @@ These are special functions to handle data validation. As it could take a lot of
         :param mixed data: data to print.
         :param BarCode barecode_type: bar code type to use.
         :return: the code's command and data length.
-        :raises: ThermalPrinterConstantError, ThermalPrinterValueError
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Validate data against the bar code type.
 
 .. function:: validate_barcode_position(position) -> None
 
         :param BarCodePosition position: the position to use.
-        :raises: ThermalPrinterConstantError
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Validate a bar code position.
 
 .. function:: validate_charset(charset) -> None
 
         :param CharSet charset: new charset to use.
-        :raises: ThermalPrinterConstantError
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Validate a charset.
 
 .. function:: validate_chinese_format(fmt) -> None
 
         :param Chinese fmt: new format to use.
-        :raises: ThermalPrinterConstantError
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Validate a Chinese format.
 
 .. function:: validate_codepage(codepage) -> None
 
         :param CodePage codepage: new code page to use.
-        :raises: ThermalPrinterConstantError
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Validate a code page.

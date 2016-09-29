@@ -24,11 +24,7 @@ Class
             - ``heat_interval`` (int): printer heat time interval (default: ``12``);
             - ``most_heated_point`` (int): for the printer, the most heated point (default: ``3``).
 
-        :exception ThermalPrinterError:
-            Will be raised when parameters are out of range.
-
-        :exception ThermalPrinterConstantError:
-            Will be raised when constant parameters are out of range.
+        :exception ThermalPrinterValueError: Will be raised on incorrect argument value.
 
 
 Methods
@@ -43,6 +39,8 @@ Bar codes
 
         :param mixed data: data to print.
         :param BarCode barecode_type: bar code type to use.
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Bar code printing. All checks are done to ensure the data validity.
 
@@ -50,6 +48,7 @@ Bar codes
     .. method:: barcode_height(height=162) -> None
 
         :param int height: bar code height (min=1, max=255).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set the bar code height.
 
@@ -57,6 +56,7 @@ Bar codes
     .. method:: barcode_left_margin(margin=0) -> None
 
         :param int margin: left margin (min=0, max=255).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set the left margin of the bar code.
 
@@ -64,6 +64,7 @@ Bar codes
     .. method:: barcode_position(position=BarCodePosition.HIDDEN) -> None
 
         :param BarCodePosition position: the position to use.
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Set the position of the text relative to the bar code.
 
@@ -71,6 +72,7 @@ Bar codes
     .. method:: barcode_width(width=3) -> None
 
         :param int width: bar code with (min=2, max=6).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set the bar code width.
 
@@ -112,6 +114,7 @@ Text styling
     .. method:: char_spacing(spacing=0) -> None
 
         :param int spacing: spacing to use (min=0, max=255).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set the right character spacing.
 
@@ -140,6 +143,7 @@ Text styling
     .. method:: justify(value='L') -> None
 
         :param str value: the new justification.
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set text justification:
 
@@ -151,6 +155,7 @@ Text styling
     .. method:: left_margin(margin=0) -> None
 
         :param int margin: the new margin (min=0, max=47).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set the left margin.
 
@@ -158,6 +163,7 @@ Text styling
     .. method:: line_spacing(spacing=30) -> None
 
         :param int spacing: the new spacing (min=0, max=255).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set line spacing.
 
@@ -172,6 +178,7 @@ Text styling
     .. method:: size(value='S') -> None
 
         :param str value: the new text size.
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Set text size:
 
@@ -192,6 +199,7 @@ Text styling
     .. method:: underline(weight=0) -> None
 
         :param int weight: the underline's weight (min=0, max=2).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Turn underline mode on/off:
 
@@ -215,6 +223,7 @@ Encoding and charsets
     .. method:: charset(charset=CharSet.USA) -> None
 
         :param CharSet charset: new charset to use.
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Select an internal character set.
 
@@ -222,6 +231,7 @@ Encoding and charsets
     .. method:: codepage(codepage=CodePage.CP437) -> None
 
         :param CodePage codepage: new code page to use.
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Select character code table.
 
@@ -241,6 +251,7 @@ Chinese
     .. method:: chinese_format(fmt=Chinese.GBK) -> None
 
         :param Chinese fmt: new format to use.
+        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
 
         Selection of the Chinese format.
 
@@ -253,6 +264,7 @@ Printing
     .. method:: feed(number=1) -> None
 
         :param int number: number of lines.
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Feeds by the specified number of lines (min=0, max=255).
 
@@ -297,6 +309,7 @@ Printer state
     .. method:: sleep(seconds=1) -> None
 
         :param int seconds: value to pass to the printer (min=0, unit=sec).
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Put the printer into a low-energy state.
 
