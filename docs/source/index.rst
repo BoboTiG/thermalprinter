@@ -16,6 +16,7 @@ This is a clean follow of the technical manual with few helpers.
 |   :maxdepth: 1          |
 |                         |
 |   installation          |
+|   setup                 |
 |   usage                 |
 |   tools                 |
 |   api                   |
