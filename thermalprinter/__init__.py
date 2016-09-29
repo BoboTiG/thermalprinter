@@ -21,7 +21,7 @@ from .constants import BarCode, BarCodePosition, CharSet, Chinese, Command, \
 from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
     Copyright (c) 2016, Mickaël Schoentgen
