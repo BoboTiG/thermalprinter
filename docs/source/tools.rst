@@ -56,3 +56,48 @@ Code pages
         for codepage in list(CodePage):
             printer.out('{}: {}'.format(codepage.name, char),
                         codepage=codepage)
+
+
+Data validation
+===============
+
+These are special functions to handle data validation. As it could take a lot of lines and logic, we prefered create them outsite the class to keep a light code for every ``ThermalPrinter``'s methods.
+
+.. module:: thermalprinter.validate
+
+.. function:: validate_barcode(data, barcode_type) -> list
+
+        :param mixed data: data to print.
+        :param BarCode barecode_type: bar code type to use.
+        :return: the code's command and data length.
+        :raises: ThermalPrinterConstantError, ThermalPrinterValueError
+
+        Validate data against the bar code type.
+
+.. function:: validate_barcode_position(position) -> None
+
+        :param BarCodePosition position: the position to use.
+        :raises: ThermalPrinterConstantError
+
+        Validate a bar code position.
+
+.. function:: validate_charset(charset) -> None
+
+        :param CharSet charset: new charset to use.
+        :raises: ThermalPrinterConstantError
+
+        Validate a charset.
+
+.. function:: validate_chinese_format(fmt) -> None
+
+        :param Chinese fmt: new format to use.
+        :raises: ThermalPrinterConstantError
+
+        Validate a Chinese format.
+
+.. function:: validate_codepage(codepage) -> None
+
+        :param CodePage codepage: new code page to use.
+        :raises: ThermalPrinterConstantError
+
+        Validate a code page.

@@ -9,9 +9,11 @@ from time import sleep
 
 from serial import Serial
 
-from .constants import BarCode, BarCodePosition, CharSet, Chinese, Command, \
-    CodePage, CodePageConverted
-from .exceptions import ThermalPrinterConstantError, ThermalPrinterValueError
+from .constants import BarCodePosition, CharSet, Chinese, Command, CodePage, \
+    CodePageConverted
+from .exceptions import ThermalPrinterValueError
+from .validate import validate_barcode, validate_barcode_position, \
+    validate_charset, validate_chinese_format, validate_codepage
 
 
 class ThermalPrinter(Serial):
@@ -251,53 +253,7 @@ class ThermalPrinter(Serial):
     def barcode(self, data, barcode_type):
         ''' Bar code printing. '''
 
-        # pylint: disable=bad-builtin
-
-        def _range1(min_=48, max_=57):
-            return set(range(min_, max_ + 1))
-
-        def _range2():
-            range_ = [32, 36, 37, 43]
-            range_.extend(_range1(45, 57))
-            range_.extend(_range1(65, 90))
-            return range_
-
-        def _range3():
-            range_ = [36, 43]
-            range_.extend(_range1(45, 58))
-            range_.extend(_range1(65, 68))
-            return range_
-
-        def _range4():
-            return _range1(0, 127)
-
-        ranges_ = [_range1, _range2, _range3, _range4]
-
-        if not isinstance(barcode_type, BarCode):
-            err = ', '.join([barcode.name for barcode in BarCode])
-            raise ThermalPrinterConstantError('Valid bar codes are: ' + err)
-
-        code, (min_, max_), range_type = barcode_type.value
-        data_len = len(data)
-        range_ = ranges_[range_type]()
-
-        if not min_ <= data_len <= max_:
-            err = '[{}] Should be {} <= len(data) <= {} (current: {}).'.format(
-                barcode_type.name, min_, max_, data_len)
-            raise ThermalPrinterValueError(err)
-        elif barcode_type is BarCode.ITF and data_len % 2 != 0:
-            raise ThermalPrinterValueError(
-                '[BarCode.ITF] len(data) must be even.')
-
-        if not all(ord(char) in range_ for char in data):
-            if range_type != 3:
-                valid = map(chr, range_)
-            else:
-                valid = map(hex, range_)
-            err = '[{}] Valid characters: {}.'.format(
-                barcode_type.name, ', '.join(valid))
-            raise ThermalPrinterValueError(err)
-
+        code, data_len = validate_barcode(data, barcode_type)
         self.send_command(Command.GS, 107, code, data_len)
         for char in list(data):
             char = bytes([ord(char)])
@@ -331,11 +287,7 @@ class ThermalPrinter(Serial):
     def barcode_position(self, position=BarCodePosition.HIDDEN):
         ''' Set the bar code position. '''
 
-        if not isinstance(position, BarCodePosition):
-            err = ', '.join([pos.name for pos in BarCodePosition])
-            raise ThermalPrinterConstantError(
-                'Valid positions are: {}.'.format(err))
-
+        validate_barcode_position(position)
         if position is not self._barcode_position:
             self._barcode_position = position
             self.send_command(Command.GS, 72, position.value)
@@ -362,11 +314,7 @@ class ThermalPrinter(Serial):
     def charset(self, charset=CharSet.USA):
         ''' Select an internal character set. '''
 
-        if not isinstance(charset, CharSet):
-            err = 'Valid charsets are: {}.'.format(
-                ', '.join([cset.name for cset in CharSet]))
-            raise ThermalPrinterConstantError(err)
-
+        validate_charset(charset)
         if charset is not self._charset:
             self._charset = charset
             self.send_command(Command.ESC, 82, charset.value)
@@ -393,11 +341,7 @@ class ThermalPrinter(Serial):
     def chinese_format(self, fmt=Chinese.GBK):
         ''' Selection of the Chinese format. '''
 
-        if not isinstance(fmt, Chinese):
-            err = ', '.join([cfmt.name for cfmt in Chinese])
-            raise ThermalPrinterConstantError(
-                'Valid Chinese formats are: {}.'.format(err))
-
+        validate_chinese_format(fmt)
         if fmt is not self._chinese_format:
             self._chinese_format = fmt
             self.send_command(Command.ESC, 57, fmt.value)
@@ -405,19 +349,7 @@ class ThermalPrinter(Serial):
     def codepage(self, codepage=CodePage.CP437):
         ''' Select character code table. '''
 
-        if not isinstance(codepage, CodePage):
-            codes = ''
-            last = list(CodePage)[-1]
-            for cpage in CodePage:
-                sep = '.' if cpage is last else ', '
-                _, name = cpage.value
-                if name:
-                    codes += '{} ({}){}'.format(cpage.name, name, sep)
-                else:
-                    codes += '{}{}'.format(cpage.name, sep)
-            raise ThermalPrinterConstantError(
-                'Valid codepages are: {}'.format(codes))
-
+        validate_codepage(codepage)
         if not self._chinese and codepage is not self._codepage:
             self._codepage = codepage
             value, _ = codepage.value
