@@ -6,10 +6,9 @@
     Based on the work of Phil Burgess and Fried/Ladyada (Adafruit).
 
     Python 3+ only.
-    Dependencies:
-        pyserial
 
-    usermod -G dialout -a $USER
+    Complete documentation:
+        https://thermalprinter.readthedocs.io
 
     You can always get the latest version of this module at:
         https://github.com/BoboTiG/thermalprinter
@@ -24,7 +23,7 @@ from .thermalprinter import ThermalPrinter
 __version__ = '0.1.1'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
-    Copyright (c) 2016, Mickaël Schoentgen
+    Copyright (c) 2016, Mickaël 'Tiger-222' Schoentgen
 
     Permission to use, copy, modify, and distribute this software and its
     documentation for any purpose and without fee or royalty is hereby

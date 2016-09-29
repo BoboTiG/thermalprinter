@@ -30,7 +30,7 @@ config = {
     'long_description': open('README.rst').read(),
     'classifiers': classifiers,
     'platforms': ['Linux'],
-    'license': 'zlib/libpng',
+    'license': 'mit',
     'install_requires': ['pyserial >= 3.0'],
 }
 
