@@ -65,40 +65,39 @@ These are special functions to handle data validation. As it could take a lot of
 
 .. module:: thermalprinter.validate
 
-.. function:: validate_barcode(data, barcode_type) -> list
+.. function:: validate_barcode(data, barcode_type) -> None
 
         :param mixed data: data to print.
         :param BarCode barecode_type: bar code type to use.
-        :return: the code's command and data length.
-        :exception ThermalPrinterValueError: Will be raised on incorrect value.
-        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
+        :exception ThermalPrinterValueError: On incorrect ``data``'s type or value.
+        :exception ThermalPrinterConstantError: On bad ``barecode_type``'s type.
 
         Validate data against the bar code type.
 
 .. function:: validate_barcode_position(position) -> None
 
         :param BarCodePosition position: the position to use.
-        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
+        :exception ThermalPrinterConstantError: On bad ``position``'s type.
 
         Validate a bar code position.
 
 .. function:: validate_charset(charset) -> None
 
         :param CharSet charset: new charset to use.
-        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
+        :exception ThermalPrinterConstantError: On bad ``charset``'s type.
 
         Validate a charset.
 
 .. function:: validate_chinese_format(fmt) -> None
 
         :param Chinese fmt: new format to use.
-        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
+        :exception ThermalPrinterConstantError: On bad ``fmt``'s type.
 
         Validate a Chinese format.
 
 .. function:: validate_codepage(codepage) -> None
 
         :param CodePage codepage: new code page to use.
-        :exception ThermalPrinterConstantError: Will be raised on out of range constant.
+        :exception ThermalPrinterConstantError: On bad ``codepage``'s type.
 
         Validate a code page.
