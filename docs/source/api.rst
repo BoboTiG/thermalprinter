@@ -84,7 +84,8 @@ Images
 
     .. method:: image(image) -> None
 
-        :param PIL.Image image: the image to print.
+        :param Image image: the image to print.
+        :exception ThermalPrinterValueError: Will be raised on incorrect value.
 
         Print Image. Requires Python Imaging Library.
         Image will be cropped to 384 pixels width if

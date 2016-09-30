@@ -398,7 +398,7 @@ class ThermalPrinter(Serial):
             self.reset_input_buffer()
 
     def image(self, image):
-        ''' Print Image. Requires Python Imaging Library.
+        ''' Print Image. Requires Python Imaging Library (pillow).
             Image will be cropped to 384 pixels width if
             necessary, and converted to 1-bit w/diffusion dithering.
             For any other behavior (scale, B&W threshold, etc.), use
@@ -412,6 +412,11 @@ class ThermalPrinter(Serial):
         '''
 
         # pylint: disable=R0914
+
+        # Checks if an object is an image object. See `isImageType()` from
+        # https://github.com/python-pillow/Pillow/blob/master/PIL/Image.py
+        if not hasattr(image, 'im'):
+            raise ThermalPrinterValueError('image should be a PIL Image.')
 
         if image.mode != '1':
             image = image.convert('1')
