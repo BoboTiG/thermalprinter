@@ -10,9 +10,7 @@ from .exceptions import ThermalPrinterConstantError, \
 
 
 def validate_barcode(data, barcode_type):
-    ''' Validate data against the bar code type.
-        Returns the code's command and data length.
-    '''
+    ''' Validate data against the bar code type. '''
 
     # pylint: disable=bad-builtin
 
@@ -59,8 +57,6 @@ def validate_barcode(data, barcode_type):
         err = '[{}] Valid characters: {}.'.format(
             barcode_type.name, ', '.join(valid))
         raise ThermalPrinterValueError(err)
-
-    return code, data_len
 
 
 def validate_barcode_position(position):

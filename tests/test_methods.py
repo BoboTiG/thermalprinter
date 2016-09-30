@@ -188,7 +188,7 @@ def test_signature_online(methods):
 
 def test_signature_out(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    sig = ArgSpec(args=['self', 'line', 'line_feed'], varargs=None,
+    sig = ArgSpec(args=['self', 'data', 'line_feed'], varargs=None,
                   keywords='kwargs', defaults=(True,))
     assert getargspec(ThermalPrinter.out) == sig
 

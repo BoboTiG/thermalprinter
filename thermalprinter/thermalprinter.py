@@ -178,19 +178,22 @@ class ThermalPrinter(Serial):
 
     # Module's methods
 
-    def out(self, line, line_feed=True, **kwargs):
+    def out(self, data, line_feed=True, **kwargs):
         ''' Send one line to the printer.
 
             You can pass formatting instructions directly via arguments:
-            >>> out(text, justify='C', inverse=True)
+            >>> out(data, justify='C', inverse=True)
 
             This will prevent you to do:
             >>> justify('C')
             >>> inverse(True)
-            >>> out(text)
+            >>> out(data)
             >>> inverse(False)
             >>> justify('L')
         '''
+
+        if data is None:
+            return
 
         # Apply style
         for style, value in kwargs.items():
@@ -199,17 +202,16 @@ class ThermalPrinter(Serial):
             except TypeError:
                 pass
 
-        if line:
-            self.write(self.to_bytes(line))
-            if line_feed:
-                self.write(b'\n')
+        self.write(self.to_bytes(data))
+        if line_feed:
+            self.write(b'\n')
+            self.__lines += 1
+
+            # Sizes M and L are double height
+            if self._size != 'S':
                 self.__lines += 1
 
-                # Sizes M and L are double height
-                if self._size != 'S':
-                    self.__lines += 1
-
-            sleep(2 * self._dot_feed_time * self._char_height)
+        sleep(2 * self._dot_feed_time * self._char_height)
 
         # Restore default style
         for style, value in kwargs.items():
@@ -221,11 +223,11 @@ class ThermalPrinter(Serial):
     def send_command(self, *args):
         ''' 'Raw' byte-writing. '''
 
-        sleep(len(args) * self._byte_time)
         for data in args:
             if isinstance(data, Command):
                 data = data.value
             self.write(bytes([data]))
+        sleep(len(args) * self._byte_time)
 
     def to_bytes(self, data):
         ''' Convert data before sending to the printer. '''
@@ -253,8 +255,10 @@ class ThermalPrinter(Serial):
     def barcode(self, data, barcode_type):
         ''' Bar code printing. '''
 
-        code, data_len = validate_barcode(data, barcode_type)
-        self.send_command(Command.GS, 107, code, data_len)
+        validate_barcode(data, barcode_type)
+        code = barcode_type.value[0]
+        self.send_command(Command.GS, 107, code, len(data))
+        # TODO: use out() ?
         for char in list(data):
             char = bytes([ord(char)])
             self.write(char)
@@ -410,8 +414,6 @@ class ThermalPrinter(Serial):
             >>> from PIL import Image
             >>> printer.image(Image.open('picture.png'))
         '''
-
-        # pylint: disable=R0914
 
         # Checks if an object is an image object. See `isImageType()` from
         # https://github.com/python-pillow/Pillow/blob/master/PIL/Image.py

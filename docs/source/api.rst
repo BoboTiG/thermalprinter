@@ -280,13 +280,13 @@ Printing
 
         You can pass formatting instructions directly via arguments::
 
-            >>> printer.out(text, justify='C', inverse=True)
+            >>> printer.out(data, justify='C', inverse=True)
 
         This will prevent you to do::
 
             >>> printer.justify('C')
             >>> printer.inverse(True)
-            >>> printer.out(text)
+            >>> printer.out(data)
             >>> printer.inverse(False)
             >>> printer.justify('L')
 
