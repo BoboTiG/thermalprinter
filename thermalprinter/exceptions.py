@@ -9,6 +9,10 @@ class ThermalPrinterError(Exception):
     ''' Error handling class. '''
 
 
+class ThermalPrinterAttributeError(ThermalPrinterError):
+    ''' Attribute error handling class. '''
+
+
 class ThermalPrinterConstantError(ThermalPrinterError):
     ''' Constant error handling class. '''
 

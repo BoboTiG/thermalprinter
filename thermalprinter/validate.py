@@ -37,7 +37,7 @@ def validate_barcode(data, barcode_type):
             ', '.join([barcode.name for barcode in BarCode])
         raise ThermalPrinterConstantError(err)
 
-    code, (min_, max_), range_type = barcode_type.value
+    _, (min_, max_), range_type = barcode_type.value
     data_len = len(data)
     range_ = [_range1, _range2, _range3, _range4][range_type]()
 

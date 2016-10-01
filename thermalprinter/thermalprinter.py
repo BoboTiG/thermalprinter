@@ -11,7 +11,7 @@ from serial import Serial
 
 from .constants import BarCodePosition, CharSet, Chinese, Command, CodePage, \
     CodePageConverted
-from .exceptions import ThermalPrinterValueError
+from .exceptions import ThermalPrinterAttributeError, ThermalPrinterValueError
 from .validate import validate_barcode, validate_barcode_position, \
     validate_charset, validate_chinese_format, validate_codepage
 
@@ -132,9 +132,9 @@ class ThermalPrinter(Serial):
         return self.__is_online
 
     @is_online.setter
-    def is_online(self, *args, **kwargs):
+    def is_online(self, _):  # pylint: disable=no-self-use
         ''' Read-only attribute. '''
-        pass
+        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     @property
     def is_sleeping(self):
@@ -142,9 +142,9 @@ class ThermalPrinter(Serial):
         return self.__is_sleeping
 
     @is_sleeping.setter
-    def is_sleeping(self, *args, **kwargs):
+    def is_sleeping(self, _):  # pylint: disable=no-self-use
         ''' Read-only attribute. '''
-        pass
+        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     @property
     def lines(self):
@@ -152,9 +152,9 @@ class ThermalPrinter(Serial):
         return self.__lines
 
     @lines.setter
-    def lines(self, *args, **kwargs):
+    def lines(self, _):  # pylint: disable=no-self-use
         ''' Read-only attribute. '''
-        pass
+        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     @property
     def feeds(self):
@@ -162,9 +162,9 @@ class ThermalPrinter(Serial):
         return self.__feeds
 
     @feeds.setter
-    def feeds(self, *args, **kwargs):
+    def feeds(self, _):  # pylint: disable=no-self-use
         ''' Read-only attribute. '''
-        pass
+        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     @property
     def max_column(self):
@@ -172,9 +172,9 @@ class ThermalPrinter(Serial):
         return self.__max_column
 
     @max_column.setter
-    def max_column(self, *args, **kwargs):
+    def max_column(self, _):  # pylint: disable=no-self-use
         ''' Read-only attribute. '''
-        pass
+        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     # Module's methods
 
