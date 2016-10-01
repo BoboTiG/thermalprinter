@@ -98,9 +98,9 @@ Documentation
 Dependencies
 ------------
 
-You will need `Sphinx <http://sphinx-doc.org/>`_ and the `Read the Docs's theme <https://github.com/snide/sphinx_rtd_theme>`_::
+You will need `Sphinx <http://sphinx-doc.org/>`_::
 
-    pip3 install sphinx sphinx_rtd_theme
+    pip3 install sphinx
 
 
 How to build?

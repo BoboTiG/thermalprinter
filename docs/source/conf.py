@@ -60,7 +60,7 @@ author = 'Tiger-222'
 # built documents.
 #
 # The short X.Y version.
-version = '0.10.1'
+version = '0.10.3'
 # The full version, including alpha/beta/rc tags.
 release = 'latest'
 
@@ -122,7 +122,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
