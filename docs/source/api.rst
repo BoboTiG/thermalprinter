@@ -666,7 +666,7 @@ If you find a better fit for one of the code page below, `open an issue <https:/
 
 .. data:: CodePageConverted.LATVIA
 
-    UTF-8
+    ISO8859-4
 
 .. data:: CodePageConverted.THAI
 

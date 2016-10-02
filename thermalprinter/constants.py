@@ -142,7 +142,7 @@ class CodePageConverted(Enum):
     CP755 = 'utf-8'
     IRAN = 'Utf-8'
     IRAN2 = 'uTf-8'
-    LATVIA = 'utF-8'
+    LATVIA = 'iso8859-4'
     THAI = 'iso8859-11'
     THAI2 = 'utf_8'
 
