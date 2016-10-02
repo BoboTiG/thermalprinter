@@ -658,7 +658,7 @@ If you find a better fit for one of the code page below, `open an issue <https:/
 
 .. data:: CodePageConverted.IRAN
 
-    UTF-8
+    CP1256
 
 .. data:: CodePageConverted.IRAN2
 
