@@ -1,6 +1,9 @@
 DP-EH600 thermal printer
 ========================
 
+.. image:: https://travis-ci.org/BoboTiG/thermalprinter.svg?branch=master
+    :target: https://travis-ci.org/BoboTiG/thermalprinter
+
 Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 
 - **Python 3.4+ only** and PEP8 compliant;

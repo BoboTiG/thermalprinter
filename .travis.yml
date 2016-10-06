@@ -8,15 +8,11 @@ python:
   - pypy3
 
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
   - pip install pyserial pillow
   - python setup.py install
 
-script:
-  - python -m serial.tools.list_ports
-  - ls -l /dev/*
-  - ls -l /dev/tty*
-  - py.test
+script: py.test --port=/dev/pts/1
 
 matrix:
     fast_finish: true
