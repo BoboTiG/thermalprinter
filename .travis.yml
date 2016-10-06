@@ -1,13 +1,11 @@
 language: python
 python:
-  - "3.2"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "nightly"  # 3.6-dev
 
 install:
-  - pip install pyserial pillow enum
+  - pip install pyserial pillow
   - pip install .
 
 script:

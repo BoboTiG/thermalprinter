@@ -3,7 +3,7 @@ DP-EH600 thermal printer
 
 Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 
-- **Python 3+ only** and PEP8 compliant;
+- **Python 3.4+ only** and PEP8 compliant;
 - this is a clean follow of the technical manual with few helpers;
 - and there is a `complete, and beautiful, documentation <https://thermalprinter.readthedocs.io>`_ :)
 - **contibutors** are welcome, check the `developer guide <https://thermalprinter.readthedocs.io/en/latest/developers.html>`_!
