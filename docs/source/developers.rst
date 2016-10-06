@@ -21,7 +21,7 @@ Dependency
 
 You will need `pytest <https://pypi.python.org/pypi/pytest>`_::
 
-    pip3 install pytest
+    pip install pytest
 
 
 Adding/changing a method
@@ -78,7 +78,7 @@ Dependencies
 
 Install required packages::
 
-    pip3 install flake8 pylint
+    pip install flake8 pylint
 
 
 How to validate?
@@ -100,7 +100,7 @@ Dependencies
 
 You will need `Sphinx <http://sphinx-doc.org/>`_::
 
-    pip3 install sphinx
+    pip install sphinx
 
 
 How to build?
