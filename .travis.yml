@@ -7,6 +7,9 @@ python:
   - "nightly"  # 3.6-dev
 
 install:
-  - pip install pyserial
+  - pip install pyserial pillow enum
   - pip install .
-script: py.test
+
+script:
+  - python -m serial.tools.list_ports
+  - py.test
