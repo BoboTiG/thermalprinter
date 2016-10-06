@@ -6,5 +6,7 @@ python:
   - "3.5"
   - "nightly"  # 3.6-dev
 
-install: pip install .
+install:
+  - pip install pyserial
+  - pip install .
 script: py.test3
