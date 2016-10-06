@@ -9,4 +9,4 @@ python:
 install:
   - pip install pyserial
   - pip install .
-script: py.test3
+script: py.test
