@@ -1,13 +1,22 @@
 language: python
 python:
-  - "3.4"
-  - "3.5"
-  - "nightly"  # 3.6-dev
+  - 3.2
+  - 3.3
+  - 3.4
+  - 3.5
+  - nightly
+  - pypy3
 
 install:
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum; fi
   - pip install pyserial pillow
-  - pip install .
+  - python setup.py install
 
 script:
   - python -m serial.tools.list_ports
+  - ls -l /dev/*
+  - ls -l /dev/tty*
   - py.test
+
+matrix:
+    fast_finish: true
