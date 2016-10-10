@@ -16,6 +16,8 @@ Installation
 
 As simple as::
 
+.. code-block:: bash
+
     pip install thermalprinter
 
 
@@ -23,6 +25,8 @@ Usage
 -----
 
 An example is better than thousand words::
+
+.. code-block:: python
 
     from PIL import Image
     from ThermalPrinter import *
