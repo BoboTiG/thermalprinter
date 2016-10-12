@@ -17,6 +17,9 @@ class FakeThermalPrinter(ThermalPrinter):
         self._dot_feed_time = 0
         self._dot_print_time = 0
 
+    def write(self, *args):
+        pass
+
 
 def pytest_addoption(parser):
     txt = 'Serial port to use (examples: /dev/ttyAMA0, /dev/ttyS0 [default])'
