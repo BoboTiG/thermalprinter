@@ -16,6 +16,8 @@ install:
 script:
   - py.test --port=/dev/pts/1
   - flake8 thermalprinter
+#  - mypy --check-untyped-defs --warn-incomplete-stub --silent-imports -m thermalprinter
+#  - mypy --check-untyped-defs --warn-incomplete-stub --silent-imports thermalprinter
 
 matrix:
     fast_finish: true
