@@ -10,10 +10,12 @@ python:
 
 install:
   - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
-  - pip install pyserial pillow
+  - pip install flake8 pyserial pillow
   - python setup.py install
 
-script: py.test --port=/dev/pts/1
+script:
+  - py.test --port=/dev/pts/1
+  - flake8 thermalprinter
 
 matrix:
     fast_finish: true
