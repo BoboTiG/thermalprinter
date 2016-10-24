@@ -34,28 +34,25 @@ class ThermalPrinter(Serial):
 
         try:
             self.heat_time = int(kwargs['heat_time'])
-            assert 0 <= self.heat_time <= 255
         except KeyError:
             self.heat_time = 80
-        except (AssertionError, ValueError):
+        if not 0 <= self.heat_time <= 255:
             raise ThermalPrinterValueError(
                 'heat_time should be between 0 and 255 (default: 80).')
 
         try:
             self.heat_interval = int(kwargs['heat_interval'])
-            assert 0 <= self.heat_interval <= 255
         except KeyError:
             self.heat_interval = 12
-        except (AssertionError, ValueError):
+        if not 0 <= self.heat_interval <= 255:
             raise ThermalPrinterValueError(
                 'heat_interval should be between 0 and 255 (default: 12).')
 
         try:
             self.most_heated_point = int(kwargs['most_heated_point'])
-            assert 0 <= self.most_heated_point <= 255
         except KeyError:
             self.most_heated_point = 3
-        except (AssertionError, ValueError):
+        if not 0 <= self.most_heated_point <= 255:
             raise ThermalPrinterValueError(
                 'most_heated_point should be between 0 and 255 (default: 3).')
 
