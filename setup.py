@@ -32,6 +32,7 @@ config = {
     'platforms': ['Linux'],
     'license': 'MIT',
     'install_requires': ['pyserial >= 3.0'],
+    'packages': ['thermalprinter'],
 }
 
 setup(**config)
