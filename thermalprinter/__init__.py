@@ -20,10 +20,10 @@ from .constants import BarCode, BarCodePosition, CharSet, Chinese, Command, \
 from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = '''
-    Copyright (c) 2016, Mickaël 'Tiger-222' Schoentgen
+    Copyright (c) 2016-2017, Mickaël 'Tiger-222' Schoentgen
 
     Permission to use, copy, modify, and distribute this software and its
     documentation for any purpose and without fee or royalty is hereby
