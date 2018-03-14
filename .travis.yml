@@ -1,23 +1,19 @@
 language: python
 python:
-  - 3.2
-  - 3.3
-  - 3.4
   - 3.5
-  - 3.5-dev
-  - 3.6-dev
-  - nightly # currently points to 3.7-dev
+  - 3.6
+  - nightly
+  - pypy3
 
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
-  - pip install flake8 pyserial pillow
-  - python setup.py install
+  - pip install --upgrade --user flake8 pyserial pillow
+  - python setup.py install --user
 
 script:
-  - py.test --port=/dev/pts/1
-  - flake8 thermalprinter
-#  - mypy --check-untyped-defs --warn-incomplete-stub --silent-imports -m thermalprinter
-#  - mypy --check-untyped-defs --warn-incomplete-stub --silent-imports thermalprinter
+  - python -m pytest --port=/dev/pts/1
+  - python -m flake8 thermalprinter
+#  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports -m thermalprinter
+#  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports thermalprinter
 
 matrix:
     fast_finish: true
