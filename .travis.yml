@@ -16,4 +16,5 @@ script:
 #  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports thermalprinter
 
 matrix:
-    fast_finish: true
+  allow_failures:
+    - python: nightly
