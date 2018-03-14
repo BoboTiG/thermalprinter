@@ -55,7 +55,7 @@ An example is better than thousand words:
         printer.out('现代汉语通用字表', chinese=True,
                     chinese_format=Chinese.UTF_8)
                     
-        # Greek 
+        # Greek (excepted the ΐ character)
         printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
 
         # Accents
