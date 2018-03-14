@@ -6,8 +6,8 @@ python:
   - pypy3
 
 install:
-  - pip install --upgrade --user flake8 pyserial pillow
-  - python setup.py install --user
+  - pip install --upgrade flake8 pyserial pillow
+  - python setup.py install
 
 script:
   - python -m pytest --port=/dev/pts/1
