@@ -76,23 +76,32 @@ class ThermalPrinter(Serial):
         self.close()
 
     def __repr__(self):
-        """ Representation of the current printer settings and its state. """
+        """ Representation of the current printer settings and its state.
 
-        settings, states = [], []
+            To know the serial state:
+            >>> printer = ThermalPrinter()
+            >>> repr(super(type(printer), printer))
+        """
 
-        for attr in vars(self):
-            val = getattr(self, attr)
-            if callable(val) or '__' in attr:
+        settings = (
+            'heat_interval=' + str(self.heat_interval),
+            'heat_time=' + str(self.heat_time),
+            'most_heated_point=' + str(self.most_heated_point),
+        )
+        states = []
+
+        for var in vars(self):
+            if not var.startswith('_'):
                 continue
 
-            if attr.startswith('_'):
-                try:
-                    callable(getattr(self, attr[1:]))
-                    states.append('{}={}'.format(attr[1:], val))
-                except:
-                    pass
+            try:
+                attr = getattr(self, var[1:])
+            except AttributeError:
+                continue
             else:
-                settings.append('{}={}'.format(attr, val))
+                if not callable(attr):
+                    continue
+                states.append('{}={}'.format(var[1:], getattr(self, var)))
 
         return '{name}<id=0x{id:x}, {settings}>({states})'.format(
             name=type(self).__name__,
