@@ -1,5 +1,6 @@
 # coding: utf-8
-
+import os
+import pty
 from types import FunctionType
 
 import pytest
@@ -20,14 +21,11 @@ class FakeThermalPrinter(ThermalPrinter):
         pass
 
 
-def pytest_addoption(parser):
-    txt = 'Serial port to use (examples: /dev/ttyAMA0, /dev/ttyS0 [default])'
-    parser.addoption('--port', action='store', default='/dev/ttyS0', help=txt)
-
-
 @pytest.fixture(scope='session')
 def port(request):
-    return request.config.getoption('--port')
+    """ http://allican.be/blog/2017/01/15/python-dummy-serial-port.html """
+    _, slave = pty.openpty()
+    return os.ttyname(slave)
 
 
 @pytest.fixture(scope='module')

@@ -32,26 +32,17 @@ class ThermalPrinter(Serial):
     def __init__(self, port='/dev/ttyAMA0', baudrate=19200, **kwargs):
         """ Print init. """
 
-        try:
-            self.heat_time = int(kwargs['heat_time'])
-        except KeyError:
-            self.heat_time = 80
+        self.heat_time = int(kwargs.get('heat_time', 80))
         if not 0 <= self.heat_time <= 255:
             raise ThermalPrinterValueError(
                 'heat_time should be between 0 and 255 (default: 80).')
 
-        try:
-            self.heat_interval = int(kwargs['heat_interval'])
-        except KeyError:
-            self.heat_interval = 12
+        self.heat_interval = int(kwargs.get('heat_interval', 12))
         if not 0 <= self.heat_interval <= 255:
             raise ThermalPrinterValueError(
                 'heat_interval should be between 0 and 255 (default: 12).')
 
-        try:
-            self.most_heated_point = int(kwargs['most_heated_point'])
-        except KeyError:
-            self.most_heated_point = 3
+        self.most_heated_point = int(kwargs.get('most_heated_point', 3))
         if not 0 <= self.most_heated_point <= 255:
             raise ThermalPrinterValueError(
                 'most_heated_point should be between 0 and 255 (default: 3).')
@@ -85,41 +76,29 @@ class ThermalPrinter(Serial):
         self.close()
 
     def __repr__(self):
-        """ String representation of the current printer settings
-            and its state.
+        """ Representation of the current printer settings and its state. """
 
-            To know the serial state:
-            >>> printer = ThermalPrinter()
-            >>> super(type(printer), printer).__repr__()
-        """
+        settings, states = [], []
 
-        return '{name}<id=0x{id:x}, heat_interval={p.heat_interval}, ' \
-            'most_heated_point={p.most_heated_point}, ' \
-            'heat_time={p.heat_time}, is_online={p.is_online}, ' \
-            'is_sleeping={p.is_sleeping}, max_column={p.max_column!r}>(' \
-            'barcode_height={p._barcode_height!r}, ' \
-            'barcode_left_margin={p._barcode_left_margin!r}, ' \
-            'barcode_position={p._barcode_position!r}, ' \
-            'barcode_width={p._barcode_width!r}, ' \
-            'bold={p._bold}, ' \
-            'charset={p._charset!r}, ' \
-            'char_spacing={p._char_spacing!r}, ' \
-            'char_height={p._char_height!r}, ' \
-            'chinese={p._chinese}, ' \
-            'chinese_format={p._chinese_format!r}, ' \
-            'codepage={p._codepage!r}, ' \
-            'double_height={p._double_height!r}, ' \
-            'double_width={p._double_width!r}, ' \
-            'inverse={p._inverse}, ' \
-            'justify={p._justify!r}, ' \
-            'left_margin={p._left_margin!r}, ' \
-            'line_spacing={p._line_spacing!r}, ' \
-            'rotate={p._rotate}, ' \
-            'size={p._size!r}, ' \
-            'strike={p._strike}, ' \
-            'underline={p._underline!r}, ' \
-            'upside_down={p._upside_down}' \
-            ')'.format(name=self.__class__.__name__, id=id(self), p=self)
+        for attr in vars(self):
+            val = getattr(self, attr)
+            if callable(val) or '__' in attr:
+                continue
+
+            if attr.startswith('_'):
+                try:
+                    callable(getattr(self, attr[1:]))
+                    states.append('{}={}'.format(attr[1:], val))
+                except:
+                    pass
+            else:
+                settings.append('{}={}'.format(attr, val))
+
+        return '{name}<id=0x{id:x}, {settings}>({states})'.format(
+            name=type(self).__name__,
+            id=id(self),
+            settings=', '.join(sorted(settings)),
+            states=', '.join(sorted(states)))
 
     # Protect some attributes to being modified outside this class.
 
@@ -255,7 +234,7 @@ class ThermalPrinter(Serial):
         validate_barcode(data, barcode_type)
         code = barcode_type.value[0]
         self.send_command(Command.GS, 107, code, len(data))
-        # TODO: use out() ?
+        # TODO: use self.out()?
         for char in list(data):
             char = bytes([ord(char)])
             self.write(char)
@@ -423,7 +402,7 @@ class ThermalPrinter(Serial):
         width = min(image.size[0], 384)
         height = image.size[1]
         row_bytes = int((width + 7) / 8)
-        row_bytes_clipped = 48 if row_bytes >= 48 else row_bytes
+        row_bytes_clipped = min(row_bytes, 48)
         bitmap = bytearray(row_bytes * height)
         pixels = image.load()
 
@@ -454,7 +433,7 @@ class ThermalPrinter(Serial):
                 sleep(row_bytes_clipped * self._byte_time)
                 idx += row_bytes - row_bytes_clipped
 
-        self.__lines += int(height / self._line_spacing) + 1
+        self.__lines += height // self._line_spacing + 1
 
     def inverse(self, state=False):
         """ Turn white/black reverse printing mode. """
@@ -467,7 +446,7 @@ class ThermalPrinter(Serial):
     def justify(self, value='L'):
         """ Set text justification. """
 
-        if not isinstance(value, str) or value not in 'LCR':
+        if not isinstance(value, str) or value not in 'LCRlcr':
             err = 'value should be one of L (left, default), C (center)'
             err += '  or R (right).'
             raise ThermalPrinterValueError(err)
@@ -567,7 +546,7 @@ class ThermalPrinter(Serial):
     def size(self, value='S'):
         """ Set text size. """
 
-        if not isinstance(value, str) or value not in 'SML':
+        if not isinstance(value, str) or value not in 'SMLsml':
             err = 'value should be one of S (small, default), M (medium)'
             err += '  or L (large).'
             raise ThermalPrinterValueError(err)
