@@ -31,6 +31,9 @@ An example is better than thousands words::
         printer.out('现代汉语通用字表', chinese=True,
                     chinese_format=Chinese.UTF_8)
 
+        # Greek (excepted the ΐ character)
+        printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
+
         # Accents
         printer.out('Voilà !', justify='C', strike=True,
                     underline=2, codepage=CodePage.ISO_8859_1)
