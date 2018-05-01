@@ -1,16 +1,15 @@
-#!/usr/bin/env python3
 # coding: utf-8
-''' This is part of the Python's module to manage the DP-EH600 thermal printer.
+""" This is part of the Python's module to manage the DP-EH600 thermal printer.
     Source: https://github.com/BoboTiG/thermalprinter
-'''
+"""
 
 from .constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage
-from .exceptions import ThermalPrinterConstantError, \
-    ThermalPrinterValueError
+from .exceptions import (ThermalPrinterConstantError,
+                         ThermalPrinterValueError)
 
 
 def validate_barcode(data, barcode_type):
-    ''' Validate data against the bar code type. '''
+    """ Validate data against the bar code type. """
 
     # pylint: disable=bad-builtin
 
@@ -33,8 +32,8 @@ def validate_barcode(data, barcode_type):
         return _range1(0, 127)
 
     if not isinstance(barcode_type, BarCode):
-        err = 'Valid bar codes are: ' + \
-            ', '.join([barcode.name for barcode in BarCode])
+        err = ('Valid bar codes are: '
+               + ', '.join([barcode.name for barcode in BarCode]))
         raise ThermalPrinterConstantError(err)
 
     _, (min_, max_), range_type = barcode_type.value
@@ -60,7 +59,7 @@ def validate_barcode(data, barcode_type):
 
 
 def validate_barcode_position(position):
-    ''' Validate a bar code position. '''
+    """ Validate a bar code position. """
 
     if not isinstance(position, BarCodePosition):
         err = ', '.join([pos.name for pos in BarCodePosition])
@@ -69,7 +68,7 @@ def validate_barcode_position(position):
 
 
 def validate_charset(charset):
-    ''' Validate a charset. '''
+    """ Validate a charset. """
 
     if not isinstance(charset, CharSet):
         err = 'Valid charsets are: {}.'.format(
@@ -78,7 +77,7 @@ def validate_charset(charset):
 
 
 def validate_chinese_format(fmt):
-    ''' Validate a Chinese format. '''
+    """ Validate a Chinese format. """
 
     if not isinstance(fmt, Chinese):
         err = ', '.join([cfmt.name for cfmt in Chinese])
@@ -87,7 +86,7 @@ def validate_chinese_format(fmt):
 
 
 def validate_codepage(codepage):
-    ''' Validate a code page. '''
+    """ Validate a code page. """
 
     if not isinstance(codepage, CodePage):
         codes = ''

@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
 # coding: utf-8
-''' This is part of the Python's module to manage the DP-EH600 thermal printer.
+""" This is part of the Python's module to manage the DP-EH600 thermal printer.
     Source: https://github.com/BoboTiG/thermalprinter
-'''
+"""
 
 from enum import Enum
 
@@ -11,7 +10,7 @@ from enum import Enum
 
 
 class BarCode(Enum):
-    ''' Available bar code types: '''
+    """ Available bar code types: """
 
     # (code, (min len(text), max len(text)), allowed_chars)
     UPC_A = (65, (11, 12), 0)
@@ -26,25 +25,25 @@ class BarCode(Enum):
     CODE93 = (72, (1, 255), 3)
     CODE128 = (73, (2, 255), 3)
 
-    def __str__(self):
+    def __repr__(self):
         return '{:<7} value: {}, {:>2} <= len(data) <= {:>3}'.format(
             self.name, self.value[0], self.value[1][0], self.value[1][1])
 
 
 class BarCodePosition(Enum):
-    ''' Available bar code positions: '''
+    """ Available bar code positions: """
 
     HIDDEN = 0
     ABOVE = 1
     BELOW = 2
     BOTH = 3
 
-    def __str__(self):
+    def __repr__(self):
         return '{:<6} value: {}'.format(self.name, self.value)
 
 
 class CharSet(Enum):
-    ''' Available internal character sets: '''
+    """ Available internal character sets: """
 
     # pylint: disable=invalid-name
 
@@ -65,23 +64,23 @@ class CharSet(Enum):
     SLOVENIA = 14
     CHINA = 15
 
-    def __str__(self):
+    def __repr__(self):
         return '{:<14} value: {:>2}'.format(self.name, self.value)
 
 
 class Chinese(Enum):
-    ''' Available Chinese formats: '''
+    """ Available Chinese formats: """
 
     GBK = 0
     UTF_8 = 1
     BIG5 = 3
 
-    def __str__(self):
+    def __repr__(self):
         return '{:<5} value: {}'.format(self.name, self.value)
 
 
 class CodePage(Enum):
-    ''' Available character code tables: '''
+    """ Available character code tables: """
 
     # (code, description)
     CP437 = (0, 'the United States of America, European standard')
@@ -129,13 +128,13 @@ class CodePage(Enum):
     CP856 = (46, '')
     CP874 = (47, '')
 
-    def __str__(self):
+    def __repr__(self):
         return '{:<11} value: {:>2}, desc: {}'.format(
             self.name, self.value[0], self.value[1])
 
 
 class CodePageConverted(Enum):
-    ''' Some code pages are not available in Python, use these instead: '''
+    """ Some code pages are not available in Python, use these instead: """
 
     # (unsupported encoding, best replacement)
     MIK = 'iso8859-5'
@@ -146,12 +145,12 @@ class CodePageConverted(Enum):
     THAI = 'iso8859-11'
     THAI2 = 'utf_8'
 
-    def __str__(self):
+    def __repr__(self):
         return '{:<11} fallback: {:>2}'.format(self.name, self.value)
 
 
 class Command(Enum):
-    ''' Codes used to send commands. '''
+    """ Codes used to send commands. """
 
     # pylint: disable=invalid-name
 

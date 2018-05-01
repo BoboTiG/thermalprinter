@@ -1,15 +1,14 @@
-#!/usr/bin/env python3
 # coding: utf-8
-''' UPC_A == UPC_E, skipping the last one.
+""" UPC_A == UPC_E, skipping the last one.
     JAN13 == EAN13, skipping the last one.
     JAN8 == EAN8, skipping the last one.
-'''
+"""
 
 import pytest
 
 from thermalprinter.constants import BarCode
-from thermalprinter.exceptions import ThermalPrinterConstantError, \
-    ThermalPrinterValueError
+from thermalprinter.exceptions import (ThermalPrinterConstantError,
+                                       ThermalPrinterValueError)
 
 
 def test_empty_values(printer):

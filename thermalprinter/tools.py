@@ -1,17 +1,16 @@
-#!/usr/bin/env python3
 # coding: utf-8
-''' This is part of the Python's module to manage the DP-EH600 thermal printer.
+""" This is part of the Python's module to manage the DP-EH600 thermal printer.
     Source: https://github.com/BoboTiG/thermalprinter
-'''
+"""
 
-from .constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage, \
-    CodePageConverted
+from .constants import (BarCode, BarCodePosition, CharSet, Chinese, CodePage,
+                        CodePageConverted)
 from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
 
 
 def ls(*constants):
-    ''' Print constants values.
+    """ Print constants values.
 
         >>> ls()
         # all constants printer
@@ -21,7 +20,7 @@ def ls(*constants):
 
         >>> ls(Chinese, CharSet)
         # print Chinese and CharSet constants
-    '''
+    """
 
     # pylint: disable=invalid-name
 
@@ -41,7 +40,7 @@ def ls(*constants):
 
 
 def test_char(char):
-    ''' Test one character with all possible code page. '''
+    """ Test one character with all possible code page. """
 
     with ThermalPrinter() as printer:
         for codepage in list(CodePage):
@@ -50,13 +49,13 @@ def test_char(char):
 
 
 def testing(port='/dev/ttyAMA0', heat_time=80):
-    ''' Print all possibilities.
+    """ Print all possibilities.
         Optional argument: heat_time
 
-        >>> from thermalprinter.utils import testing
+        >>> from thermalprinter.tools import testing
         >>> testing()
         >>> testing(port='/dev/ttyS0', heat_time=120)
-    '''
+    """
 
     try:
         with ThermalPrinter(port=port, heat_time=heat_time) as printer:
@@ -79,6 +78,7 @@ def testing(port='/dev/ttyAMA0', heat_time=80):
             printer.out('Bold', bold=True)
             printer.out('现代汉语通用字表', chinese=True,
                         chinese_format=Chinese.UTF_8)
+            printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
             printer.out('Double height', double_height=True)
             printer.out('Double width', double_width=True)
             printer.out('Inverse', inverse=True)

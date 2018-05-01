@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 # coding: utf-8
 
-from thermalprinter.constants import Chinese
+from thermalprinter.constants import Chinese, CodePage
 
 
 def test_print_one_line(printer):
@@ -32,6 +31,11 @@ def test_print_one_line_chinese(printer):
     printer.out('现代汉语通用字表', chinese=True, chinese_format=Chinese.UTF_8)
     assert printer._chinese is False
     assert printer._chinese_format is Chinese.GBK
+
+
+def test_print_one_line_greek(printer):
+    printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
+    assert printer._codepage is CodePage.CP437
 
 
 def test_print_one_line_bool(printer):

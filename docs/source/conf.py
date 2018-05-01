@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ThermalPrinter'
-copyright = '2016-2017, Tiger-222'
+copyright = '2016-2018, Tiger-222'
 author = 'Tiger-222'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -60,7 +60,7 @@ author = 'Tiger-222'
 # built documents.
 #
 # The short X.Y version.
-version = '0.1.7'
+version = '0.1.8'
 # The full version, including alpha/beta/rc tags.
 release = 'latest'
 
