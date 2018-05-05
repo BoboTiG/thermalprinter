@@ -3,6 +3,7 @@ cache/
 dist/
 docs/build/
 .eggs/
+.idea/
 tests/.cache/
 *.egg-info/
 
