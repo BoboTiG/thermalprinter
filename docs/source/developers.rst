@@ -21,9 +21,11 @@ Testing
 Dependency
 ----------
 
-You will need `pytest <https://pypi.python.org/pypi/pytest>`_::
+You will need `pytest <https://pypi.python.org/pypi/pytest>`_:
 
-    pip install pytest
+.. code-block:: bash
+
+    python3 -m pip install --upgrade --user pytest
 
 
 Adding/changing a method
@@ -31,7 +33,9 @@ Adding/changing a method
 
 Before all, you will add a test file for the new method. Then, there is a test file called ``test_methods.py`` where all functions signatures are specified. Here is a little help to add a new one.
 
-1. Say we want to find the signature of the ``size`` function::
+1. Say we want to find the signature of the ``size`` function:
+
+.. code-block:: python
 
     >>> from thermalprinter import ThermalPrinter
     >>> from inspect import getargspec
@@ -40,7 +44,9 @@ Before all, you will add a test file for the new method. Then, there is a test f
     ArgSpec(args=['self', 'value'], varargs=None, keywords=None, defaults=('S',))
 
 2. Copy the all line ``ArgSpec(...)``.
-3. Open the ``test_methods.py`` file and add a new test case, keep it sorted::
+3. Open the ``test_methods.py`` file and add a new test case, keep it sorted:
+
+.. code-block:: python
 
     # Syntax of the function's name: test_signature_FUNCTION
     def test_signature_size(methods):
@@ -59,13 +65,17 @@ To summary, there are 3 modifications to apply, all functions in this file use t
 How to test?
 ------------
 
-Enable the developer mode::
+Enable the developer mode:
 
-    sudo python3 setup.py develop
+.. code-block:: bash
 
-Lauch the test suit::
+    python3 setup.py develop
 
-    py.test-3
+Lauch the test suit:
+
+.. code-block:: bash
+
+    python3 -m pytest
 
 And you can :doc:`test printing functions <tools>` (if you added a styling method, you can add it to this function).
 
@@ -78,15 +88,17 @@ It is important to keep a clean base code. Use tools like `flake8 <https://pypi.
 Dependencies
 ------------
 
-Install required packages::
+Install required packages:
 
-    pip install flake8 pylint
+.. code-block:: bash
+
+    python3 -m pip install --upgrade --user flake8 pylint
 
 
 How to validate?
 ----------------
 
-::
+.. code-block:: bash
 
     flake8
     pylint3 thermalprinter
@@ -100,15 +112,17 @@ Documentation
 Dependencies
 ------------
 
-You will need `Sphinx <http://sphinx-doc.org/>`_::
+You will need `Sphinx <http://sphinx-doc.org/>`_:
 
-    pip install sphinx
+.. code-block:: bash
+
+    python3 -m pip install --upgrade --user sphinx
 
 
 How to build?
 -------------
 
-::
+.. code-block:: bash
 
     cd docs
     make clean html

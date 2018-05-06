@@ -2,7 +2,9 @@
 Usage
 =====
 
-An example is better than thousands words::
+An example is better than thousands words:
+
+.. code-block:: python
 
     from PIL import Image
     from ThermalPrinter import *
@@ -45,15 +47,21 @@ An example is better than thousands words::
 Instance the class
 ==================
 
-Import the module::
+Import the module:
+
+.. code-block:: python
 
     from thermalprinter import ThermalPrinter
 
-So the module can be used as simply as::
+So the module can be used as simply as:
+
+.. code-block:: python
 
     with ThermalPrinter() as printer:
         # ...
 
-Or::
+Or:
+
+.. code-block:: python
 
     printer = ThermalPrinter()

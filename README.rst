@@ -18,7 +18,7 @@ As simple as:
 
 .. code-block:: bash
 
-    pip install thermalprinter
+    python3 -m pip install --upgrade --user thermalprinter
 
 
 Usage

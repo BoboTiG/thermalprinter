@@ -7,21 +7,27 @@ Installation
 Dependencies
 ============
 
-The only dependency is `pySerial <https://github.com/pyserial/pyserial>`_ (version 3.0+)::
+The only dependency is `pySerial <https://github.com/pyserial/pyserial>`_ (version 3.0+):
 
-    pip install pyserial
+.. code-block:: bash
 
-For Python < 3.4, you will need to install *Enum* too::
+    python3 -m pip install --upgrade --user pyserial
 
-    pip install enum34
+For Python < 3.4, you will need to install *Enum* too:
+
+.. code-block:: bash
+
+    python3 -m pip install --upgrade --user enum34
 
 
 Recommended way
 ===============
 
-Quite simple::
+Quite simple:
 
-    pip install thermalprinter
+.. code-block:: bash
+
+    python3 -m pip install --upgrade --user thermalprinter
 
 
 From sources
@@ -29,11 +35,15 @@ From sources
 
 Alternatively, you can get a copy of the module from GitHub.
 
-1. Clone the repository::
+1. Clone the repository:
+
+.. code-block:: bash
 
     git clone https://github.com/BoboTiG/thermalprinter.git
     cd thermalprinter
 
-2. Install them module::
+2. Install them module:
 
-    sudo python3 setup.py install
+.. code-block:: bash
+
+    python3 setup.py install --user
