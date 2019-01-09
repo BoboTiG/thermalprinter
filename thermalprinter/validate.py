@@ -11,8 +11,6 @@ from .exceptions import (ThermalPrinterConstantError,
 def validate_barcode(data, barcode_type):
     """ Validate data against the bar code type. """
 
-    # pylint: disable=bad-builtin
-
     def _range1(min_=48, max_=57):
         return set(range(min_, max_ + 1))
 
