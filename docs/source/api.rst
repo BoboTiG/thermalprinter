@@ -315,10 +315,13 @@ Printer state
         Put the printer into a low-energy state.
 
 
-    .. method:: status() -> dict
+    .. method:: status(raise_on_error=True) -> dict
 
-        Check the printer status. If RX pin is not connected, all values
-        will be set to True.
+        :param bool raise_on_error: raise on error.
+        :exception ThermalPrinterCommunicationError: If RX pin is not connected and if ``raise_on_error`` is ``True``.
+
+        Check the printer status.
+        If RX pin is not connected, all values will be set to True.
 
         Return a dict:
 
@@ -326,6 +329,9 @@ Printer state
             - paper: ``False`` is no paper;
             - temp: ``False`` if the temperature exceeds 60°C;
             - voltage: ``False`` if the voltage is higher than 9.5V.
+
+        .. versionchanged:: 0.2.0
+           Added ``raise_on_error`` keyword argument.
 
 
     .. method:: reset() -> None
@@ -414,6 +420,10 @@ Exceptions
 .. exception:: ThermalPrinterAttributeError
 
     Exception that is raised when trying to assign something to a read-only attribute.
+
+.. exception:: ThermalPrinterCommunicationError
+
+    Exception that is raised on communication error with the printer.
 
 .. exception:: ThermalPrinterConstantError
 

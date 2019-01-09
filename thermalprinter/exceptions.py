@@ -12,13 +12,13 @@ class ThermalPrinterAttributeError(ThermalPrinterError):
     """ Attribute error handling class. """
 
 
+class ThermalPrinterCommunicationError(ThermalPrinterError):
+    """ Communication error handling class """
+
+
 class ThermalPrinterConstantError(ThermalPrinterError):
     """ Constant error handling class. """
 
 
 class ThermalPrinterValueError(ThermalPrinterError):
     """ Value error handling class. """
-
-
-class ThermalPrinterCommunicationError(ThermalPrinterError):
-    """ Communication error handling class """
