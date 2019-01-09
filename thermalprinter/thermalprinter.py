@@ -10,8 +10,7 @@ from serial import Serial
 
 from .constants import (BarCodePosition, CharSet, Chinese, CodePage,
                         CodePageConverted, Command)
-from .exceptions import (ThermalPrinterAttributeError,
-                         ThermalPrinterValueError,
+from .exceptions import (ThermalPrinterValueError,
                          ThermalPrinterCommunicationError)
 from .validate import (validate_barcode, validate_barcode_position,
                        validate_charset, validate_chinese_format,
@@ -118,50 +117,25 @@ class ThermalPrinter(Serial):
         """ The printer is online. """
         return self.__is_online
 
-    @is_online.setter
-    def is_online(self, _):  # pylint: disable=no-self-use
-        """ Read-only attribute. """
-        raise ThermalPrinterAttributeError('Read-only attribute.')
-
     @property
     def is_sleeping(self):
         """ The printer is sleeping. """
         return self.__is_sleeping
-
-    @is_sleeping.setter
-    def is_sleeping(self, _):  # pylint: disable=no-self-use
-        """ Read-only attribute. """
-        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     @property
     def lines(self):
         """ Number of printed lines since the start of the script. """
         return self.__lines
 
-    @lines.setter
-    def lines(self, _):  # pylint: disable=no-self-use
-        """ Read-only attribute. """
-        raise ThermalPrinterAttributeError('Read-only attribute.')
-
     @property
     def feeds(self):
         """ Number of printed line feeds since the start of the script. """
         return self.__feeds
 
-    @feeds.setter
-    def feeds(self, _):  # pylint: disable=no-self-use
-        """ Read-only attribute. """
-        raise ThermalPrinterAttributeError('Read-only attribute.')
-
     @property
     def max_column(self):
         """ Number of printable characters on one line. """
         return self.__max_column
-
-    @max_column.setter
-    def max_column(self, _):  # pylint: disable=no-self-use
-        """ Read-only attribute. """
-        raise ThermalPrinterAttributeError('Read-only attribute.')
 
     # Module's methods
 
