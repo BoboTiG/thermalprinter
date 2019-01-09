@@ -19,5 +19,6 @@ class ThermalPrinterConstantError(ThermalPrinterError):
 class ThermalPrinterValueError(ThermalPrinterError):
     """ Value error handling class. """
 
+
 class ThermalPrinterCommunicationError(ThermalPrinterError):
     """ Communication error handling class """
