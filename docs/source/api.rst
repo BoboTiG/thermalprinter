@@ -379,35 +379,35 @@ All these attributes are **read-only**.
 
         :getter: Number of printed line feeds since the start of the script.
         :type: int
-        :exception ThermalPrinterAttributeError: When trying to assign a value.
+        :exception AttributeError: When trying to assign a value.
 
 
     .. attribute:: is_online
 
         :getter: The printer is online.
         :type: bool
-        :exception ThermalPrinterAttributeError: When trying to assign a value.
+        :exception AttributeError: When trying to assign a value.
 
 
     .. attribute:: is_sleeping
 
         :getter: The printer is sleeping.
         :type: bool
-        :exception ThermalPrinterAttributeError: When trying to assign a value.
+        :exception AttributeError: When trying to assign a value.
 
 
     .. attribute:: lines
 
         :getter: Number of printed lines since the start of the script.
         :type: int
-        :exception ThermalPrinterAttributeError: When trying to assign a value.
+        :exception AttributeError: When trying to assign a value.
 
 
     .. attribute:: max_column
 
         :getter: Number of printable characters on one line.
         :type: int
-        :exception ThermalPrinterAttributeError: When trying to assign a value.
+        :exception AttributeError: When trying to assign a value.
 
 
 Exceptions
@@ -416,10 +416,6 @@ Exceptions
 .. exception:: ThermalPrinterError
 
     Base class for thermal printer exceptions.
-
-.. exception:: ThermalPrinterAttributeError
-
-    Exception that is raised when trying to assign something to a read-only attribute.
 
 .. exception:: ThermalPrinterCommunicationError
 

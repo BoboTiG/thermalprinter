@@ -3,8 +3,6 @@
 
 import pytest
 
-from thermalprinter.exceptions import ThermalPrinterAttributeError
-
 
 def test_attribute_get_is_online(printer):
     assert printer.is_online is True
@@ -27,25 +25,25 @@ def test_attribute_get_max_column(printer):
 
 
 def test_attribute_set_is_online(printer):
-    with pytest.raises(ThermalPrinterAttributeError):
+    with pytest.raises(AttributeError):
         printer.is_online = False
 
 
 def test_attribute_set_is_sleeping(printer):
-    with pytest.raises(ThermalPrinterAttributeError):
+    with pytest.raises(AttributeError):
         printer.is_sleeping = True
 
 
 def test_attribute_set_lines(printer):
-    with pytest.raises(ThermalPrinterAttributeError):
+    with pytest.raises(AttributeError):
         printer.lines = 42
 
 
 def test_attribute_set_feeds(printer):
-    with pytest.raises(ThermalPrinterAttributeError):
+    with pytest.raises(AttributeError):
         printer.feeds = 42
 
 
 def test_attribute_set_max_column(printer):
-    with pytest.raises(ThermalPrinterAttributeError):
+    with pytest.raises(AttributeError):
         printer.max_column = 42

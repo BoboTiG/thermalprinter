@@ -8,10 +8,6 @@ class ThermalPrinterError(Exception):
     """ Error handling class. """
 
 
-class ThermalPrinterAttributeError(ThermalPrinterError):
-    """ Attribute error handling class. """
-
-
 class ThermalPrinterCommunicationError(ThermalPrinterError):
     """ Communication error handling class """
 
