@@ -2,16 +2,17 @@ language: python
 python:
   - 3.5
   - 3.6
+  - 3.7-dev
   - nightly
   - pypy3
 
 install:
-  - pip install flake8 pyserial pillow sphinx
+  - python -m pip install flake8 pyserial pillow sphinx
   - python setup.py develop
 
 script:
-  - python -m pytest tests
-  - python -m flake8 thermalprinter
+  - python -m pytest
+  - python -m flake8 .
   - sphinx-build --color -W -bhtml docs/source docs/output
 #  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports -m thermalprinter
 #  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports thermalprinter

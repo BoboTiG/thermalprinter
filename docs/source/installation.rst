@@ -4,19 +4,6 @@
 Installation
 ============
 
-Dependencies
-============
-
-The only dependency is `pySerial <https://github.com/pyserial/pyserial>`_ (version 3.0+):
-
-.. code-block:: bash
-
-    python3 -m pip install --upgrade --user pyserial>=3.0.0
-
-
-Recommended way
-===============
-
 Quite simple:
 
 .. code-block:: bash
