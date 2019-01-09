@@ -6,12 +6,13 @@ python:
   - pypy3
 
 install:
-  - pip install flake8 pyserial pillow
+  - pip install flake8 pyserial pillow sphinx
   - python setup.py develop
 
 script:
   - python -m pytest tests
   - python -m flake8 thermalprinter
+  - sphinx-build --color -W -bhtml docs/source docs/output
 #  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports -m thermalprinter
 #  - python -m mypy --check-untyped-defs --warn-incomplete-stub --silent-imports thermalprinter
 

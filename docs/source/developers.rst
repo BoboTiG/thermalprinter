@@ -124,5 +124,4 @@ How to build?
 
 .. code-block:: bash
 
-    cd docs
-    make clean html
+    sphinx-build --color -W -bhtml docs/source docs/output

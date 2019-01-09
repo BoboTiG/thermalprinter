@@ -9,3 +9,5 @@ tests/.cache/
 
 *.pyc
 MANIFEST.in
+docs/output
+build/

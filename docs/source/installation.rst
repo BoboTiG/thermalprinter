@@ -11,13 +11,7 @@ The only dependency is `pySerial <https://github.com/pyserial/pyserial>`_ (versi
 
 .. code-block:: bash
 
-    python3 -m pip install --upgrade --user pyserial
-
-For Python < 3.4, you will need to install *Enum* too:
-
-.. code-block:: bash
-
-    python3 -m pip install --upgrade --user enum34
+    python3 -m pip install --upgrade --user pyserial>=3.0.0
 
 
 Recommended way
