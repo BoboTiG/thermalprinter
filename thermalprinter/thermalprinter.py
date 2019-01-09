@@ -10,7 +10,8 @@ from serial import Serial
 
 from .constants import (BarCodePosition, CharSet, Chinese, CodePage,
                         CodePageConverted, Command)
-from .exceptions import ThermalPrinterAttributeError, ThermalPrinterValueError
+from .exceptions import (ThermalPrinterAttributeError, ThermalPrinterValueError,
+                         ThermalPrinterCommunicationError)
 from .validate import (validate_barcode, validate_barcode_position,
                        validate_charset, validate_chinese_format,
                        validate_codepage)
@@ -586,9 +587,12 @@ class ThermalPrinter(Serial):
             self.__is_sleeping = True
         self.send_command(Command.ESC, 56, seconds, seconds >> 8)
 
-    def status(self):
+    def status(self, suppress_communication_error=True):
         """ Check the printer status. If RX pin is not connected, all values
             will be set to True.
+            Setting suppress_communication_error to False will cause
+            rising ThermalPrinterCommunicationError in case lack of
+            response from printer.
 
             Return a dict:
                 movement: False if the movement is not connected
@@ -607,6 +611,10 @@ class ThermalPrinter(Serial):
             ret['paper'] = stat & 0b00000100 == 0
             ret['voltage'] = stat & 0b00001000 == 0
             ret['temp'] = stat & 0b01000000 == 0
+
+        elif not suppress_communication_error:
+            raise ThermalPrinterCommunicationError()
+
         return ret
 
     def strike(self, state=False):
