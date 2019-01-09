@@ -591,9 +591,9 @@ class ThermalPrinter(Serial):
     def status(self, raise_on_error=True):
         """ Check the printer status. If RX pin is not connected, all values
             will be set to True.
-            Setting suppress_communication_error to False will cause
-            rising ThermalPrinterCommunicationError in case lack of
-            response from printer.
+            Setting raise_on_error to False will cause rising
+            ThermalPrinterCommunicationError in case lack of
+            response from the printer.
 
             Return a dict:
                 movement: False if the movement is not connected
@@ -612,7 +612,6 @@ class ThermalPrinter(Serial):
             ret['paper'] = stat & 0b00000100 == 0
             ret['voltage'] = stat & 0b00001000 == 0
             ret['temp'] = stat & 0b01000000 == 0
-
         elif raise_on_error:
             raise ThermalPrinterCommunicationError()
 
