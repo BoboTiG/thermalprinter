@@ -10,7 +10,8 @@ from serial import Serial
 
 from .constants import (BarCodePosition, CharSet, Chinese, CodePage,
                         CodePageConverted, Command)
-from .exceptions import (ThermalPrinterAttributeError, ThermalPrinterValueError,
+from .exceptions import (ThermalPrinterAttributeError,
+                         ThermalPrinterValueError,
                          ThermalPrinterCommunicationError)
 from .validate import (validate_barcode, validate_barcode_position,
                        validate_charset, validate_chinese_format,
