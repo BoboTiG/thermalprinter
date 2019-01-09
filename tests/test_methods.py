@@ -221,7 +221,7 @@ def test_signature_sleep(methods):
 
 def test_signature_status(methods):
     methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-    sig = ArgSpec(args=['self', 'suppress_communication_error'], varargs=None,
+    sig = ArgSpec(args=['self', 'raise_on_error'], varargs=None,
                   keywords=None, defaults=(True,))
     assert getargspec(ThermalPrinter.status) == sig
 

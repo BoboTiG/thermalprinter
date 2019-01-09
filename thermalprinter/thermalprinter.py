@@ -588,7 +588,7 @@ class ThermalPrinter(Serial):
             self.__is_sleeping = True
         self.send_command(Command.ESC, 56, seconds, seconds >> 8)
 
-    def status(self, suppress_communication_error=True):
+    def status(self, raise_on_error=True):
         """ Check the printer status. If RX pin is not connected, all values
             will be set to True.
             Setting suppress_communication_error to False will cause
@@ -613,7 +613,7 @@ class ThermalPrinter(Serial):
             ret['voltage'] = stat & 0b00001000 == 0
             ret['temp'] = stat & 0b01000000 == 0
 
-        elif not suppress_communication_error:
+        elif raise_on_error:
             raise ThermalPrinterCommunicationError()
 
         return ret
