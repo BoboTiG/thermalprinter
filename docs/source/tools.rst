@@ -32,12 +32,16 @@ Constants
 Tests
 =====
 
-.. function:: testing(port='/dev/ttyAMA0', heat_time=80)
+.. function:: testing(printer=None, raise_on_error=True)
 
-    :param str port: serial port to use, known as the device name.
-    :param int heat_time: printer heat time.
+    :param ThermalPrinter printer: optional printer to use for testing.
+    :param bool raise_on_error: raise on error.
 
     Send to the printer several insctructions to test every printing functions.
+
+    .. versionchanged:: 0.2.0
+        Removed ``port`` and ``heat_time`` arguments.
+        Added ``printer`` and ``raise_on_error`` arguments.
 
 
 Code pages
