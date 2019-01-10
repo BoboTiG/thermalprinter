@@ -603,8 +603,8 @@ class ThermalPrinter(Serial):
         """ Print the test page (contains printer's settings). """
 
         self.send_command(Command.DC2, 84)
-        sleep(self._dot_print_time * 24 * 26 +
-              self._dot_feed_time * (8 * 26 + 32))
+        sleep(self._dot_print_time * 24 * 26
+              + self._dot_feed_time * (8 * 26 + 32))
 
     def underline(self, weight=0):
         """ Turn underline mode on/off.
