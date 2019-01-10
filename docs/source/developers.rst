@@ -28,40 +28,6 @@ You will need `pytest <https://pypi.python.org/pypi/pytest>`_:
     python3 -m pip install --upgrade --user pytest
 
 
-Adding/changing a method
-------------------------
-
-Before all, you will add a test file for the new method. Then, there is a test file called ``test_methods.py`` where all functions signatures are specified. Here is a little help to add a new one.
-
-1. Say we want to find the signature of the ``size`` function:
-
-.. code-block:: python
-
-    >>> from thermalprinter import ThermalPrinter
-    >>> from inspect import getargspec
-
-    >>> getargspec(ThermalPrinter.size)
-    ArgSpec(args=['self', 'value'], varargs=None, keywords=None, defaults=('S',))
-
-2. Copy the all line ``ArgSpec(...)``.
-3. Open the ``test_methods.py`` file and add a new test case, keep it sorted:
-
-.. code-block:: python
-
-    # Syntax of the function's name: test_signature_FUNCTION
-    def test_signature_size(methods):
-        methods.remove(extract_stack(None, 2)[1][2].replace('test_signature_', ''))
-
-        # Here, you paste the ArgSpec(...) line
-        sig = ArgSpec(args=['self', 'value'], varargs=None, keywords=None,
-                      defaults=('S',))
-
-        # And here you use the function's name too
-        assert getargspec(ThermalPrinter.size) == sig
-
-To summary, there are 3 modifications to apply, all functions in this file use the same syntax.
-
-
 How to test?
 ------------
 
