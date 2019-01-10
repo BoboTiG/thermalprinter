@@ -244,10 +244,13 @@ def ls(*constants):
             print('Unknown constant "{}".'.format(constant))
 
 
-def test_char(char):
+def test_char(char, printer=None):
     """ Test one character with all possible code page. """
 
-    with ThermalPrinter() as printer:
+    if not printer:
+        printer = ThermalPrinter()
+
+    with printer:
         for codepage in list(CodePage):
             printer.out('{}: {}'.format(codepage.name, char),
                         codepage=codepage)

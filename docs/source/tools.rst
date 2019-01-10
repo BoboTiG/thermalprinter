@@ -47,19 +47,23 @@ Tests
 Code pages
 ==========
 
-.. function:: test_char(char)
+.. function:: test_char(char, printer=None)
 
     :param bytes char: bytes to print.
+    :param ThermalPrinter printer: optional printer to use for testing.
 
     Test one character with all possible code page. Say you are looking for the good code page to print a sequence, you can print it using every code pages::
 
-        >>> test_char(b'现')
+        >>> test_char('现'.encode())
 
     This function is as simple as::
 
         for codepage in list(CodePage):
             printer.out('{}: {}'.format(codepage.name, char),
                         codepage=codepage)
+
+    .. versionchanged:: 0.2.0
+        Added ``printer`` argument.
 
 
 Data validation

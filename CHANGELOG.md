@@ -2,7 +2,18 @@
 
 ## 0.2.0
 
-- Add communication error in the `status()` function (issue #3)
-- Deleted ``ThermalPrinterAttributeError`` exception
-  Attributes ``is_online``, ``is_sleeping``, ``lines``, ``feeds`` and ``max_column`` now raise ``AttributeError`` when trying to set them (previously raising ``ThermalPrinterAttributeError``)
+### Bug Fixes
+
+- Fixed image printing in `tools.testing()` when the module is installed. Will now raise an exception if `raise_on_error` argument is `True` (default).
+
+### Features
+
+- Add communication error in the `status()` (issue #3). Will now raise an exception if `raise_on_error` argument is `True` (default).
 - Use `setup.cfg` instead of `setup.py`
+
+### Technical Changes
+
+- Deleted the `ThermalPrinterAttributeError` exception
+- Attributes `is_online`, `is_sleeping`, `lines`, `feeds` and `max_column` now raise `AttributeError` when trying to set them (previously raising `ThermalPrinterAttributeError`)
+- Changed signature of `tools.testing(port='/dev/ttyAMA0', heat_time=80)` -> `tools.testing(printer=None, raise_on_error=True)`
+- Changed signature of `tools.test_char(char)` -> `tools.test_char(char, printer=None)`
