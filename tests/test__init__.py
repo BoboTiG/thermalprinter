@@ -6,6 +6,16 @@ from thermalprinter import ThermalPrinter
 from thermalprinter.exceptions import ThermalPrinterValueError
 
 
+def test_initialiation_with_context_manager(port):
+    with ThermalPrinter(port=port) as printer:
+        repr(printer)
+
+
+def test_initialiation_without_context_manager(port):
+    printer = ThermalPrinter(port=port)
+    printer.close()
+
+
 def test_default_values(port):
     printer = ThermalPrinter(port=port)
     assert repr(printer)
@@ -27,5 +37,5 @@ def test_changing_good_values(port):
 def test_changing_bad_values(port):
     opt = {'heat_time': 512, 'heat_interval': -42, 'most_heated_point': -42}
     with pytest.raises(ThermalPrinterValueError):
-        printer = ThermalPrinter(port=port, baudrate=9600, **opt)
-        del printer
+        with ThermalPrinter(port=port, baudrate=9600, **opt):
+            pass
