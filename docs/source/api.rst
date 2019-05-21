@@ -299,7 +299,7 @@ Printer state
     .. method:: offline() -> None
 
         Take the printer offline. Print commands sent after this
-        will be ignored until :attr:`offline()` is called.
+        will be ignored until :attr:`online()` is called.
 
 
     .. method:: online() -> None
