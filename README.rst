@@ -59,6 +59,9 @@ An example is better than thousand words:
         # Greek (excepted the ΐ character)
         printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
 
+        # Other characters
+        printer.out(b'Cards \xe8 \xe9 \xea \xeb', codepage=CodePage.CP932)
+
         # Accents
         printer.out('Voilà !', justify='C', strike=True,
                     underline=2, codepage=CodePage.ISO_8859_1)

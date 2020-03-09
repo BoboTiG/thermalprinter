@@ -296,6 +296,7 @@ def testing(printer=None, raise_on_error=True):
             printer.out('现代汉语通用字表', chinese=True,
                         chinese_format=Chinese.UTF_8)
             printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
+            printer.out(b'Cards \xe8 \xe9 \xea \xeb', codepage=CodePage.CP932)
             printer.out('Double height', double_height=True)
             printer.out('Double width', double_width=True)
             printer.out('Inverse', inverse=True)
