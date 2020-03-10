@@ -28,7 +28,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ThermalPrinter'
-copyright = '2016-2019, Tiger-222'
+copyright = '2016-2020, Tiger-222'
 author = 'Tiger-222'
 
 # The version info for the project you're documenting, acts as replacement for

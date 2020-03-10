@@ -22,7 +22,7 @@ from .thermalprinter import ThermalPrinter
 __version__ = '0.2.0'
 __author__ = 'Mickaël Schoentgen'
 __copyright__ = """
-    Copyright (c) 2016-2019, Mickaël 'Tiger-222' Schoentgen
+    Copyright (c) 2016-2020, Mickaël 'Tiger-222' Schoentgen
 
     Permission to use, copy, modify, and distribute this software and its
     documentation for any purpose and without fee or royalty is hereby
