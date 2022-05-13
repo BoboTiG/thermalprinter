@@ -30,7 +30,7 @@ class ThermalPrinter(Serial):
     __lines = 0
     __feeds = 0
 
-    def __init__(self, port='/dev/ttyAMA0', baudrate=19200, **kwargs):
+    def __init__(self, port='/dev/ttyAMA0', baudrate=19200, command_timeout=0.05, **kwargs):
         """ Print init. """
 
         self.heat_time = int(kwargs.get('heat_time', 80))
@@ -53,6 +53,7 @@ class ThermalPrinter(Serial):
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
+        self._command_timeout = command_timeout
 
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
@@ -319,7 +320,7 @@ class ThermalPrinter(Serial):
             self._codepage = codepage
             value, _ = codepage.value
             self.send_command(Command.ESC, 116, value)
-            sleep(0.05)
+            sleep(self._command_timeout)
 
     def double_height(self, state=False):
         """ Set double height mode. """
@@ -358,7 +359,7 @@ class ThermalPrinter(Serial):
 
         self.send_command(Command.ESC, 64)
         self.reset_output_buffer()
-        sleep(0.05)
+        sleep(self._command_timeout)
         if clear:
             self.reset_input_buffer()
 
@@ -579,7 +580,7 @@ class ThermalPrinter(Serial):
         ret = {'movement': True, 'paper': True,
                'temp': True, 'voltage': True}
         self.send_command(Command.ESC, 118, 0)
-        sleep(0.05)
+        sleep(self._command_timeout)
         if self.in_waiting:
             stat = ord(self.read(1))
             ret['movement'] = stat & 0b00000001 == 1
@@ -635,5 +636,5 @@ class ThermalPrinter(Serial):
         if self.is_sleeping:
             self.__is_sleeping = False
             self.send_command(255)
-            sleep(0.05)    # Sleep 50ms as in documentation
+            sleep(self._command_timeout)    # Sleep 50ms as in documentation
             self.sleep(0)  # SLEEP OFF - IMPORTANT!

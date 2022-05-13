@@ -21,9 +21,9 @@ def methods():
     "method, arguments",
     [
         ("__enter__", {}),
-        ("__init__", {"args": ["self", "port", "baudrate"],
+        ("__init__", {"args": ["self", "port", "baudrate", "command_timeout"],
                       "varkw": "kwargs",
-                      "defaults": ("/dev/ttyAMA0", 19200)}),
+                      "defaults": ("/dev/ttyAMA0", 19200, 0.05)}),
         ("__repr__", {}),
         ("_on_exit", {}),
         ("barcode", {"args": ["self", "data", "barcode_type"]}),
