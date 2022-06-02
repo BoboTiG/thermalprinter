@@ -23,6 +23,7 @@ Class
             - ``heat_time`` (int): printer heat time (default: ``80``);
             - ``heat_interval`` (int): printer heat time interval (default: ``12``);
             - ``most_heated_point`` (int): for the printer, the most heated point (default: ``3``).
+            - ``command_timeout`` (int): command timeout (default: ``0.05``).
 
         :exception ThermalPrinterValueError: On incorrect argument's type or value.
 
