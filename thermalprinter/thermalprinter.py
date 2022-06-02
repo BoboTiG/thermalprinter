@@ -86,10 +86,11 @@ class ThermalPrinter(Serial):
         """
 
         settings = (
-            'heat_interval=' + str(self.heat_interval),
-            'heat_time=' + str(self.heat_time),
-            'most_heated_point=' + str(self.most_heated_point),
+            f'heat_interval={str(self.heat_interval)}',
+            f'heat_time={str(self.heat_time)}',
+            f'most_heated_point={str(self.most_heated_point)}',
         )
+
         states = []
 
         for var in vars(self):
@@ -103,7 +104,7 @@ class ThermalPrinter(Serial):
             else:
                 if not callable(attr):
                     continue
-                states.append('{}={}'.format(var[1:], getattr(self, var)))
+                states.append(f'{var[1:]}={getattr(self, var)}')
 
         return '{name}<id=0x{id:x}, {settings}>({states})'.format(
             name=type(self).__name__,
@@ -398,9 +399,7 @@ class ThermalPrinter(Serial):
             for pad in range(row_bytes):
                 sum_ = 0
                 bit = 128
-                while bit > 0:
-                    if row >= width:
-                        break
+                while bit > 0 and row < width:
                     if pixels[row, col] == 0:
                         sum_ |= bit
                     row += 1
@@ -433,8 +432,11 @@ class ThermalPrinter(Serial):
         """ Set text justification. """
 
         if not isinstance(value, str) or value not in 'LCRlcr':
-            err = 'value should be one of L (left, default), C (center)'
-            err += '  or R (right).'
+            err = (
+                'value should be one of L (left, default), C (center)'
+                + '  or R (right).'
+            )
+
             raise ThermalPrinterValueError(err)
 
         value = value.upper()
@@ -533,8 +535,11 @@ class ThermalPrinter(Serial):
         """ Set text size. """
 
         if not isinstance(value, str) or value not in 'SMLsml':
-            err = 'value should be one of S (small, default), M (medium)'
-            err += '  or L (large).'
+            err = (
+                'value should be one of S (small, default), M (medium)'
+                + '  or L (large).'
+            )
+
             raise ThermalPrinterValueError(err)
 
         value = value.upper()
