@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+### Features
+
+- Add option to specify command timeout.
 ## 0.2.0
 
 Release date: `2019-01-10`
