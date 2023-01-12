@@ -4,8 +4,6 @@ Python module to manage the DP-EH600 thermal printer.
 This module is maintained by Mickaël 'Tiger-222' Schoentgen <contact@tiger-222.fr>.
 Based on the work of Phil Burgess and Fried/Ladyada (Adafruit).
 
-Python 3.7+ only.
-
 Complete documentation: https://thermalprinter.readthedocs.io
 
 You can always get the latest version of this module at: https://github.com/BoboTiG/thermalprinter
