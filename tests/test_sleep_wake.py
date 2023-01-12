@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from thermalprinter.exceptions import ThermalPrinterValueError
@@ -11,7 +9,7 @@ def test_default_state(printer):
 
 def test_sleep_bad_value(printer):
     with pytest.raises(ThermalPrinterValueError):
-        printer.sleep('42')
+        printer.sleep("42")
 
 
 def test_sleep_bad_int(printer):

@@ -1,6 +1,3 @@
-# coding: utf-8
-
-
 def test_default_value(printer):
     assert printer._upside_down is False
 

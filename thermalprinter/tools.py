@@ -1,13 +1,19 @@
-# coding: utf-8
-""" This is part of the Python's module to manage the DP-EH600 thermal printer.
-    Source: https://github.com/BoboTiG/thermalprinter
+"""
+This is part of the Python's module to manage the DP-EH600 thermal printer.
+Source: https://github.com/BoboTiG/thermalprinter
 """
 
-from .constants import (BarCode, BarCodePosition, CharSet, Chinese, CodePage,
-                        CodePageConverted)
+from typing import Any, Optional
+
+from .constants import (
+    CONSTANTS,
+    BarCode,
+    BarCodePosition,
+    Chinese,
+    CodePage,
+)
 from .exceptions import ThermalPrinterError
 from .thermalprinter import ThermalPrinter
-
 
 # gnu.png
 TESTING_IMG_DATA = """\
@@ -214,55 +220,86 @@ vubvf6wtbamlSknLzX9PK9vwCI7TMGVaPIrHS5JuU5bNzzhE21SqCpVqtaWWP7gLN7k002BDN0lF
 gg=="""
 
 
-def ls(*constants):
-    """ Print constants values.
+def ls(*constants: Any) -> None:
+    """Print constants values.
 
-        >>> ls()
-        # all constants printer
+    :param list \\*constants: constant(s) to print.
 
-        >>> ls(Chinese)
-        # print Chinese constants
+    Examples.
 
-        >>> ls(Chinese, CharSet)
-        # print Chinese and CharSet constants
+    Print all constants:
+
+    >>> ls()
+
+    You can print only constants you want too:
+
+    >>> from thermalprinter.constants import Chinese, CodePage
+    >>> # Print Chinese values
+    >>> ls(Chinese)
+    >>> # Print Chinese and CodePage values
+    >>> ls(Chinese, CharSet)
     """
 
     # pylint: disable=invalid-name
 
-    if not constants:
-        constants = [BarCode, BarCodePosition, CharSet, Chinese, CodePage,
-                     CodePageConverted]
-
-    for constant in constants:
+    for constant in constants or CONSTANTS:
         try:
-            print('---CONST', constant.__name__)
-            print(constant.__doc__.strip())
+            print("---")
             for value in constant:
                 print(value)
             print()
         except AttributeError:
-            print('Unknown constant "{}".'.format(constant))
+            print(f"Unknown constant {constant!r}")
 
 
-def test_char(char, printer=None):
-    """ Test one character with all possible code page. """
+def print_char(char: str, printer: Optional[ThermalPrinter] = None) -> None:
+    """
+    Test one character with all possible code page.
+
+    :param str char: character to print.
+    :param ThermalPrinter printer: optional printer to use for printer_tests.
+
+    Say you are looking for the good code page to print a sequence,
+    you can print it using every code pages:
+
+    >>> print_char("现")
+
+    This function is as simple as:
+
+    >>> for codepage in list(CodePage):
+    ...    printer.out(printer.out(f"{codepage.name}: {char}"))
+
+    .. versionchanged:: 0.2.0
+        Added ``printer`` argument.
+    """
 
     if not printer:
         printer = ThermalPrinter()
 
     with printer:
         for codepage in list(CodePage):
-            printer.out('{}: {}'.format(codepage.name, char),
-                        codepage=codepage)
+            printer.out(f"{codepage.name}: {char}")
 
 
-def testing(printer=None, raise_on_error=True):
-    """ Print all possibilities.
+def printer_tests(
+    printer: Optional[ThermalPrinter] = None, raise_on_error: bool = True
+) -> None:
+    """
+    Send to the printer several insctructions to test every printing functions.
 
-        >>> from thermalprinter.tools import testing
-        >>> testing()
-        >>> printer = ThermalPrinter(port='/dev/ttyS0', heat_time=120)
-        >>> testing(printer=printer)
+    :param ThermalPrinter printer: optional printer to use for printer_tests.
+    :param bool raise_on_error: raise on error.
+
+    .. versionchanged:: 0.2.0
+        Removed ``port`` and ``heat_time`` arguments.
+        Added ``printer`` and ``raise_on_error`` arguments.
+
+    Example:
+
+    >>> from thermalprinter.tools import printer_tests
+    >>> printer_tests()
+    >>> printer = ThermalPrinter(port='/dev/ttyS0', heat_time=120)
+    >>> printer_tests(printer=printer)
     """
 
     try:
@@ -271,43 +308,48 @@ def testing(printer=None, raise_on_error=True):
 
         with printer:
             try:
+                # pylint: disable=import-outside-toplevel
                 import base64
                 import io
+
                 import PIL.Image
 
-                with io.BytesIO() as f:
-                    f.write(base64.b64decode(TESTING_IMG_DATA))
-                    f.seek(0)
+                with io.BytesIO() as buffer:
+                    buffer.write(base64.b64decode(TESTING_IMG_DATA))
+                    buffer.seek(0)
 
                     printer.feed()
-                    printer.image(PIL.Image.open(f))
+                    printer.image(PIL.Image.open(buffer))
                     printer.feed()
             except ImportError:
                 if raise_on_error:
                     raise
-                print('Pillow module not installed, skip picture printing.')
+                print("Pillow module not installed, skip picture printing.")
 
             printer.barcode_height(80)
             printer.barcode_position(BarCodePosition.BELOW)
             printer.barcode_width(3)
-            printer.barcode('012345678901', BarCode.EAN13)
+            printer.barcode("012345678901", BarCode.EAN13)
 
-            printer.out('Bold', bold=True)
-            printer.out('现代汉语通用字表', chinese=True,
-                        chinese_format=Chinese.UTF_8)
-            printer.out('Στην υγειά μας!', codepage=CodePage.CP737)
-            printer.out(b'Cards \xe8 \xe9 \xea \xeb', codepage=CodePage.CP932)
-            printer.out('Double height', double_height=True)
-            printer.out('Double width', double_width=True)
-            printer.out('Inverse', inverse=True)
-            printer.out('Rotate 90°', rotate=True,
-                        codepage=CodePage.ISO_8859_1)
-            printer.out('Strike', strike=True)
-            printer.out('Underline', underline=1)
-            printer.out('Upside down', upside_down=True)
+            printer.out("Bold", bold=True)
+            printer.out("现代汉语通用字表", chinese=True, chinese_format=Chinese.UTF_8)
+            printer.out("Στην υγειά μας!", codepage=CodePage.CP737)
+            printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
+            printer.out("Double height", double_height=True)
+            printer.out("Double width", double_width=True)
+            printer.out("Inverse", inverse=True)
+            printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
+            printer.out("Strike", strike=True)
+            printer.out("Underline", underline=1)
+            printer.out("Upside down", upside_down=True)
 
-            printer.out('Voilà !', justify='C', strike=True,
-                        underline=2, codepage=CodePage.ISO_8859_1)
+            printer.out(
+                "Voilà !",
+                justify="C",
+                strike=True,
+                underline=2,
+                codepage=CodePage.ISO_8859_1,
+            )
 
             printer.feed(2)
     except ThermalPrinterError as ex:

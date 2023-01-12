@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from thermalprinter.constants import CodePage
@@ -22,7 +20,7 @@ def test_changing_good_value(printer):
 
 def test_changing_bad_value(printer):
     with pytest.raises(ThermalPrinterConstantError):
-        printer.codepage('42')
+        printer.codepage("42")
 
 
 def test_changing_but_chinese(printer):

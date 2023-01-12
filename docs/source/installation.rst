@@ -8,7 +8,7 @@ Quite simple:
 
 .. code-block:: bash
 
-    python3 -m pip install --upgrade --user thermalprinter
+    python -m pip install -U thermalprinter
 
 
 From sources
@@ -27,4 +27,4 @@ Alternatively, you can get a copy of the module from GitHub.
 
 .. code-block:: bash
 
-    python3 setup.py install --user
+    python -m pip install -e .

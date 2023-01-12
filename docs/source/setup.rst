@@ -12,7 +12,7 @@ Raspberry Pi
 
 .. code-block:: bash
 
-    sudo usermod -a -G dialout USER
+    sudo usermod -a -G dialout $USER
 
 3. Reboot.
 

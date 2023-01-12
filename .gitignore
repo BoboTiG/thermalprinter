@@ -1,5 +1,6 @@
 __pycache__/
 cache/
+.coverage
 dist/
 docs/build/
 .eggs/
@@ -11,3 +12,4 @@ tests/.cache/
 MANIFEST.in
 docs/output
 build/
+venv/

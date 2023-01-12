@@ -4,14 +4,27 @@
 
 ### Features
 
-- Add option to specify command timeout.
+- Removed Python 3.5 support.
+- Added support for Python 3.9, 3.10, and 3.11.
+- Added type annotations.
+- Added option to specify command timeout via `ThermalPrinter(..., command_timeout=float)`.
+- Documentation is now generated from the source code to never miss signature changes.
+- Moved the CI from Travis-CI to GitHub actions.
+- Run black on the entire source code.
+- Added more quality checks.
+
+### Technical Changes
+
+- Renamed `tools.test_char()` -> `tools.print_char()`.
+- Renamed `tools.testing()` -> `tools.printer_tests()`.
+
 ## 0.2.0
 
 Release date: `2019-01-10`
 
 ### Bug Fixes
 
-- Fixed image printing in `tools.testing()` when the module is installed. Will now raise an exception if `raise_on_error` argument is `True` (default).
+- Fixed image printing in `tools.printer_tests()` when the module is installed. Will now raise an exception if `raise_on_error` argument is `True` (default).
 
 ### Features
 
@@ -22,5 +35,5 @@ Release date: `2019-01-10`
 
 - Removed `ThermalPrinterAttributeError` exception
 - Attributes `is_online`, `is_sleeping`, `lines`, `feeds` and `max_column` now raise `AttributeError` when trying to set them (previously raising `ThermalPrinterAttributeError`)
-- Changed signature of `tools.testing(port='/dev/ttyAMA0', heat_time=80)` -> `tools.testing(printer=None, raise_on_error=True)`
-- Changed signature of `tools.test_char(char)` -> `tools.test_char(char, printer=None)`
+- Changed signature of `tools.printer_tests(port='/dev/ttyAMA0', heat_time=80)` -> `tools.printer_tests(printer=None, raise_on_error=True)`
+- Changed signature of `tools.print_char(char)` -> `tools.print_char(char, printer=None)`

@@ -2,7 +2,7 @@
 # (sorted alphabeticaly)
 
 # Nickname or fullname <email> <email2> <emailN> [URL] [URL2] [URLN]
-#     - major contribution
+#     - major contribution (optional)
 #     - major contribution 2
 #     - major contribution N
 
@@ -11,3 +11,5 @@ Phillip 'vIiRuS' Thelen [http://pherth.net]
 
 Alexandros Kokkalas
     - Print Greek characters example
+
+Zdzisław Krajewski [https://github.com/d21d3q]

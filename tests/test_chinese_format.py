@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from thermalprinter.constants import Chinese
@@ -22,7 +20,7 @@ def test_changing_good_value(printer):
 
 def test_changing_bad_value(printer):
     with pytest.raises(ThermalPrinterConstantError):
-        printer.chinese_format('42')
+        printer.chinese_format("42")
 
 
 def test_reset_value(printer):

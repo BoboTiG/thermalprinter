@@ -1,20 +1,20 @@
-# coding: utf-8
-""" This is part of the Python's module to manage the DP-EH600 thermal printer.
-    Source: https://github.com/BoboTiG/thermalprinter
+"""
+This is part of the Python's module to manage the DP-EH600 thermal printer.
+Source: https://github.com/BoboTiG/thermalprinter
 """
 
 
 class ThermalPrinterError(Exception):
-    """ Error handling class. """
+    """Base class for thermal printer exceptions.."""
 
 
 class ThermalPrinterCommunicationError(ThermalPrinterError):
-    """ Communication error handling class """
+    """Exception that is raised on communication error with the printer."""
 
 
 class ThermalPrinterConstantError(ThermalPrinterError):
-    """ Constant error handling class. """
+    """Exception that is raised on inexistant or out of range constant."""
 
 
 class ThermalPrinterValueError(ThermalPrinterError):
-    """ Value error handling class. """
+    """Exception that is raised on incorrect type or value passed to any method."""

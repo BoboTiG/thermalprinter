@@ -18,30 +18,22 @@ Setup
 Testing
 =======
 
-Dependency
-----------
+Dependencies
+------------
 
-You will need `pytest <https://pypi.python.org/pypi/pytest>`_:
+Install required packages:
 
 .. code-block:: bash
 
-    python3 -m pip install --upgrade --user pytest
+    python -m pip install -e '.[tests]'
 
 
 How to test?
 ------------
 
-Enable the developer mode:
-
 .. code-block:: bash
 
-    python3 setup.py develop
-
-Lauch the test suit:
-
-.. code-block:: bash
-
-    python3 -m pytest
+    python -m pytest
 
 And you can :doc:`test printing functions <tools>` (if you added a styling method, you can add it to this function).
 
@@ -58,7 +50,7 @@ Install required packages:
 
 .. code-block:: bash
 
-    python3 -m pip install --upgrade --user flake8 pylint
+    python -m pip install -e '.[dev]'
 
 
 How to validate?
@@ -66,10 +58,7 @@ How to validate?
 
 .. code-block:: bash
 
-    flake8
-    pylint3 thermalprinter
-
-If there is no output, you are good ;)
+    ./checks.sh
 
 
 Documentation
@@ -78,11 +67,11 @@ Documentation
 Dependencies
 ------------
 
-You will need `Sphinx <http://sphinx-doc.org/>`_:
+Install required packages:
 
 .. code-block:: bash
 
-    python3 -m pip install --upgrade --user sphinx
+    python -m pip install -e '.[docs]'
 
 
 How to build?

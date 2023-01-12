@@ -1,6 +1,3 @@
-# coding: utf-8
-
-
 def test_default_value(printer):
     assert printer._double_height is False
     assert printer._char_height == 24

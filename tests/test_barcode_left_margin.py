@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from thermalprinter.exceptions import ThermalPrinterValueError
@@ -21,7 +19,7 @@ def test_changing_good_value(printer):
 
 def test_bad_value__not_int(printer):
     with pytest.raises(ThermalPrinterValueError):
-        printer.barcode_left_margin('42')
+        printer.barcode_left_margin("42")
 
 
 def test_changing_bad_value__not_in_range_low(printer):

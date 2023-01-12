@@ -1,4 +1,3 @@
-# coding: utf-8
 import os
 import pty
 
@@ -20,13 +19,13 @@ class FakeThermalPrinter(ThermalPrinter):
         pass
 
 
-@pytest.fixture(scope='session')
-def port(request):
-    """ http://allican.be/blog/2017/01/15/python-dummy-serial-port.html """
+@pytest.fixture(scope="session")
+def port():
+    """http://allican.be/blog/2017/01/15/python-dummy-serial-port.html"""
     _, slave = pty.openpty()
     return os.ttyname(slave)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def printer(port):
     return FakeThermalPrinter(port=port)

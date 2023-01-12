@@ -1,6 +1,3 @@
-# coding: utf-8
-
-
 def test_default_state(printer):
     assert printer.is_online is True
 

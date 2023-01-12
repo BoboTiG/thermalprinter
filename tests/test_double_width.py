@@ -1,6 +1,3 @@
-# coding: utf-8
-
-
 def test_default_value(printer):
     assert printer._double_width is False
     assert printer.max_column == 32

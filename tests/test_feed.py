@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import pytest
 
 from thermalprinter.exceptions import ThermalPrinterValueError
@@ -17,7 +15,7 @@ def test_changing_good_value(printer):
 
 def test_bad_value__not_int(printer):
     with pytest.raises(ThermalPrinterValueError):
-        printer.feed('42')
+        printer.feed("42")
     assert printer.feeds == 42 + 1
 
 
