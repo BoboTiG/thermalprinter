@@ -1,0 +1,150 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thermalprinter"
+description = "Driver for the DP-EH600 thermal printer (AdaFruit)."
+readme = "README.md"
+requires-python = ">= 3.7"
+authors = [
+  { name = "Mickaël Schoentgen", email="contact@tiger-222.fr" },
+]
+maintainers = [
+  { name = "Mickaël Schoentgen", email="contact@tiger-222.fr" },
+]
+license = { file = "LICENSE" }
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Unix",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Printing",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: System :: Hardware :: Hardware Drivers",
+]
+keywords = [
+    "printer",
+    "driver",
+    "thermal-printer",
+    "dp-eh600",
+    "dp-eh400",
+    "adafruit",
+]
+dependencies = [
+  "pyserial>=3.5,<4",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/BoboTiG/thermalprinter"
+Changelog = "https://github.com/BoboTiG/thermalprinter/blob/main/CHANGELOG.md"
+Source = "https://github.com/BoboTiG/thermalprinter"
+Sponsor = "https://github.com/sponsors/BoboTiG"
+Tracker = "https://github.com/BoboTiG/thermalprinter/issues"
+"Released Versions" = "https://github.com/BoboTiG/thermalprinter/releases"
+
+[project.optional-dependencies]
+dev = [
+  "mypy==1.13.0",
+  "pytest==8.3.3",
+  "pytest-cov==6.0.0",
+  "ruff==0.7.1",
+]
+docs = [
+  "sphinx==8.1.3",
+  "enum-tools[sphinx]==0.12.0",
+  "sphinx-rtd-theme==3.0.1",
+]
+tests = [
+  "pillow ; python_version < '3.9'",
+  "pillow==11.0.0 ; python_version >= '3.9'",
+  "pytest ; python_version < '3.9'",
+  "pytest==8.3.3 ; python_version >= '3.9'",
+  "pytest-cov ; python_version < '3.9'",
+  "pytest-cov==6.0.0 ; python_version >= '3.9'",
+]
+
+[tool.hatch.version]
+path = "src/thermalprinter/__init__.py"
+
+[tool.hatch.build]
+skip-excluded-dirs = true
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "CHANGELOG.md",
+  "src/thermalprinter",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "src/thermalprinter",
+]
+
+[tool.mypy]
+# Ensure we know what we do
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+
+# Imports management
+ignore_missing_imports = true
+follow_imports = "skip"
+
+# Ensure full coverage
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+
+strict_equality = true
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+addopts = """
+    --cov-report=term-missing:skip-covered
+    --cov=thermalprinter
+    --showlocals
+    --strict-markers
+    -r fE
+    -vvv
+"""
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py37"
+
+[tool.ruff.lint]
+extend-select = ["ALL"]
+ignore = [
+    "ANN401",  # allow Any for *constants
+    "COM812",  # conflict
+    "D",  # TODO
+    "FBT",  # boolean positional arguments are good for this project
+    "ISC001",  # conflict
+    "N802",  # test functions names should be lowercase
+    "PLR2004",  # magic values
+    "S",  # assert in tests
+    "SLF",  # private class access in tests
+    "T201",  # print()
+]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

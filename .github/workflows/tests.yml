@@ -1,4 +1,4 @@
-name: Unit tests
+name: Tests
 
 on: pull_request
 
@@ -14,27 +14,32 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14-dev"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "${{ matrix.python }}"
+          cache: pip
       - name: Install requirements
-        run: python -m pip install -e '.[tests]'
+        run: |
+          python -m pip install -U pip
+          python -m pip install -e '.[tests]'
       - name: Unit tests
-        run: python -Wd -m pytest tests
-      - name: Generate the user functions documentation
-        run: sphinx-build --color -W -bhtml docs/source docs/output
+        run: python -m pytest
 
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
+          cache: pip
       - name: Install requirements
         run: python -m pip install -e '.[docs]'
       - name: Check the documentation

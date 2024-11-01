@@ -41,7 +41,7 @@ And you can :doc:`test printing functions <tools>` (if you added a styling metho
 Validating the code
 ===================
 
-It is important to keep a clean base code. Use tools like `flake8 <https://pypi.python.org/pypi/flake8>`_ and `Pylint <https://pypi.python.org/pypi/pylint>`_.
+It is important to keep a clean base code.
 
 Dependencies
 ------------
