@@ -62,9 +62,9 @@ dev = [
   "ruff==0.7.1",
 ]
 docs = [
-  "sphinx==8.3.1 ; python_version > '3.9'",
-  "enum-tools[sphinx]==0.12.0 ; python_version > '3.9'",
-  "sphinx-rtd-theme==3.0.1 ; python_version > '3.9'",
+  "sphinx==8.1.3",
+  "enum-tools[sphinx]==0.12.0",
+  "sphinx-rtd-theme==3.0.1",
 ]
 tests = [
   "pillow==11.0.0",
