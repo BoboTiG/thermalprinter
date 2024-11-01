@@ -10,7 +10,6 @@ from time import sleep
 from typing import Any
 
 from serial import Serial
-from typing_extensions import Self
 
 from thermalprinter.constants import (
     BarCode,
@@ -115,7 +114,7 @@ class ThermalPrinter(Serial):
         # Factory settings
         self.reset()
 
-    def __enter__(self) -> Self:
+    def __enter__(self) -> ThermalPrinter:  # noqa: PYI034
         """`with ThermalPrinter() as printer:`."""
         return self
 
