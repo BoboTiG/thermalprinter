@@ -72,7 +72,8 @@ tests = [
   "pillow ; python_version < '3.9'",
   "pillow==11.0.0 ; python_version >= '3.9'",
   "pytest==8.3.3",
-  "pytest-cov==6.0.0",
+  "pytest-cov ; python_version < '3.9'",
+  "pytest-cov==6.0.0 ; python_version >= '3.9'",
 ]
 
 [tool.hatch.version]
