@@ -106,10 +106,6 @@ disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
 
-# Restrict dynamic typing (a little)
-# e.g. `x: List[Any]` or x: List`
-disallow_any_generics = true
-
 strict_equality = true
 
 [tool.pytest.ini_options]

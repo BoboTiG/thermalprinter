@@ -81,10 +81,22 @@ class ThermalPrinter(Serial):
         command_timeout: float = 0.05,
         **kwargs: Any,
     ) -> None:
+        # Few important values
+        self._baudrate = baudrate
+        self._byte_time = 11.0 / float(self._baudrate)
+        self._dot_feed_time = 0.0025
+        self._dot_print_time = 0.033
+        self._command_timeout = command_timeout
         self.heat_time = int(kwargs.get("heat_time", 80))
         self.heat_interval = int(kwargs.get("heat_interval", 12))
         self.most_heated_point = int(kwargs.get("most_heated_point", 3))
 
+        # Init the serial
+        super().__init__(port=port, baudrate=self._baudrate)
+        sleep(0.5)  # Important
+        register(self._on_exit)
+
+        # Several checks
         if not 0 <= self.heat_time <= 255:
             msg = "heat_time should be between 0 and 255 (default: 80)."
             raise ThermalPrinterValueError(msg)
@@ -94,18 +106,6 @@ class ThermalPrinter(Serial):
         if not 0 <= self.most_heated_point <= 255:
             msg = "most_heated_point should be between 0 and 255 (default: 3)."
             raise ThermalPrinterValueError(msg)
-
-        # Few important values
-        self._baudrate = baudrate
-        self._byte_time = 11.0 / float(self._baudrate)
-        self._dot_feed_time = 0.0025
-        self._dot_print_time = 0.033
-        self._command_timeout = command_timeout
-
-        # Init the serial
-        super().__init__(port=port, baudrate=self._baudrate)
-        sleep(0.5)  # Important
-        register(self._on_exit)
 
         # Printer settings
         self.send_command(Command.ESC, 55, self.most_heated_point, self.heat_time, self.heat_interval)
