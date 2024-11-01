@@ -82,16 +82,15 @@ class ThermalPrinter(Serial):
         **kwargs: Any,
     ) -> None:
         self.heat_time = int(kwargs.get("heat_time", 80))
+        self.heat_interval = int(kwargs.get("heat_interval", 12))
+        self.most_heated_point = int(kwargs.get("most_heated_point", 3))
+
         if not 0 <= self.heat_time <= 255:
             msg = "heat_time should be between 0 and 255 (default: 80)."
             raise ThermalPrinterValueError(msg)
-
-        self.heat_interval = int(kwargs.get("heat_interval", 12))
         if not 0 <= self.heat_interval <= 255:
             msg = "heat_interval should be between 0 and 255 (default: 12)."
             raise ThermalPrinterValueError(msg)
-
-        self.most_heated_point = int(kwargs.get("most_heated_point", 3))
         if not 0 <= self.most_heated_point <= 255:
             msg = "most_heated_point should be between 0 and 255 (default: 3)."
             raise ThermalPrinterValueError(msg)
