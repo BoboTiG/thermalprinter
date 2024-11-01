@@ -1,15 +1,19 @@
-__pycache__/
-cache/
+# Files
 .coverage
+MANIFEST.in
+
+# Folders
+__pycache__/
+build/
+cache/
 dist/
 docs/build/
-.eggs/
-.idea/
-tests/.cache/
-*.egg-info/
-
-*.pyc
-MANIFEST.in
 docs/output
-build/
+.eggs/
+*.egg-info/
+htmlcov/
+.idea/
+.mypy_cache/
+.pytest_cache/
+tests/.cache/
 venv/

@@ -2,7 +2,7 @@
 Usage
 =====
 
-An example is better than thousands words:
+An example is better than a thousand words:
 
 .. code-block:: python
 
@@ -30,8 +30,7 @@ An example is better than thousands words:
         printer.out("Upside down", upside_down=True)
 
         # Chinese (almost all alphabets exist)
-        printer.out("现代汉语通用字表", chinese=True,
-                    chinese_format=Chinese.UTF_8)
+        printer.out("现代汉语通用字表", chinese=True, chinese_format=Chinese.UTF_8)
                     
         # Greek (excepted the ΐ character)
         printer.out("Στην υγειά μας!", codepage=CodePage.CP737)
@@ -40,8 +39,7 @@ An example is better than thousands words:
         printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
 
         # Accents
-        printer.out("Voilà !", justify="C", strike=True,
-                    underline=2, codepage=CodePage.ISO_8859_1)
+        printer.out("Voilà !", justify="C", strike=True, underline=2, codepage=CodePage.ISO_8859_1)
 
         # Line feeds
         printer.feed(2)
