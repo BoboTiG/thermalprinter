@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "thermalprinter"
 description = "Driver for the DP-EH600 thermal printer (AdaFruit)."
 readme = "README.md"
-requires-python = ">= 3.9"
+requires-python = ">= 3.7"
 authors = [
   { name = "Mickaël Schoentgen", email="contact@tiger-222.fr" },
 ]
@@ -23,6 +23,8 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
