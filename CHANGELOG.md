@@ -6,8 +6,8 @@ Release date: `202x-xx-xx`
 
 ### Features
 
-- Drop support for Python 3.5, 3.6, and 3.7.
-- Added support for Python 3.9, 3.10, 3.11, 3.12, 3.13, and 3.14.
+- Drop support for Python 3.5, and 3.6.
+- Added support for Python 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, and 3.14.
 - Support for DP-EH400/1 printers is confirmed (#17).
 - Added type annotations.
 - New option to specify commands timeout via `ThermalPrinter(..., command_timeout=float)` (#17).
