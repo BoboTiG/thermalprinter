@@ -6,11 +6,11 @@ Release date: `202x-xx-xx`
 
 ### Features
 
-- Removed Python 3.5 support.
-- Removed Python 3.6 support.
+- Drop support for Python 3.5, 3.6, and 3.7.
 - Added support for Python 3.9, 3.10, 3.11, 3.12, 3.13, and 3.14.
+- Support for DP-EH400/1 printers is confirmed (#17).
 - Added type annotations.
-- New option to specify commands timeout via `ThermalPrinter(..., command_timeout=float)`.
+- New option to specify commands timeout via `ThermalPrinter(..., command_timeout=float)` (#17).
 - No longer checks that the provided `image` argument to `ThermalPrinter.image()` is a `PIL.Image` object.
 - Documentation is now generated from the source code to never miss signature changes.
 - Moved the CI from Travis-CI to GitHub actions.
