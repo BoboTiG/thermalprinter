@@ -1,4 +1,4 @@
-# DP-EH600 thermal printer
+# DP-EH600 Thermal Printer
 
 [![PyPI Version](https://img.shields.io/pypi/v/thermalprinter.svg)](https://pypi.python.org/pypi/thermalprinter)
 [![PyPI Status](https://img.shields.io/pypi/status/thermalprinter.svg)](https://pypi.python.org/pypi/thermalprinter)
@@ -6,13 +6,20 @@
 [![Tests](https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml)
 [![Github License](https://img.shields.io/github/license/BoboTiG/thermalprinter.svg)](https://github.com/BoboTiG/thermalprinter/blob/master/LICENSE)
 
-Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
+Python module to manage DP-EH600 thermal printers (the one sold by AdaFruit).
 
 - **Python 3.7+** and PEP8 compliant;
 - this is a clean follow of the technical manual with few helpers;
 - and there is a [complete, and beautiful, documentation](https://thermalprinter.readthedocs.io) 🙂
 - also several useful [recipes](https://github.com/BoboTiG/thermalprinter-recipes);
 - **contributors** are welcome, check the [developer guide](https://thermalprinter.readthedocs.io/en/latest/developers.html)!
+
+## Printers
+
+Supported printers:
+
+- DP-EH600
+- DP-EH400/1
 
 ## Installation
 
@@ -25,13 +32,13 @@ python -m pip install -U thermalprinter
 An example is better than a thousand words:
 
 ```python
-
-from PIL import Image
+from PIL import Image  # Optional, for printing images
 from ThermalPrinter import *
+
 
 with ThermalPrinter(port="/dev/ttyAMA0") as printer:
     # Picture
-    printer.image(Image.open("gnu.png"))
+    printer.image(Image.open("src/tests/gnu.png"))
 
     # Bar codes
     printer.barcode_height(80)

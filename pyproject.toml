@@ -58,15 +58,17 @@ Tracker = "https://github.com/BoboTiG/thermalprinter/issues"
 
 [project.optional-dependencies]
 dev = [
-  "mypy==1.13.0",
-  "pytest==8.3.3",
-  "pytest-cov==6.0.0",
-  "ruff==0.7.1",
+  "build==1.2.2.post1",
+  "twine==5.1.1",
 ]
 docs = [
   "sphinx==8.1.3",
   "enum-tools[sphinx]==0.12.0",
   "sphinx-rtd-theme==3.0.1",
+]
+lint = [
+  "mypy==1.13.0",
+  "ruff==0.7.1",
 ]
 tests = [
   "pillow ; python_version < '3.9'",
@@ -108,6 +110,10 @@ follow_imports = "skip"
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
+
+# Restrict dynamic typing (a little)
+# e.g. `x: List[Any]` or x: List`
+# disallow_any_generics = true
 
 strict_equality = true
 

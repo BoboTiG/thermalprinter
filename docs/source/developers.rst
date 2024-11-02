@@ -50,7 +50,7 @@ Install required packages:
 
 .. code-block:: bash
 
-    python -m pip install -e '.[dev]'
+    python -m pip install -e '.[lint]'
 
 
 How to validate?
