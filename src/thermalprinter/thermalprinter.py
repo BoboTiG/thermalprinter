@@ -41,6 +41,9 @@ class ThermalPrinter(Serial):
         - ``most_heated_point`` (int): for the printer, the most heated point (default: ``3``).
 
     :exception ThermalPrinterValueError: On incorrect argument's type or value.
+
+    .. versionchanged:: 0.3.0
+        Added ``command_timeout`` keyword-argument.
     """
 
     # Counters
