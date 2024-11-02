@@ -33,5 +33,5 @@ jobs:
       - name: Publish
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          skip_existing: true
-          print_hash: true
+          skip-existing: true
+          print-hash: true
