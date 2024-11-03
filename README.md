@@ -12,7 +12,7 @@ Python module to manage DP-EH600 thermal printers (the one sold by AdaFruit).
 - this is a clean follow of the technical manual with few helpers;
 - and there is a [complete, and beautiful, documentation](https://thermalprinter.readthedocs.io) 🙂
 - also several useful [recipes](https://github.com/BoboTiG/thermalprinter-recipes);
-- **contributors** are welcome, check the [developer guide](https://thermalprinter.readthedocs.io/en/latest/developers.html)!
+- **contributors** are welcome, check the [developer guide](https://thermalprinter.readthedocs.io/developers.html)!
 
 ## Printers
 
