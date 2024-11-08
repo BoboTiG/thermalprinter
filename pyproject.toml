@@ -68,7 +68,7 @@ docs = [
 ]
 lint = [
   "mypy==1.13.0",
-  "ruff==0.7.2",
+  "ruff==0.7.3",
 ]
 tests = [
   "pillow ; python_version < '3.9'",
