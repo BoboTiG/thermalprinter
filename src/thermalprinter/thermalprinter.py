@@ -52,6 +52,9 @@ class ThermalPrinter(Serial):
 
     .. versionchanged:: 0.3.0
         Added ``command_timeout`` keyword-argument.
+
+    .. versionchanged:: 0.3.1
+        Added ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
     """
 
     # Counters
@@ -90,6 +93,8 @@ class ThermalPrinter(Serial):
         port: str = DEFAULT_PORT,
         baudrate: int = DEFAULT_BAUDRATE,
         command_timeout: float = 0.05,
+        sleep_sec_after_init: float = 0.5,
+        run_setup_cmd: bool = True,
         **kwargs: Any,
     ) -> None:
         # Few important values
@@ -116,11 +121,12 @@ class ThermalPrinter(Serial):
 
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
-        sleep(0.5)  # Important
+        sleep(sleep_sec_after_init)  # Important
         register(self._on_exit)
 
         # Printer settings
-        self.send_command(Command.ESC, 55, self.most_heated_point, self.heat_time, self.heat_interval)
+        if run_setup_cmd:
+            self.send_command(Command.ESC, 55, self.most_heated_point, self.heat_time, self.heat_interval)
 
         # Factory settings
         self.reset()
