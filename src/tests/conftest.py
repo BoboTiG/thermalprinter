@@ -6,23 +6,10 @@ from typing import TYPE_CHECKING, Generator
 
 import pytest
 
-from thermalprinter import ThermalPrinter
+from tests.faker import FakeThermalPrinter
 
 if TYPE_CHECKING:
-    from _typeshed import ReadableBuffer
-
-
-class FakeThermalPrinter(ThermalPrinter):
-    def __init__(self, port: str) -> None:
-        super().__init__(port=port)
-
-        # Disable timers
-        self._byte_time = 0
-        self._dot_feed_time = 0
-        self._dot_print_time = 0
-
-    def write(self, b: ReadableBuffer) -> None:
-        pass
+    from thermalprinter import ThermalPrinter
 
 
 @pytest.fixture(autouse=True)
