@@ -122,6 +122,7 @@ pythonpath = "src"
 addopts = """
     --cov-report=term-missing:skip-covered
     --cov=thermalprinter
+    --no-cov-on-fail
     --showlocals
     --strict-markers
     -r fE
