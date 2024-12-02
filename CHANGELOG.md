@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.3.1
+
+Release date: `2024-12-xx`
+
+### Features
+
+- New option to control printer settings at initialization: `ThermalPrinter(..., run_setup_cmd=bool)` (#15).
+- New option to specify the *mandatory* sleep time, in seconds, right after the serial initialization: `ThermalPrinter(..., sleep_sec_after_init=float)`.
+- Improved the documentation by fixing issues found by [Harper](https://github.com/elijah-potter/harper).
+- Improved tests coverage from 92% to 94%.
+
+### Technical Changes
+
+- Added the printer constant `DEFAULT_BAUDRATE` (integer, defaults to `19200`)
+- Added the printer constant `DEFAULT_PORT` (string, defaults to `/dev/ttyAMA0`)
+- Added the printer constant `DEFAULT_HEAT_TIME` (integer, defaults to `80`)
+- Added the printer constant `DEFAULT_HEAT_INTERVAL` (integer, defaults to `12`)
+- Added the printer constant `DEFAULT_MOST_HEATED_POINT` (integer, defaults to `3`)
+- Added the `ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
+
 ## 0.3.0
 
 Release date: `2024-11-02`
