@@ -34,6 +34,9 @@ from thermalprinter.validate import (
     validate_codepage,
 )
 
+if TYPE_CHECKING:
+    from types import TracebackType
+
 
 class ThermalPrinter(Serial):
     r""":param str port: Serial port to use, known as the device name.
@@ -90,6 +93,7 @@ class ThermalPrinter(Serial):
         **kwargs: Any,
     ) -> None:
         # Few important values
+        self.is_open = False
         self._baudrate = baudrate
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
@@ -124,6 +128,14 @@ class ThermalPrinter(Serial):
     def __enter__(self) -> ThermalPrinter:  # noqa: PYI034
         """`with ThermalPrinter() as printer:`."""
         return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        self._on_exit()
 
     def _on_exit(self) -> None:
         """To be sure we keep stats and cleanup."""
