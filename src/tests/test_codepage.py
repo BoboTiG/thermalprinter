@@ -5,6 +5,10 @@ from thermalprinter.exceptions import ThermalPrinterConstantError
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
+def test_repr() -> None:
+    assert repr(CodePage.CP1250) == "CP1250      value: 30, desc: Central Europe [WCP1250]"
+
+
 def test_default_value(printer: ThermalPrinter) -> None:
     assert printer._codepage is CodePage.CP437
 

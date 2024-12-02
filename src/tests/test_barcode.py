@@ -10,6 +10,10 @@ from thermalprinter.exceptions import ThermalPrinterConstantError, ThermalPrinte
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
+def test_repr() -> None:
+    assert repr(BarCode.UPC_A) == "UPC_A  value: 65, 11 <= len(data) <=  12"
+
+
 def test_empty_values(printer: ThermalPrinter) -> None:
     with pytest.raises(TypeError):
         printer.barcode()  # type: ignore[call-arg]

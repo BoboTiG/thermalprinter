@@ -5,6 +5,10 @@ from thermalprinter.exceptions import ThermalPrinterConstantError
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
+def test_repr() -> None:
+    assert repr(Chinese.BIG5) == "BIG5  value: 3"
+
+
 def test_default_value(printer: ThermalPrinter) -> None:
     assert printer._chinese_format is Chinese.GBK
 
