@@ -235,13 +235,10 @@ def ls(*constants: Any) -> None:
     >>> ls(Chinese, CharSet)
     """
     for constant in constants or CONSTANTS:
-        try:
-            print("---")
-            for value in constant:
-                print(value)
-            print()
-        except AttributeError:  # noqa: PERF203
-            print(f"Unknown constant {constant!r}")
+        print("---")
+        for value in constant:
+            print(value)
+        print()
 
 
 def print_char(char: str, printer: ThermalPrinter | None = None) -> None:

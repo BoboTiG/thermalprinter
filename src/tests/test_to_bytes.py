@@ -1,298 +1,77 @@
+from typing import Any
+
+import pytest
+
 from thermalprinter.constants import CodePage
 from thermalprinter.thermalprinter import ThermalPrinter
 
-
-def test_type_bool(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(True), bytes)
-
-
-def test_type_int(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(42), bytes)
-
-
-def test_type_float(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(42.0), bytes)
-
-
-def test_type_complex(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(42j), bytes)
-
-
-def test_type_str(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes("42"), bytes)
-
-
-def test_type_bytes(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(b"42"), bytes)
-
-
-def test_type_bytearray(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(bytearray("42", "utf-8")), bytes)
-
-
-def test_type_memoryview(printer: ThermalPrinter) -> None:
-    isinstance(printer.to_bytes(memoryview(b"42")), bytes)
-
-
-def test_charset_CP437(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP437)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP932(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP932)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP850(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP850)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP860(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP860)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP863(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP863)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP865(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP865)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CYRILLIC(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CYRILLIC)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP866(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP866)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_MIK(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.MIK)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP755(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP755)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_IRAN(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.IRAN)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP862(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP862)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1252(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1252)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1253(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1253)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP852(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP852)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP858(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP858)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_IRAN2(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.IRAN2)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_LATVIA(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.LATVIA)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP864(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP864)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_1(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_1)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP737(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP737)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1257(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1257)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_THAI(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.THAI)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP720(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP720)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP855(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP855)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP857(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP857)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1250(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1250)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP775(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP775)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1254(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1254)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1255(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1255)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1256(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1256)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP1258(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP1258)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_2(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_2)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_3(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_3)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_4(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_4)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_5(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_5)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_6(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_6)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_7(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_7)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_8(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_8)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_9(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_9)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_ISO_8859_15(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.ISO_8859_15)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_THAI2(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.THAI2)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP856(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP856)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
-
-
-def test_charset_CP874(printer: ThermalPrinter) -> None:
-    printer.codepage(CodePage.CP874)
-    data = "42 现代汉语通用字表 aeiuoy é@`à"
-    assert isinstance(printer.to_bytes(data), bytes)
+CODEPAGES = sorted(cp for cp in vars(CodePage) if cp.isupper())
+RESULTS = {
+    "CP1250": b"42 ???????? aeiuoy \xe9@`?",
+    "CP1252": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "CP1253": b"42 ???????? aeiuoy ?@`?",
+    "CP1254": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "CP1255": b"42 ???????? aeiuoy ?@`?",
+    "CP1256": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "CP1257": b"42 ???????? aeiuoy \xe9@`?",
+    "CP1258": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "CP437": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP720": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP737": b"42 ???????? aeiuoy ?@`?",
+    "CP755": b"42 \xe7\x8e\xb0\xe4\xbb\xa3\xe6\xb1\x89\xe8\xaf\xad\xe9\x80\x9a\xe7\x94\xa8\xe5\xad\x97\xe8\xa1\xa8 aeiuoy \xc3\xa9@`\xc3\xa0",
+    "CP775": b"42 ???????? aeiuoy \x82@`?",
+    "CP850": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP852": b"42 ???????? aeiuoy \x82@`?",
+    "CP855": b"42 ???????? aeiuoy ?@`?",
+    "CP856": b"42 ???????? aeiuoy ?@`?",
+    "CP857": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP858": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP860": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP862": b"42 ???????? aeiuoy ?@`?",
+    "CP863": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP864": b"42 ???????? aeiuoy ?@`?",
+    "CP865": b"42 ???????? aeiuoy \x82@`\x85",
+    "CP866": b"42 ???????? aeiuoy ?@`?",
+    "CP874": b"42 ???????? aeiuoy ?@`?",
+    "CP932": b"42 ?\x91\xe3??\x92\xca\x97p\x8e\x9a\x95\\ aeiuoy ?@`?",
+    "CYRILLIC": b"42 ???????? aeiuoy ?@`?",
+    "IRAN": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "IRAN2": b"42 \xe7\x8e\xb0\xe4\xbb\xa3\xe6\xb1\x89\xe8\xaf\xad\xe9\x80\x9a\xe7\x94\xa8\xe5\xad\x97\xe8\xa1\xa8 aeiuoy \xc3\xa9@`\xc3\xa0",
+    "ISO_8859_1": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "ISO_8859_15": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "ISO_8859_2": b"42 ???????? aeiuoy \xe9@`?",
+    "ISO_8859_3": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "ISO_8859_4": b"42 ???????? aeiuoy \xe9@`?",
+    "ISO_8859_5": b"42 ???????? aeiuoy ?@`?",
+    "ISO_8859_6": b"42 ???????? aeiuoy ?@`?",
+    "ISO_8859_7": b"42 ???????? aeiuoy ?@`?",
+    "ISO_8859_8": b"42 ???????? aeiuoy ?@`?",
+    "ISO_8859_9": b"42 ???????? aeiuoy \xe9@`\xe0",
+    "LATVIA": b"42 ???????? aeiuoy \xe9@`?",
+    "MIK": b"42 ???????? aeiuoy ?@`?",
+    "THAI": b"42 ???????? aeiuoy ?@`?",
+    "THAI2": b"42 \xe7\x8e\xb0\xe4\xbb\xa3\xe6\xb1\x89\xe8\xaf\xad\xe9\x80\x9a\xe7\x94\xa8\xe5\xad\x97\xe8\xa1\xa8 aeiuoy \xc3\xa9@`\xc3\xa0",
+}
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (True, b"True"),
+        (42, b"42"),
+        (42.0, b"42.0"),
+        (42j, b"42j"),
+        ("42", b"42"),
+        (b"42", b"42"),
+        (bytearray("42", "utf-8"), b"42"),
+        (memoryview(b"42"), b"42"),
+    ],
+)
+def test_builtin_types(value: Any, expected: bytes, printer: ThermalPrinter) -> None:
+    assert printer.to_bytes(value) == expected
+
+
+@pytest.mark.parametrize("codepage", CODEPAGES)
+def test_codepage(codepage: str, printer: ThermalPrinter) -> None:
+    printer.codepage(getattr(CodePage, codepage))
+    assert printer.to_bytes("42 现代汉语通用字表 aeiuoy é@`à") == RESULTS[codepage]
