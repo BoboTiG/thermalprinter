@@ -153,3 +153,9 @@ class Command(Enum):
 
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted]
+
+DEFAULT_BAUDRATE = 19200
+DEFAULT_PORT = "/dev/ttyAMA0"
+DEFAULT_HEAT_TIME = 80
+DEFAULT_HEAT_INTERVAL = 12
+DEFAULT_MOST_HEATED_POINT = 3

@@ -34,8 +34,8 @@ __all__ = [
     "BarCodePosition",
     "CharSet",
     "Chinese",
-    "Command",
     "CodePage",
+    "Command",
     "ThermalPrinter",
     "ThermalPrinterError",
 ]

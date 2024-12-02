@@ -7,11 +7,16 @@ from __future__ import annotations
 import contextlib
 from atexit import register
 from time import sleep
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from serial import Serial
 
 from thermalprinter.constants import (
+    DEFAULT_BAUDRATE,
+    DEFAULT_HEAT_INTERVAL,
+    DEFAULT_HEAT_TIME,
+    DEFAULT_MOST_HEATED_POINT,
+    DEFAULT_PORT,
     BarCode,
     BarCodePosition,
     CharSet,
@@ -79,8 +84,8 @@ class ThermalPrinter(Serial):
 
     def __init__(
         self,
-        port: str = "/dev/ttyAMA0",
-        baudrate: int = 19200,
+        port: str = DEFAULT_PORT,
+        baudrate: int = DEFAULT_BAUDRATE,
         command_timeout: float = 0.05,
         **kwargs: Any,
     ) -> None:
@@ -90,25 +95,25 @@ class ThermalPrinter(Serial):
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
         self._command_timeout = command_timeout
-        self.heat_time = int(kwargs.get("heat_time", 80))
-        self.heat_interval = int(kwargs.get("heat_interval", 12))
-        self.most_heated_point = int(kwargs.get("most_heated_point", 3))
+        self.heat_time = int(kwargs.get("heat_time", DEFAULT_HEAT_TIME))
+        self.heat_interval = int(kwargs.get("heat_interval", DEFAULT_HEAT_INTERVAL))
+        self.most_heated_point = int(kwargs.get("most_heated_point", DEFAULT_MOST_HEATED_POINT))
+
+        # Several checks
+        error = ""
+        if not 0 <= self.heat_time <= 255:
+            error = f"heat_time should be between 0 and 255 (default: {DEFAULT_HEAT_TIME})."
+        elif not 0 <= self.heat_interval <= 255:
+            error = f"heat_interval should be between 0 and 255 (default: {DEFAULT_HEAT_INTERVAL})."
+        elif not 0 <= self.most_heated_point <= 255:
+            error = f"most_heated_point should be between 0 and 255 (default: {DEFAULT_MOST_HEATED_POINT})."
+        if error:
+            raise ThermalPrinterValueError(error)
 
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
         sleep(0.5)  # Important
         register(self._on_exit)
-
-        # Several checks
-        if not 0 <= self.heat_time <= 255:
-            msg = "heat_time should be between 0 and 255 (default: 80)."
-            raise ThermalPrinterValueError(msg)
-        if not 0 <= self.heat_interval <= 255:
-            msg = "heat_interval should be between 0 and 255 (default: 12)."
-            raise ThermalPrinterValueError(msg)
-        if not 0 <= self.most_heated_point <= 255:
-            msg = "most_heated_point should be between 0 and 255 (default: 3)."
-            raise ThermalPrinterValueError(msg)
 
         # Printer settings
         self.send_command(Command.ESC, 55, self.most_heated_point, self.heat_time, self.heat_interval)
