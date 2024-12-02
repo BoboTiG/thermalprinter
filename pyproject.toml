@@ -59,7 +59,7 @@ Tracker = "https://github.com/BoboTiG/thermalprinter/issues"
 [project.optional-dependencies]
 dev = [
   "build==1.2.2.post1",
-  "twine==5.1.1",
+  "twine==6.0.1",
 ]
 docs = [
   "sphinx==8.1.3",
