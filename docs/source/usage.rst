@@ -7,7 +7,7 @@ An example is better than a thousand words:
 .. code-block:: python
 
     from PIL import Image
-    from ThermalPrinter import *
+    from thermalprinter import *
 
     with ThermalPrinter(port="/dev/ttyAMA0") as printer:
         # Picture

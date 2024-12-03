@@ -33,7 +33,7 @@ An example is better than a thousand words:
 
 ```python
 from PIL import Image  # Optional, for printing images
-from ThermalPrinter import *
+from thermalprinter import *
 
 
 with ThermalPrinter(port="/dev/ttyAMA0") as printer:
