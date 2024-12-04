@@ -43,10 +43,10 @@ class ThermalPrinter(Serial):
     :param int baudrate: Baud rate.
     :param dict kwargs: Additionnal optional arguments:
 
-        - ``command_timeout`` (float): command timeout, in seconds (default: ``0.05``);
-        - ``heat_time`` (int): printer heat time (default: ``{DEFAULT_HEAT_TIME}``);
-        - ``heat_interval`` (int): printer heat time interval (default: ``{DEFAULT_HEAT_INTERVAL}``);
-        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``{DEFAULT_MOST_HEATED_POINT}``);
+        - ``command_timeout`` (float): command timeout, in seconds (default: ``0.05``)
+        - ``heat_time`` (int): printer heat time (default: ``{DEFAULT_HEAT_TIME}``)
+        - ``heat_interval`` (int): printer heat time interval (default: ``{DEFAULT_HEAT_INTERVAL}``)
+        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``{DEFAULT_MOST_HEATED_POINT}``)
         - ``run_setup_cmd`` (bool)
         - ``sleep_sec_after_init`` (float)
 
@@ -535,9 +535,11 @@ class ThermalPrinter(Serial):
         """Set text justification.
 
         :param str value: the new justification.
-            - ``L`` to align left.
-            - ``C`` to align center.
-            - ``R`` to align right.
+
+            - ``L`` to align left
+            - ``C`` to align center
+            - ``R`` to align right
+    
         :exception ThermalPrinterValueError: On incorrect ``value``'s type or value.
         """
         if not isinstance(value, str) or value not in "LCRlcr" or len(value) != 1:
