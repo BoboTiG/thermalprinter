@@ -39,10 +39,10 @@ if TYPE_CHECKING:
 
 
 class ThermalPrinter(Serial):
-    r""":param str port: Serial port to use, known as the device name.
-    :param int baudrate: Baud rate such as 9600, or 115200 etc.
+    """:param str port: Serial port to use, known as the device name.
+    :param int baudrate: Baud rate such as 9600 (default), or 115200 etc.
     :param float command_timeout: Command timeout, in seconds.
-    :param dict \\*\\*kwargs: Additionnal optional arguments:
+    :param dict kwargs: Additionnal optional arguments:
 
         - ``heat_time`` (int): printer heat time (default: ``80``);
         - ``heat_interval`` (int): printer heat time interval (default: ``12``);
@@ -489,8 +489,8 @@ class ThermalPrinter(Serial):
 
         Example:
 
-            >>> from PIL import Image
-            >>> printer.image(Image.open("picture.png"))
+        >>> from PIL import Image
+        >>> printer.image(Image.open("picture.png"))
         """
         if image.mode != "1":
             image = image.convert("1")
