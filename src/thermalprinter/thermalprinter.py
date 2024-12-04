@@ -39,14 +39,14 @@ if TYPE_CHECKING:
 
 
 class ThermalPrinter(Serial):
-    """:param str port: Serial port to use, known as the device name.
-    :param int baudrate: Baud rate such as 9600 (default), or 115200 etc.
-    :param float command_timeout: Command timeout, in seconds.
+    f""":param str port: Serial port to use, known as the device name.
+    :param int baudrate: Baud rate.
     :param dict kwargs: Additionnal optional arguments:
 
-        - ``heat_time`` (int): printer heat time (default: ``80``);
-        - ``heat_interval`` (int): printer heat time interval (default: ``12``);
-        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``3``).
+        - ``command_timeout`` (float): command timeout, in seconds (default: ``0.05``);
+        - ``heat_time`` (int): printer heat time (default: ``{DEFAULT_HEAT_TIME}``);
+        - ``heat_interval`` (int): printer heat time interval (default: ``{DEFAULT_HEAT_INTERVAL}``);
+        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``{DEFAULT_MOST_HEATED_POINT}``).
 
     :exception ThermalPrinterValueError: On incorrect argument's type or value.
 
@@ -88,22 +88,14 @@ class ThermalPrinter(Serial):
     _underline = 0
     _upside_down = False
 
-    def __init__(
-        self,
-        port: str = DEFAULT_PORT,
-        baudrate: int = DEFAULT_BAUDRATE,
-        command_timeout: float = 0.05,
-        sleep_sec_after_init: float = 0.5,
-        run_setup_cmd: bool = True,
-        **kwargs: Any,
-    ) -> None:
+    def __init__(self, port: str = DEFAULT_PORT, baudrate: int = DEFAULT_BAUDRATE, **kwargs: Any) -> None:
         # Few important values
         self.is_open = False
         self._baudrate = baudrate
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
-        self._command_timeout = command_timeout
+        self._command_timeout = float(kwargs.get("command_timeout", 0.05))
         self.heat_time = int(kwargs.get("heat_time", DEFAULT_HEAT_TIME))
         self.heat_interval = int(kwargs.get("heat_interval", DEFAULT_HEAT_INTERVAL))
         self.most_heated_point = int(kwargs.get("most_heated_point", DEFAULT_MOST_HEATED_POINT))
@@ -121,11 +113,11 @@ class ThermalPrinter(Serial):
 
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
-        sleep(sleep_sec_after_init)  # Important
+        sleep(float(kwargs.get("sleep_sec_after_init", 0.5)))  # Important
         register(self._on_exit)
 
         # Printer settings
-        if run_setup_cmd:
+        if kwargs.get("run_setup_cmd", True):
             self.send_command(Command.ESC, 55, self.most_heated_point, self.heat_time, self.heat_interval)
 
         # Factory settings
@@ -541,9 +533,9 @@ class ThermalPrinter(Serial):
         """Set text justification.
 
         :param str value: the new justification.
-            ``L`` to align left.
-            ``C`` to align center.
-            ``R`` to align right.
+            - ``L`` to align left.
+            - ``C`` to align center.
+            - ``R`` to align right.
         :exception ThermalPrinterValueError: On incorrect ``value``'s type or value.
         """
         if not isinstance(value, str) or value not in "LCRlcr" or len(value) != 1:
@@ -650,9 +642,9 @@ class ThermalPrinter(Serial):
         """Set text size.
 
         :param str value: the new text size.
-            ``S`` for small.
-            ``M`` for medium (double height).
-            ``L`` for large (double width and height).
+            - ``S`` for small.
+            - ``M`` for medium (double height).
+            - ``L`` for large (double width and height).
         :exception ThermalPrinterValueError: On incorrect ``value``'s type or value.
 
         :Note: This method affects :attr:`max_column`.
@@ -739,9 +731,9 @@ class ThermalPrinter(Serial):
         """Turn underline mode on/off.
 
         :param int weight: the underline's weight.
-            ``0`` will turn off underline mode.
-            ``1`` will turn on underline mode (1 dot thick).
-            ``2`` will turns on underline mode (2 dots thick).
+            - ``0`` will turn off underline mode.
+            - ``1`` will turn on underline mode (1 dot thick).
+            - ``2`` will turns on underline mode (2 dots thick).
         :exception ThermalPrinterValueError: On incorrect ``weight``'s type or value.
         """
         if not isinstance(weight, int) or not 0 <= weight <= 2:
