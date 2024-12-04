@@ -9,11 +9,11 @@ from thermalprinter.exceptions import ThermalPrinterConstantError, ThermalPrinte
 
 
 def validate_barcode(data: str, barcode_type: BarCode) -> None:
-    """Validate data against the bar code type.
+    """Validate data against the barcode type.
 
-    :param str data: data to print.
-    :param BarCode barecode_type: bar code type to use.
-    :exception ThermalPrinterValueError: On incorrect ``data``'s type or value.
+    :param str data: The data to print.
+    :param BarCode barecode_type: The barcode type to validate.
+    :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
     :exception ThermalPrinterConstantError: On bad ``barecode_type``'s type.
     """
 
@@ -36,7 +36,7 @@ def validate_barcode(data: str, barcode_type: BarCode) -> None:
         return _range0(0, 127)
 
     if not isinstance(barcode_type, BarCode):
-        err = "Valid bar codes are: " + ", ".join([barcode.name for barcode in BarCode])
+        err = "Valid barcodes are: " + ", ".join([barcode.name for barcode in BarCode])
         raise ThermalPrinterConstantError(err)
 
     _, (min_, max_), range_type = barcode_type.value
@@ -59,9 +59,9 @@ def validate_barcode(data: str, barcode_type: BarCode) -> None:
 
 
 def validate_barcode_position(position: BarCodePosition) -> None:
-    """Validate a bar code position.
+    """Validate a barcode position.
 
-    :param BarCodePosition position: the position to use.
+    :param BarCodePosition position: The position to validate.
     :exception ThermalPrinterConstantError: On bad ``position``'s type.
     """
     if not isinstance(position, BarCodePosition):
@@ -73,7 +73,7 @@ def validate_barcode_position(position: BarCodePosition) -> None:
 def validate_charset(charset: CharSet) -> None:
     """Validate a charset.
 
-    :param CharSet charset: new charset to use.
+    :param CharSet charset: The charset to validate.
     :exception ThermalPrinterConstantError: On bad ``charset``'s type.
     """
     if not isinstance(charset, CharSet):
@@ -84,7 +84,7 @@ def validate_charset(charset: CharSet) -> None:
 def validate_chinese_format(fmt: Chinese) -> None:
     """Validate a Chinese format.
 
-    :param Chinese fmt: new format to use.
+    :param Chinese fmt: The Chinese format to validate.
     :exception ThermalPrinterConstantError: On bad ``fmt``'s type.
     """
     if not isinstance(fmt, Chinese):
@@ -96,7 +96,7 @@ def validate_chinese_format(fmt: Chinese) -> None:
 def validate_codepage(codepage: CodePage) -> None:
     """Validate a code page.
 
-    :param CodePage codepage: new code page to use.
+    :param CodePage codepage: The code page to validate.
     :exception ThermalPrinterConstantError: On bad ``codepage``'s type.
     """
     if isinstance(codepage, CodePage):

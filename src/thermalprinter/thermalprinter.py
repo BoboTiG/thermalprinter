@@ -39,24 +39,23 @@ if TYPE_CHECKING:
 
 
 class ThermalPrinter(Serial):
-    f""":param str port: Serial port to use, known as the device name.
+    """:param str port: Serial port to use, known as the device name.
     :param int baudrate: Baud rate.
-    :param dict kwargs: Additionnal optional arguments:
+    :param float command_timeout: Command timeout, in seconds.
+    :param int heat_time: Printer heat time.
+    :param int heat_interval: Printer heat time interval.
+    :param int most_heated_point: Printer most heated point.
+    :param bool run_setup_cmd: Set to ``False`` to disabled the automatic one-shot run of the printer settings command.
+    :param flat sleep_sec_after_init: Initial *mandatory* time to wait right after the serial initialisation.
 
-        - ``command_timeout`` (float): command timeout, in seconds (default: ``0.05``)
-        - ``heat_time`` (int): printer heat time (default: ``{DEFAULT_HEAT_TIME}``)
-        - ``heat_interval`` (int): printer heat time interval (default: ``{DEFAULT_HEAT_INTERVAL}``)
-        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``{DEFAULT_MOST_HEATED_POINT}``)
-        - ``run_setup_cmd`` (bool)
-        - ``sleep_sec_after_init`` (float)
-
-    :exception ThermalPrinterValueError: On incorrect argument's type or value.
+    :exception ThermalPrinterValueError: On incorrect argument's type, or value.
 
     .. versionchanged:: 0.3.0
         Added ``command_timeout`` keyword-argument.
 
     .. versionchanged:: 0.3.1
         Added ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
+        ``heat_time``, ``heat_interval``, and ``most_heated_point`` are now proper keyword-arguments.
     """
 
     # Counters
@@ -90,37 +89,48 @@ class ThermalPrinter(Serial):
     _underline = 0
     _upside_down = False
 
-    def __init__(self, port: str = DEFAULT_PORT, baudrate: int = DEFAULT_BAUDRATE, **kwargs: Any) -> None:
+    def __init__(  # noqa: PLR0913
+        self,
+        port: str = DEFAULT_PORT,
+        *,
+        baudrate: int = DEFAULT_BAUDRATE,
+        command_timeout: float = 0.05,
+        heat_interval: int = DEFAULT_HEAT_INTERVAL,
+        heat_time: int = DEFAULT_HEAT_TIME,
+        most_heated_point: int = DEFAULT_MOST_HEATED_POINT,
+        run_setup_cmd: bool = True,
+        sleep_sec_after_init: float = 0.5,
+    ) -> None:
         # Few important values
         self.is_open = False
         self._baudrate = baudrate
         self._byte_time = 11.0 / float(self._baudrate)
         self._dot_feed_time = 0.0025
         self._dot_print_time = 0.033
-        self._command_timeout = float(kwargs.get("command_timeout", 0.05))
-        self.heat_time = int(kwargs.get("heat_time", DEFAULT_HEAT_TIME))
-        self.heat_interval = int(kwargs.get("heat_interval", DEFAULT_HEAT_INTERVAL))
-        self.most_heated_point = int(kwargs.get("most_heated_point", DEFAULT_MOST_HEATED_POINT))
+        self._command_timeout = command_timeout
+        self._heat_time = heat_time
+        self._heat_interval = heat_interval
+        self._most_heated_point = most_heated_point
 
         # Several checks
         error = ""
-        if not 0 <= self.heat_time <= 255:
+        if not 0 <= heat_time <= 255:
             error = f"heat_time should be between 0 and 255 (default: {DEFAULT_HEAT_TIME})."
-        elif not 0 <= self.heat_interval <= 255:
+        elif not 0 <= heat_interval <= 255:
             error = f"heat_interval should be between 0 and 255 (default: {DEFAULT_HEAT_INTERVAL})."
-        elif not 0 <= self.most_heated_point <= 255:
+        elif not 0 <= most_heated_point <= 255:
             error = f"most_heated_point should be between 0 and 255 (default: {DEFAULT_MOST_HEATED_POINT})."
         if error:
             raise ThermalPrinterValueError(error)
 
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
-        sleep(float(kwargs.get("sleep_sec_after_init", 0.5)))  # Important
+        sleep(sleep_sec_after_init)  # Important
         register(self._on_exit)
 
         # Printer settings
-        if kwargs.get("run_setup_cmd", True):
-            self.send_command(Command.ESC, 55, self.most_heated_point, self.heat_time, self.heat_interval)
+        if run_setup_cmd:
+            self.send_command(Command.ESC, 55, self._most_heated_point, self._heat_time, self._heat_interval)
 
         # Factory settings
         self.reset()
@@ -150,9 +160,8 @@ class ThermalPrinter(Serial):
         >>> repr(super(type(printer), printer))
         """
         settings = (
-            f"heat_interval={self.heat_interval}",
-            f"heat_time={self.heat_time}",
-            f"most_heated_point={self.most_heated_point}",
+            f"baudrate={self.baudrate}",
+            f"is_open={self.is_open}",
         )
         states = []
 
@@ -207,9 +216,9 @@ class ThermalPrinter(Serial):
     def out(self, data: Any, line_feed: bool = True, **kwargs: Any) -> None:
         """Send one line to the printer.
 
-        :param mixed data: the data to print.
-        :param bool line_feed: send a line break after the printed data.
-        :param dict kwargs: additional styles to apply.
+        :param mixed data: The data to print.
+        :param bool line_feed: Send a line break after the printed data.
+        :param dict kwargs: Additional styles to apply.
 
         You can pass formatting instructions directly via arguments:
 
@@ -249,8 +258,8 @@ class ThermalPrinter(Serial):
     def send_command(self, command: Command, *data: int) -> None:
         """Raw byte-writing.
 
-        :param command: command for the printer.
-        :param data: command arguments.
+        :param command: Command to send to the printer.
+        :param data: Command arguments, if any.
         """
         # The command
         if command is not Command.NONE:
@@ -264,8 +273,8 @@ class ThermalPrinter(Serial):
     def to_bytes(self, data: Any) -> bytes:
         """Convert data before sending to the printer.
 
-        :param mixed data: any type of data to print.
-        :return bytes: the converted data in bytes
+        :param mixed data: Any type of data to print.
+        :return bytes: The converted data in bytes
         """
         if isinstance(data, (bool, int, float, complex)):
             data = str(data)
@@ -288,11 +297,11 @@ class ThermalPrinter(Serial):
     # Printer's methods
 
     def barcode(self, data: str, barcode_type: BarCode) -> None:
-        """Bar code printing. All checks are done to ensure the data validity.
+        """barcode printing. All checks are done to ensure the data validity.
 
-        :param str data: data to print.
-        :param BarCode barecode_type: bar code type to use.
-        :exception ThermalPrinterValueError: On incorrect ``data``'s type or value.
+        :param str data: The data to print.
+        :param BarCode barecode_type: The barcode type to use.
+        :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
         :exception ThermalPrinterConstantError: On bad ``barecode_type``'s type.
         """
         validate_barcode(data, barcode_type)
@@ -305,10 +314,10 @@ class ThermalPrinter(Serial):
         self.__lines += int(self._barcode_height / self._line_spacing) + 1
 
     def barcode_height(self, height: int = 162) -> None:
-        """Set bar code height.
+        """Set barcode height.
 
-        :param int height: bar code height (min=1, max=255).
-        :exception ThermalPrinterValueError: On incorrect ``height``'s type or value.
+        :param int height: The barcode height (min=1, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``height``'s type, or value.
         """
         if not isinstance(height, int) or not 1 <= height <= 255:
             msg = "height should be between 1 and 255 (default: 162)."
@@ -319,10 +328,10 @@ class ThermalPrinter(Serial):
             self.send_command(Command.GS, 104, height)
 
     def barcode_left_margin(self, margin: int = 0) -> None:
-        """Set the left margin of the bar code.
+        """Set the left margin of the barcode.
 
-        :param int margin: left margin (min=0, max=255).
-        :exception ThermalPrinterValueError: On incorrect ``margin``'s type or value.
+        :param int margin: The barcode left margin (min=0, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``margin``'s type, or value.
         """
         if not isinstance(margin, int) or not 0 <= margin <= 255:
             msg = "margin should be between 0 and 255 (default: 0)."
@@ -333,9 +342,9 @@ class ThermalPrinter(Serial):
             self.send_command(Command.GS, 120, margin)
 
     def barcode_position(self, position: BarCodePosition = BarCodePosition.HIDDEN) -> None:
-        """Set the position of the text relative to the bar code.
+        """Set the position of the text relative to the barcode.
 
-        :param BarCodePosition position: the position to use.
+        :param BarCodePosition position: The barcode position to use.
         :exception ThermalPrinterConstantError: On bad ``position``'s type.
         """
         validate_barcode_position(position)
@@ -344,10 +353,10 @@ class ThermalPrinter(Serial):
             self.send_command(Command.GS, 72, position.value)
 
     def barcode_width(self, width: int = 3) -> None:
-        """Set the bar code width.
+        """Set the barcode width.
 
-        :param int width: bar code with (min=2, max=6).
-        :exception ThermalPrinterValueError: On incorrect ``width``'s type or value.
+        :param int width: The barcode with (min=2, max=6).
+        :exception ThermalPrinterValueError: On incorrect ``width``'s type, or value.
         """
         if not isinstance(width, int) or not 2 <= width <= 6:
             msg = "width should be between 2 and 6 (default: 3)."
@@ -360,7 +369,7 @@ class ThermalPrinter(Serial):
     def bold(self, state: bool = False) -> None:
         """Turn emphasized mode on/off.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._bold:
             self._bold = state
@@ -369,7 +378,7 @@ class ThermalPrinter(Serial):
     def charset(self, charset: CharSet = CharSet.USA) -> None:
         """Select an internal character set.
 
-        :param CharSet charset: new charset to use.
+        :param CharSet charset: The new charset to use.
         :exception ThermalPrinterConstantError: On bad ``charset``'s type.
         """
         validate_charset(charset)
@@ -380,8 +389,8 @@ class ThermalPrinter(Serial):
     def char_spacing(self, spacing: int = 0) -> None:
         """Set the right character spacing.
 
-        :param int spacing: spacing to use (min=0, max=255).
-        :exception ThermalPrinterValueError: On incorrect ``spacing``'s type or value.
+        :param int spacing: The spacing to use (min=0, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``spacing``'s type, or value.
         """
         if not isinstance(spacing, int) or not 0 <= spacing <= 255:
             msg = "spacing should be between 0 and 255 (default: 0)."
@@ -394,7 +403,7 @@ class ThermalPrinter(Serial):
     def chinese(self, state: bool = False) -> None:
         """Select/cancel Chinese mode.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._chinese:
             self._chinese = state
@@ -403,7 +412,7 @@ class ThermalPrinter(Serial):
     def chinese_format(self, fmt: Chinese = Chinese.GBK) -> None:
         """Selection of the Chinese format.
 
-        :param Chinese fmt: new format to use.
+        :param Chinese fmt: The new Chinese format to use.
         :exception ThermalPrinterConstantError: On bad ``fmt``'s type.
         """
         validate_chinese_format(fmt)
@@ -414,7 +423,7 @@ class ThermalPrinter(Serial):
     def codepage(self, codepage: CodePage = CodePage.CP437) -> None:
         """Select character code table.
 
-        :param CodePage codepage: new code page to use.
+        :param CodePage codepage: The new code page to use.
         :exception ThermalPrinterConstantError: On bad ``codepage``'s type.
         """
         validate_codepage(codepage)
@@ -427,7 +436,7 @@ class ThermalPrinter(Serial):
     def double_height(self, state: bool = False) -> None:
         """Set double height mode.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._double_height:
             self._double_height = state
@@ -437,7 +446,7 @@ class ThermalPrinter(Serial):
     def double_width(self, state: bool = False) -> None:
         """Select double width mode.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._double_width:
             self._double_width = state
@@ -447,8 +456,8 @@ class ThermalPrinter(Serial):
     def feed(self, number: int = 1) -> None:
         """Feeds by the specified number of lines.
 
-        :param int number: number of lines (min=0, max=255).
-        :exception ThermalPrinterValueError: On incorrect ``number``'s type or value.
+        :param int number: The number of lines (min=0, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``number``'s type, or value.
         """
         if not isinstance(number, int) or not 0 <= number <= 255:
             msg = "number should be between 0 and 255 (default: 1)."
@@ -461,7 +470,7 @@ class ThermalPrinter(Serial):
     def flush(self, clear: bool = False) -> None:
         """Remove the print data in buffer.
 
-        :param bool clear: set to ``True`` to also clear the receive buffer.
+        :param bool clear: Set to ``True`` to also clear the receive buffer.
         """
         self.send_command(Command.ESC, 64)
         self.reset_output_buffer()
@@ -479,7 +488,7 @@ class ThermalPrinter(Serial):
 
         Max width: 384px.
 
-        :param PIL.Image image: the PIL Image to use.
+        :param PIL.Image image: The PIL Image object to use.
 
         Example:
 
@@ -525,7 +534,7 @@ class ThermalPrinter(Serial):
     def inverse(self, state: bool = False) -> None:
         """Turn white/black reverse printing mode.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._inverse:
             self._inverse = state
@@ -534,13 +543,13 @@ class ThermalPrinter(Serial):
     def justify(self, value: str = "L") -> None:
         """Set text justification.
 
-        :param str value: the new justification:
+        :param str value: The new justification:
 
             - ``L`` to align left
             - ``C`` to align center
             - ``R`` to align right
-    
-        :exception ThermalPrinterValueError: On incorrect ``value``'s type or value.
+
+        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
         """
         if not isinstance(value, str) or value not in "LCRlcr" or len(value) != 1:
             err = "value should be one of L (left, default), C (center)  or R (right)."
@@ -560,8 +569,8 @@ class ThermalPrinter(Serial):
     def left_margin(self, margin: int = 0) -> None:
         """Set the left margin.
 
-        :param int margin: the new margin (min=0, max=47).
-        :exception ThermalPrinterValueError: On incorrect ``margin``'s type or value.
+        :param int margin: The new margin (min=0, max=47).
+        :exception ThermalPrinterValueError: On incorrect ``margin``'s type, or value.
         """
         if not isinstance(margin, int) or not 0 <= margin <= 47:
             msg = "margin should be between 0 and 47 (default: 0)."
@@ -574,8 +583,8 @@ class ThermalPrinter(Serial):
     def line_spacing(self, spacing: int = 30) -> None:
         """Set line spacing.
 
-        :param int spacing: the new spacing (min=0, max=255).
-        :exception ThermalPrinterValueError: On incorrect ``spacing``'s type or value.
+        :param int spacing: The new spacing (min=0, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``spacing``'s type, or value.
         """
         if not isinstance(spacing, int) or not 0 <= spacing <= 255:
             msg = "spacing should be between 0 and 255 (default: 30)."
@@ -636,7 +645,7 @@ class ThermalPrinter(Serial):
     def rotate(self, state: bool = False) -> None:
         """Turn on/off clockwise rotation of 90°.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._rotate:
             self._rotate = state
@@ -645,13 +654,13 @@ class ThermalPrinter(Serial):
     def size(self, value: str = "S") -> None:
         """Set text size.
 
-        :param str value: the new text size:
+        :param str value: The new text size:
 
             - ``S`` for small
             - ``M`` for medium (double height)
-            - ``L`` for large (double both width and height)
-    
-        :exception ThermalPrinterValueError: On incorrect ``value``'s type or value.
+            - ``L`` for large (double both width, and height)
+
+        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
 
         :Note: This method affects :attr:`max_column`.
         """
@@ -662,7 +671,7 @@ class ThermalPrinter(Serial):
         value = value.upper()
         if value != self._size:
             self._size = value
-            if value == "L":  # Large: double width and height
+            if value == "L":  # Large: double both width, and height
                 size, self._char_height, self.__max_column = 0x11, 48, 16
             elif value == "M":  # Medium: double height
                 size, self._char_height, self.__max_column = 0x01, 48, 32
@@ -674,8 +683,8 @@ class ThermalPrinter(Serial):
     def sleep(self, seconds: int = 1) -> None:
         """Put the printer into a low-energy state.
 
-        :param int seconds: value to pass to the printer (min=0).
-        :exception ThermalPrinterValueError: On incorrect ``seconds``'s type or value.
+        :param int seconds: Value to pass to the printer (min=0).
+        :exception ThermalPrinterValueError: On incorrect ``seconds``'s type, or value.
         """
         if self.is_sleeping:
             return
@@ -691,9 +700,9 @@ class ThermalPrinter(Serial):
     def status(self, raise_on_error: bool = True) -> dict[str, bool]:
         """Check the printer status.
 
-        :param bool raise_on_error: raise on error.
+        :param bool raise_on_error: Raise on error.
         :exception ThermalPrinterCommunicationError:
-            If RX pin is not connected and if ``raise_on_error`` is ``True``.
+            If RX pin is not connected, and if ``raise_on_error`` is ``True``.
         :rtype: dict[str, bool]
         :return: A dict containing:
 
@@ -703,7 +712,7 @@ class ThermalPrinter(Serial):
             - ``voltage``: ``False`` if the voltage is higher than 9.5V
 
         .. versionchanged:: 0.2.0
-           Added ``raise_on_error`` keyword argument.
+           Added ``raise_on_error`` keyword-argument.
         """
         ret = {"movement": True, "paper": True, "temp": True, "voltage": True}
         self.send_command(Command.ESC, 118, 0)
@@ -722,7 +731,7 @@ class ThermalPrinter(Serial):
     def strike(self, state: bool = False) -> None:
         """Turn on/off double-strike mode.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._strike:
             self._strike = state
@@ -736,13 +745,13 @@ class ThermalPrinter(Serial):
     def underline(self, weight: int = 0) -> None:
         """Turn underline mode on/off.
 
-        :param int weight: the underline's weight:
+        :param int weight: The new underline's weight:
 
-            - ``0`` will turn off underline mode
-            - ``1`` will turn on underline mode (1 dot thick)
-            - ``2`` will turns on underline mode (2 dots thick)
-    
-        :exception ThermalPrinterValueError: On incorrect ``weight``'s type or value.
+            - ``0`` to turn off
+            - ``1`` for 1 dot thick underline
+            - ``2`` for 2 dots thick underline
+
+        :exception ThermalPrinterValueError: On incorrect ``weight``'s type, or value.
         """
         if not isinstance(weight, int) or not 0 <= weight <= 2:
             msg = "weight should be between 0 and 2 (default: 0)."
@@ -755,7 +764,7 @@ class ThermalPrinter(Serial):
     def upside_down(self, state: bool = False) -> None:
         """Turns on/off upside-down printing mode.
 
-        :param bool state: new state.
+        :param bool state: Enabled if ``state`` is ``True`` else disabed.
         """
         if state is not self._upside_down:
             self._upside_down = state

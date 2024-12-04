@@ -8,7 +8,7 @@ from enum import Enum
 
 
 class BarCode(Enum):
-    """Bar code types."""
+    """Barcode types."""
 
     # Syntax: (code, (min len(text), max len(text)), allowed_chars)
     UPC_A = (65, (11, 12), 0)
@@ -28,7 +28,7 @@ class BarCode(Enum):
 
 
 class BarCodePosition(Enum):
-    """Bar code positions."""
+    """Barcode positions."""
 
     HIDDEN = 0
     ABOVE = 1

@@ -3,6 +3,34 @@ import pytest
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
+def test_repr(printer: ThermalPrinter) -> None:
+    assert repr(printer).endswith(
+        "baudrate=19200, is_open=True>("
+        "barcode_height=162,"
+        " barcode_left_margin=0,"
+        " barcode_position=BarCodePosition.HIDDEN,"
+        " barcode_width=3,"
+        " bold=False,"
+        " char_spacing=0,"
+        " charset=CharSet.USA,"
+        " chinese=False,"
+        " chinese_format=Chinese.GBK,"
+        " codepage=CodePage.CP437,"
+        " double_height=False,"
+        " double_width=False,"
+        " inverse=False,"
+        " justify=L,"
+        " left_margin=0,"
+        " line_spacing=30,"
+        " rotate=False,"
+        " size=S,"
+        " strike=False,"
+        " underline=0,"
+        " upside_down=False"
+        ")"
+    )
+
+
 def test_attribute_get_is_online(printer: ThermalPrinter) -> None:
     assert printer.is_online
 

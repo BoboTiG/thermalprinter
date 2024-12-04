@@ -218,7 +218,7 @@ gg=="""
 def ls(*constants: Any) -> None:
     """Print constants values.
 
-    :param list constants: constant(s) to print.
+    :param list constants: Constant(s) to print.
 
     Print all constants:
 
@@ -242,15 +242,15 @@ def ls(*constants: Any) -> None:
 def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
     """Test one character with all possible code page.
 
-    :param str char: character to print.
-    :param ThermalPrinter printer: optional printer to use for printer_tests.
+    :param str char: The character to print.
+    :param ThermalPrinter printer: Optional printer to use.
 
     Say you are looking for the good code page to print a sequence,
     you can print it using every code pages:
 
     >>> print_char("现")
 
-    This function is as simple as:
+    This function is the same as this code:
 
     >>> for codepage in list(CodePage):
     ...    printer.out(printer.out(f"{codepage.name}: {char}"))
@@ -269,8 +269,8 @@ def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
 def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool = True) -> None:
     """Send to the printer several insctructions to test every printing functions.
 
-    :param ThermalPrinter printer: optional printer to use for printer_tests.
-    :param bool raise_on_error: raise on error.
+    :param ThermalPrinter printer: Optional printer to use.
+    :param bool raise_on_error: Raise on error.
 
     .. versionchanged:: 0.2.0
         Removed ``port`` and ``heat_time`` arguments.
