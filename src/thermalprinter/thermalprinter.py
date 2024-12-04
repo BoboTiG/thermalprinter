@@ -48,7 +48,7 @@ class ThermalPrinter(Serial):
     :param int heat_time: Printer heat time.
     :param int heat_interval: Printer heat time interval.
     :param int most_heated_point: Printer most heated point.
-    :param bool run_setup_cmd: Set to ``False`` to disabled the automatic one-shot run of the printer settings command.
+    :param bool run_setup_cmd: Set to ``False`` to disable the automatic one-shot run of the printer settings command (that ay be problematic on some devices).
     :param flat sleep_sec_after_init: Initial *mandatory* time to wait right after the serial initialisation.
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
@@ -372,7 +372,7 @@ class ThermalPrinter(Serial):
     def bold(self, state: bool = False) -> None:
         """Turn emphasized mode on/off.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._bold:
             self._bold = state
@@ -406,7 +406,7 @@ class ThermalPrinter(Serial):
     def chinese(self, state: bool = False) -> None:
         """Select/cancel Chinese mode.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._chinese:
             self._chinese = state
@@ -439,7 +439,7 @@ class ThermalPrinter(Serial):
     def double_height(self, state: bool = False) -> None:
         """Set double height mode.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._double_height:
             self._double_height = state
@@ -449,7 +449,7 @@ class ThermalPrinter(Serial):
     def double_width(self, state: bool = False) -> None:
         """Select double width mode.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._double_width:
             self._double_width = state
@@ -537,7 +537,7 @@ class ThermalPrinter(Serial):
     def inverse(self, state: bool = False) -> None:
         """Turn white/black reverse printing mode.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._inverse:
             self._inverse = state
@@ -648,7 +648,7 @@ class ThermalPrinter(Serial):
     def rotate(self, state: bool = False) -> None:
         """Turn on/off clockwise rotation of 90°.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._rotate:
             self._rotate = state
@@ -734,7 +734,7 @@ class ThermalPrinter(Serial):
     def strike(self, state: bool = False) -> None:
         """Turn on/off double-strike mode.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._strike:
             self._strike = state
@@ -767,7 +767,7 @@ class ThermalPrinter(Serial):
     def upside_down(self, state: bool = False) -> None:
         """Turns on/off upside-down printing mode.
 
-        :param bool state: Enabled if ``state`` is ``True`` else disabed.
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
         if state is not self._upside_down:
             self._upside_down = state
