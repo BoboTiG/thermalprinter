@@ -39,24 +39,7 @@ if TYPE_CHECKING:
 
 
 class ThermalPrinter(Serial):
-    """:param str port: Serial port to use, known as the device name.
-    :param int baudrate: Baud rate.
-    :param float command_timeout: Command timeout, in seconds.
-    :param int heat_time: Printer heat time.
-    :param int heat_interval: Printer heat time interval.
-    :param int most_heated_point: Printer most heated point.
-    :param bool run_setup_cmd: Set to ``False`` to disabled the automatic one-shot run of the printer settings command.
-    :param flat sleep_sec_after_init: Initial *mandatory* time to wait right after the serial initialisation.
-
-    :exception ThermalPrinterValueError: On incorrect argument's type, or value.
-
-    .. versionchanged:: 0.3.0
-        Added ``command_timeout`` keyword-argument.
-
-    .. versionchanged:: 0.3.1
-        Added ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
-        ``heat_time``, ``heat_interval``, and ``most_heated_point`` are now proper keyword-arguments.
-    """
+    """The class managing the thermal printer."""
 
     # Counters
     __lines: int = 0
@@ -101,6 +84,25 @@ class ThermalPrinter(Serial):
         run_setup_cmd: bool = True,
         sleep_sec_after_init: float = 0.5,
     ) -> None:
+        """
+        :param str port: Serial port to use, known as the device name.
+        :param int baudrate: Baud rate.
+        :param float command_timeout: Command timeout, in seconds.
+        :param int heat_time: Printer heat time.
+        :param int heat_interval: Printer heat time interval.
+        :param int most_heated_point: Printer most heated point.
+        :param bool run_setup_cmd: Set to ``False`` to disabled the automatic one-shot run of the printer settings command.
+        :param flat sleep_sec_after_init: Initial *mandatory* time to wait right after the serial initialisation.
+
+        :exception ThermalPrinterValueError: On incorrect argument's type, or value.
+
+        .. versionchanged:: 0.3.0
+            Added ``command_timeout`` keyword-argument.
+
+        .. versionchanged:: 0.3.1
+            Added ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
+            ``heat_time``, ``heat_interval``, and ``most_heated_point`` are now proper keyword-arguments.
+        """
         # Few important values
         self.is_open = False
         self._baudrate = baudrate
