@@ -534,7 +534,7 @@ class ThermalPrinter(Serial):
     def justify(self, value: str = "L") -> None:
         """Set text justification.
 
-        :param str value: the new justification.
+        :param str value: the new justification:
 
             - ``L`` to align left
             - ``C`` to align center
@@ -645,10 +645,12 @@ class ThermalPrinter(Serial):
     def size(self, value: str = "S") -> None:
         """Set text size.
 
-        :param str value: the new text size.
-            - ``S`` for small.
-            - ``M`` for medium (double height).
-            - ``L`` for large (double width and height).
+        :param str value: the new text size:
+
+            - ``S`` for small
+            - ``M`` for medium (double height)
+            - ``L`` for large (double both width and height)
+    
         :exception ThermalPrinterValueError: On incorrect ``value``'s type or value.
 
         :Note: This method affects :attr:`max_column`.
@@ -734,10 +736,12 @@ class ThermalPrinter(Serial):
     def underline(self, weight: int = 0) -> None:
         """Turn underline mode on/off.
 
-        :param int weight: the underline's weight.
-            - ``0`` will turn off underline mode.
-            - ``1`` will turn on underline mode (1 dot thick).
-            - ``2`` will turns on underline mode (2 dots thick).
+        :param int weight: the underline's weight:
+
+            - ``0`` will turn off underline mode
+            - ``1`` will turn on underline mode (1 dot thick)
+            - ``2`` will turns on underline mode (2 dots thick)
+    
         :exception ThermalPrinterValueError: On incorrect ``weight``'s type or value.
         """
         if not isinstance(weight, int) or not 0 <= weight <= 2:
