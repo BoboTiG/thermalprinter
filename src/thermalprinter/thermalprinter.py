@@ -39,7 +39,10 @@ if TYPE_CHECKING:
 
 
 class ThermalPrinter(Serial):
-    """:param str port: Serial port to use, known as the device name.
+    """
+    The class managing the thermal printer.
+
+    :param str port: Serial port to use, known as the device name.
     :param int baudrate: Baud rate.
     :param float command_timeout: Command timeout, in seconds.
     :param int heat_time: Printer heat time.
