@@ -46,7 +46,9 @@ class ThermalPrinter(Serial):
         - ``command_timeout`` (float): command timeout, in seconds (default: ``0.05``);
         - ``heat_time`` (int): printer heat time (default: ``{DEFAULT_HEAT_TIME}``);
         - ``heat_interval`` (int): printer heat time interval (default: ``{DEFAULT_HEAT_INTERVAL}``);
-        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``{DEFAULT_MOST_HEATED_POINT}``).
+        - ``most_heated_point`` (int): for the printer, the most heated point (default: ``{DEFAULT_MOST_HEATED_POINT}``);
+        - ``run_setup_cmd`` (bool)
+        - ``sleep_sec_after_init`` (float)
 
     :exception ThermalPrinterValueError: On incorrect argument's type or value.
 
