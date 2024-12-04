@@ -216,11 +216,9 @@ gg=="""
 
 
 def ls(*constants: Any) -> None:
-    r"""Print constants values.
+    """Print constants values.
 
-    :param list \\*constants: constant(s) to print.
-
-    Examples.
+    :param list constants: constant(s) to print.
 
     Print all constants:
 
@@ -279,6 +277,7 @@ def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool
         Added ``printer`` and ``raise_on_error`` arguments.
 
     Example:
+
     >>> from thermalprinter.tools import printer_tests
     >>> printer_tests()
     >>> printer = ThermalPrinter(port="/dev/ttyS0", heat_time=120)
