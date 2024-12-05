@@ -266,7 +266,7 @@ def print_char(char: str, *, printer: ThermalPrinter | None = None) -> None:
             printer.out(f"{codepage.name}: {char}")
 
 
-def printer_tests(*, printer: ThermalPrinter | None = None, *, raise_on_error: bool = True) -> None:
+def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool = True) -> None:
     """Send to the printer several instructions to test every printing functions.
 
     :param ThermalPrinter printer: Optional printer to use.
