@@ -53,12 +53,11 @@ class ThermalPrinter(Serial):
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
 
-    .. versionchanged:: 0.3.0
-        Added ``command_timeout`` keyword-argument.
+    .. versionadded:: 0.3.0
+        The ``command_timeout`` keyword-argument.
 
-    .. versionchanged:: 0.3.1
-        Added ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
-        ``heat_time``, ``heat_interval``, and ``most_heated_point`` are now proper keyword-arguments.
+    .. versionadded:: 0.3.1
+        ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
     """
 
     # Counters
