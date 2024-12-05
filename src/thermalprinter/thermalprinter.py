@@ -713,8 +713,8 @@ class ThermalPrinter(Serial):
             - ``temp``: ``False`` if the temperature exceeds 60°C
             - ``voltage``: ``False`` if the voltage is higher than 9.5V
 
-        .. versionchanged:: 0.2.0
-           Added ``raise_on_error`` keyword-argument.
+        .. versionadded:: 0.2.0
+           The ``raise_on_error`` keyword-argument.
         """
         ret = {"movement": True, "paper": True, "temp": True, "voltage": True}
         self.send_command(Command.ESC, 118, 0)
