@@ -9,6 +9,7 @@ extensions = [
     "enum_tools.autoenum",
     "sphinx_copybutton",
 ]
+myst_links_external_new_tab = True
 templates_path = []
 source_suffix = ".rst"
 master_doc = "index"
