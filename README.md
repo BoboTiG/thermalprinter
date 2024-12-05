@@ -36,7 +36,7 @@ from PIL import Image  # Optional, for printing images
 from thermalprinter import *
 
 
-with ThermalPrinter(port="/dev/ttyAMA0") as printer:
+with ThermalPrinter() as printer:
     # Picture
     printer.image(Image.open("src/tests/gnu.png"))
 
@@ -69,10 +69,10 @@ with ThermalPrinter(port="/dev/ttyAMA0") as printer:
     # Accents
     printer.out(
         "Voilà !",
+        codepage=CodePage.ISO_8859_1,
         justify=Justify.CENTER,
         strike=True,
         underline=Underline.THICK,
-        codepage=CodePage.ISO_8859_1,
     )
 
     # Line feeds

@@ -321,10 +321,10 @@ def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool
 
             printer.out(
                 "Voilà !",
+                codepage=CodePage.ISO_8859_1,
                 justify=Justify.CENTER,
                 strike=True,
                 underline=Underline.THICK,
-                codepage=CodePage.ISO_8859_1,
             )
 
             printer.feed(2)

@@ -98,6 +98,11 @@ packages = [
   "src/thermalprinter",
 ]
 
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+]
+
 [tool.mypy]
 # Ensure we know what we do
 warn_redundant_casts = true

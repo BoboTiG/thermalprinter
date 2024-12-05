@@ -4,54 +4,9 @@ Usage
 
 An example is better than a thousand words:
 
-.. code-block:: python
-
-    from PIL import Image
-    from thermalprinter import *
-
-
-    with ThermalPrinter() as printer:
-        # Picture
-        printer.image(Image.open("gnu.png"))
-
-        # Barcode
-        printer.barcode_height(80)
-        printer.barcode_position(BarCodePosition.BELOW)
-        printer.barcode_width(3)
-        printer.barcode("012345678901", BarCode.EAN13)
-
-        # Styles
-        printer.out("Bold", bold=True)
-        printer.out("Double height", double_height=True)
-        printer.out("Double width", double_width=True)
-        printer.out("Inverse", inverse=True)
-        printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
-        printer.out("Size", size=Size.MEDIUM)
-        printer.out("Strike", strike=True)
-        printer.out("Underline", underline=Underline.THIN)
-        printer.out("Upside down", upside_down=True)
-
-        # Chinese (almost all alphabets exist)
-        printer.out("现代汉语通用字表", chinese=True, chinese_format=Chinese.UTF_8)
-                    
-        # Greek (excepted the ΐ character)
-        printer.out("Στην υγειά μας!", codepage=CodePage.CP737)
-
-        # Other characters
-        printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
-
-        # Accents
-        printer.out(
-            "Voilà !",
-            justify=Justify.CENTER,
-            strike=True,
-            underline=Underline.THICK,
-            codepage=CodePage.ISO_8859_1,
-        )
-
-        # Line feeds
-        printer.feed(2)
-
+.. literalinclude:: ../../README.md
+    :lines: 35-79
+    :language: python
 
 Instantiate the Class
 =====================
