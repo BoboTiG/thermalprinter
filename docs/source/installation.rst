@@ -15,7 +15,7 @@ Alternatively, you can get a copy of the module from GitHub.
 
 .. code-block:: bash
 
-    git clone https://github.com/BoboTiG/thermalprinter.git
+    git clone --depth=1 https://github.com/BoboTiG/thermalprinter.git
     cd thermalprinter
 
 2. Install the module:
