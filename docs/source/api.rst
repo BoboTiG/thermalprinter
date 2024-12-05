@@ -105,8 +105,13 @@ Constants
 
 .. module:: thermalprinter.constants
 
+Commands
+--------
+
+.. autoenum:: Command
+
 Barcode Types
---------------
+-------------
 
 .. autoenum:: BarCode
 
