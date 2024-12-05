@@ -226,10 +226,10 @@ def ls(*constants: Any) -> None:
 
     You can print only constants you want too:
 
-    >>> from thermalprinter.constants import Chinese, CodePage
-    >>> # Print Chinese values
+    >>> # Print Chinese constant values:
     >>> ls(Chinese)
-    >>> # Print Chinese and CodePage values
+
+    >>> # Print Chinese, and CodePage, constant values:
     >>> ls(Chinese, CharSet)
     """
     for constant in constants or CONSTANTS:
@@ -240,7 +240,7 @@ def ls(*constants: Any) -> None:
 
 
 def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
-    """Test one character with all possible code page.
+    """Test one character with all possible code pages.
 
     :param str char: The character to print.
     :param ThermalPrinter printer: Optional printer to use.
@@ -250,10 +250,10 @@ def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
 
     >>> print_char("现")
 
-    This function is the same as this code:
+    This function is equivalent to:
 
     >>> for codepage in list(CodePage):
-    ...    printer.out(printer.out(f"{codepage.name}: {char}"))
+    ...    printer.out(f"{codepage.name}: {char}")
 
     .. versionchanged:: 0.2.0
         Added ``printer`` argument.
@@ -267,7 +267,7 @@ def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
 
 
 def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool = True) -> None:
-    """Send to the printer several insctructions to test every printing functions.
+    """Send to the printer several instructions to test every printing functions.
 
     :param ThermalPrinter printer: Optional printer to use.
     :param bool raise_on_error: Raise on error.
@@ -276,10 +276,12 @@ def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool
         Removed ``port`` and ``heat_time`` arguments.
         Added ``printer`` and ``raise_on_error`` arguments.
 
-    Example:
+    Examples:
 
-    >>> from thermalprinter.tools import printer_tests
+    >>> # Using a printer with the default configuration:
     >>> printer_tests()
+
+    >>> # Using a specific printer configuration:
     >>> printer = ThermalPrinter(port="/dev/ttyS0", heat_time=120)
     >>> printer_tests(printer=printer)
 
