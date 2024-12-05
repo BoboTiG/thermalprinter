@@ -135,7 +135,9 @@ Code Pages Fallback
 
 .. autoenum:: CodePageConverted
 
-If you find a better fit for one of the code page below, `open an issue <https://github.com/BoboTiG/thermalprinter/issues>`_ please (or `send a patch <https://github.com/BoboTiG/thermalprinter/pulls>`_).
+.. note::
+
+    If you find a better fit for one of the code page below, `open an issue <https://github.com/BoboTiG/thermalprinter/issues>`_ please (or `send a patch <https://github.com/BoboTiG/thermalprinter/pulls>`_).
 
 Commands
 --------

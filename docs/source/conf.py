@@ -4,10 +4,10 @@
 # -- General configuration ------------------------------------------------
 
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.intersphinx",
     "enum_tools.autoenum",
     "sphinx_copybutton",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
 ]
 myst_links_external_new_tab = True
 templates_path = []
@@ -28,13 +28,9 @@ todo_include_todos = False
 html_theme = "shibuya"
 html_theme_options = {
     "accent_color": "mint",
-    # "page_layout": "compact",
-    # "twitter_creator": "__tiger222__",
-    # "twitter_site": "__tiger222__",
-    # "twitter_url": "https://twitter.com/__tiger222__",
-    # "github_url": "https://github.com/BoboTiG",
     "globaltoc_expand_depth": 2,
     "nav_links": [
+        {"title": "Recipes", "url": "https://github.com/BoboTiG/thermalprinter-recipes"},
         {"title": "GitHub", "url": "https://github.com/BoboTiG/thermalprinter"},
         {"title": "PyPI", "url": "https://pypi.org/project/thermalprinter/"},
     ],
