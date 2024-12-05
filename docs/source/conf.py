@@ -11,11 +11,11 @@ extensions = [
 ]
 myst_links_external_new_tab = True
 templates_path = []
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 project = "ThermalPrinter"
 author = "Mickaël Schoentgen"
-copyright = f"2016-2024, {author}"
+copyright = f"2016-2024, {author}"  # noqa: A001
 version = "0.3.0"
 release = "latest"
 language = "en"
@@ -59,9 +59,7 @@ latex_documents = [
 
 # -- Options for manual page output ---------------------------------------
 
-man_pages = [
-    (master_doc, "thermalprinter", "ThermalPrinter Documentation", [author], 1)
-]
+man_pages = [(master_doc, "thermalprinter", "ThermalPrinter Documentation", [author], 1)]
 man_show_urls = False
 
 

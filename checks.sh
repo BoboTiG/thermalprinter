@@ -1,5 +1,5 @@
 #!/bin/bash
 set -eu
-python -m ruff format src
-python -m ruff check --fix --unsafe-fixes src
+python -m ruff format docs src
+python -m ruff check --fix --unsafe-fixes docs src
 python -m mypy src

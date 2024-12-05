@@ -158,6 +158,9 @@ ignore = [
 fixable = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
+"docs/source/conf.py" = [
+    "INP001",
+]
 "src/tests/*" = [
     "E501",
 ]
