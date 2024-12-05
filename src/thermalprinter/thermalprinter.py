@@ -4,7 +4,6 @@ Source: https://github.com/BoboTiG/thermalprinter.
 
 from __future__ import annotations
 
-import contextlib
 from atexit import register
 from time import sleep
 from typing import TYPE_CHECKING, Any
@@ -58,7 +57,7 @@ class ThermalPrinter(Serial):
 
     .. versionadded:: 0.3.1
         ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
-    """
+    """  # noqa: E501
 
     # Counters
     __lines: int = 0

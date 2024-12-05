@@ -6,7 +6,11 @@ from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr() -> None:
-    assert repr(Chinese.BIG5) == "BIG5  value: 3"
+    assert repr(Chinese.BIG5) == "3"
+
+
+def test_str() -> None:
+    assert str(Chinese.BIG5) == "BIG5"
 
 
 def test_default_value(printer: ThermalPrinter) -> None:

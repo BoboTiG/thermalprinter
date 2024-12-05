@@ -6,7 +6,11 @@ from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr() -> None:
-    assert repr(BarCodePosition.ABOVE) == "ABOVE  value: 1"
+    assert repr(BarCodePosition.ABOVE) == "1"
+
+
+def test_str() -> None:
+    assert str(BarCodePosition.ABOVE) == "ABOVE"
 
 
 def test_default_value(printer: ThermalPrinter) -> None:

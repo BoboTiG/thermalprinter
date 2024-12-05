@@ -24,7 +24,10 @@ class BarCode(Enum):
     CODE128 = (73, (2, 255), 3)
 
     def __repr__(self) -> str:
-        return f"{self.name:<7}value: {self.value[0]}, {self.value[1][0]:>2} <= len(data) <= {self.value[1][1]:>3}"
+        return f"{self.value[0]}, range: {self.value[1][0]} <= len(data) <= {self.value[1][1]}"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class BarCodePosition(Enum):
@@ -36,7 +39,10 @@ class BarCodePosition(Enum):
     BOTH = 3
 
     def __repr__(self) -> str:
-        return f"{self.name:<6} value: {self.value}"
+        return str(self.value)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class CharSet(Enum):
@@ -60,7 +66,10 @@ class CharSet(Enum):
     CHINA = 15
 
     def __repr__(self) -> str:
-        return f"{self.name:<14} value: {self.value:>2}"
+        return str(self.value)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Chinese(Enum):
@@ -71,7 +80,10 @@ class Chinese(Enum):
     BIG5 = 3
 
     def __repr__(self) -> str:
-        return f"{self.name:<5} value: {self.value}"
+        return str(self.value)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class CodePage(Enum):
@@ -123,7 +135,10 @@ class CodePage(Enum):
     CP874 = (47, "")
 
     def __repr__(self) -> str:
-        return f"{self.name:<11} value: {self.value[0]:>2}, desc: {self.value[1]}"
+        return f"{self.value[0]} ({self.value[1]})"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class CodePageConverted(Enum):
@@ -139,7 +154,10 @@ class CodePageConverted(Enum):
     THAI2 = "utf-8"  # noqa: PIE796
 
     def __repr__(self) -> str:
-        return f"{self.name:<11} fallback: {self.value:>2}"
+        return self.value
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Command(Enum):
@@ -150,6 +168,12 @@ class Command(Enum):
     ESC = 27
     FS = 28
     GS = 29
+
+    def __repr__(self) -> str:
+        return str(self.value)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted]

@@ -6,7 +6,11 @@ from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr() -> None:
-    assert repr(CodePage.CP1250) == "CP1250      value: 30, desc: Central Europe [WCP1250]"
+    assert repr(CodePage.CP1250) == "30 (Central Europe [WCP1250])"
+
+
+def test_str() -> None:
+    assert str(CodePage.CP1250) == "CP1250"
 
 
 def test_default_value(printer: ThermalPrinter) -> None:

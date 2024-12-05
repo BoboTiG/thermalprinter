@@ -28,13 +28,14 @@ todo_include_todos = False
 html_theme = "shibuya"
 html_theme_options = {
     "accent_color": "mint",
-    "page_layout": "compact",
-    "twitter_creator": "__tiger222__",
-    "twitter_site": "__tiger222__",
-    "twitter_url": "https://twitter.com/__tiger222__",
-    "github_url": "https://github.com/BoboTiG",
+    # "page_layout": "compact",
+    # "twitter_creator": "__tiger222__",
+    # "twitter_site": "__tiger222__",
+    # "twitter_url": "https://twitter.com/__tiger222__",
+    # "github_url": "https://github.com/BoboTiG",
     "globaltoc_expand_depth": 2,
     "nav_links": [
+        {"title": "GitHub", "url": "https://github.com/BoboTiG/thermalprinter"},
         {"title": "PyPI", "url": "https://pypi.org/project/thermalprinter/"},
     ],
 }
