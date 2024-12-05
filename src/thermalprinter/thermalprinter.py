@@ -258,10 +258,10 @@ class ThermalPrinter(Serial):
             getattr(self, style)()
 
     def send_command(self, command: Command, *data: int) -> None:
-        """Raw bytes writing.
+        """Send a command to the printer.
 
-        :param command: Command to send to the printer.
-        :param data: Command arguments, if any.
+        :param Command command: The command to send to the printer.
+        :param list[int] data: Eventual command arguments.
         """
         # The command
         if command is not Command.NONE:
