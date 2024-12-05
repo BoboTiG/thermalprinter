@@ -32,7 +32,7 @@ python -m pip install -U thermalprinter
 An example is better than a thousand words:
 
 ```python
-from PIL import Image  # Optional, for printing images
+from PIL import Image  # Optional, for images printing
 from thermalprinter import *
 
 
@@ -40,13 +40,13 @@ with ThermalPrinter() as printer:
     # Picture
     printer.image(Image.open("src/tests/gnu.png"))
 
-    # Bar codes
+    # Barcode
     printer.barcode_height(80)
     printer.barcode_position(BarCodePosition.BELOW)
     printer.barcode_width(3)
     printer.barcode("012345678901", BarCode.EAN13)
 
-    # Styles
+    # Style
     printer.out("Bold", bold=True)
     printer.out("Double height", double_height=True)
     printer.out("Double width", double_width=True)
@@ -66,7 +66,7 @@ with ThermalPrinter() as printer:
     # Other characters
     printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
 
-    # Accents
+    # Accent
     printer.out(
         "Voilà !",
         codepage=CodePage.ISO_8859_1,

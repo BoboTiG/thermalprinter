@@ -258,7 +258,7 @@ def print_char(char: str, *, printer: ThermalPrinter | None = None) -> None:
     .. versionadded:: 0.2.0
         The ``printer`` keyword-argument.
     """
-    if not printer:
+    if not printer:  # pragma: noqa
         printer = ThermalPrinter()
 
     with printer:
@@ -279,7 +279,7 @@ def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool
         ``printer``, and ``raise_on_error``, keyword-arguments.
     """
     try:
-        if not printer:
+        if not printer:  # pragma: noqa
             printer = ThermalPrinter()
 
         with printer:
