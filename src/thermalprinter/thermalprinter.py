@@ -23,6 +23,7 @@ from thermalprinter.constants import (
     CodePage,
     CodePageConverted,
     Command,
+    Underline,
 )
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
 from thermalprinter.validate import (
@@ -55,7 +56,7 @@ class ThermalPrinter(Serial):
     .. versionadded:: 0.3.0
         The ``command_timeout`` keyword-argument.
 
-    .. versionadded:: 0.3.1
+    .. versionadded:: 0.4.0
         ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
     """  # noqa: E501
 
@@ -742,24 +743,15 @@ class ThermalPrinter(Serial):
         self.send_command(Command.DC2, 84)
         sleep(self._dot_print_time * 24 * 26 + self._dot_feed_time * (8 * 26 + 32))
 
-    def underline(self, weight: int = 0) -> None:
+    def underline(self, weight: Underline = Underline.OFF) -> None:
         """Set the underline mode.
 
-        :param int weight: The new underline's weight:
-
-            - ``0`` to turn off (default)
-            - ``1`` for one dot thick underline
-            - ``2`` for two dots thick underline
-
-        :exception ThermalPrinterValueError: On incorrect ``weight``'s type, or value.
+        .. versionchanged:: 0.4.0
+            The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`constants.Underline`.
         """
-        if not isinstance(weight, int) or not 0 <= weight <= 2:
-            msg = "weight should be between 0 and 2 (default: 0)."
-            raise ThermalPrinterValueError(msg)
-
-        if weight != self._underline:
-            self._underline = weight
-            self.send_command(Command.ESC, 45, weight)
+        if weight.value != self._underline:
+            self._underline = weight.value
+            self.send_command(Command.ESC, 45, weight.value)
 
     def upside_down(self, state: bool = False) -> None:
         """Turns on/off the upside-down printing mode.

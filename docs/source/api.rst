@@ -143,3 +143,8 @@ Commands
 --------
 
 .. autoenum:: Command
+
+Underline
+---------
+
+.. autoenum:: Underline

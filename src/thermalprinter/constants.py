@@ -140,7 +140,15 @@ class Command(Enum):
     GS = 29
 
 
-CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted]
+class Underline(Enum):
+    """Underline weights."""
+
+    OFF = 0
+    THIN = 1
+    THICK = 2
+
+
+CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted, Underline]
 
 DEFAULT_BAUDRATE = 19200
 DEFAULT_PORT = "/dev/ttyAMA0"

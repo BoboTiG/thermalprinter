@@ -1,4 +1,4 @@
-from thermalprinter.constants import Chinese, CodePage
+from thermalprinter.constants import Chinese, CodePage, Underline
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
@@ -23,7 +23,7 @@ def test_print_one_line_multi_styles(printer: ThermalPrinter) -> None:
         "This is the centered stroke underline line.",
         justify="C",
         strike=True,
-        underline=1,
+        underline=Underline.THIN,
     )
     assert printer._justify == "L"
     assert not printer._strike

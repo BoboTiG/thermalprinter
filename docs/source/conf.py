@@ -5,6 +5,7 @@
 
 extensions = [
     "enum_tools.autoenum",
+    "myst_parser",
     "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",

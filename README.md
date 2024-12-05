@@ -53,7 +53,7 @@ with ThermalPrinter(port="/dev/ttyAMA0") as printer:
     printer.out("Inverse", inverse=True)
     printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
     printer.out("Strike", strike=True)
-    printer.out("Underline", underline=1)
+    printer.out("Underline", underline=Underline.THIN)
     printer.out("Upside down", upside_down=True)
 
     # Chinese (almost all alphabets exist)
@@ -66,7 +66,7 @@ with ThermalPrinter(port="/dev/ttyAMA0") as printer:
     printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
 
     # Accents
-    printer.out("Voilà !", justify="C", strike=True, underline=2, codepage=CodePage.ISO_8859_1)
+    printer.out("Voilà !", justify="C", strike=True, underline=Underline.THICK, codepage=CodePage.ISO_8859_1)
 
     # Line feeds
     printer.feed(2)
