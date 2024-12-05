@@ -1,15 +1,10 @@
-.. highlight:: sh
-
 ============
 Installation
 ============
 
-Quite simple:
-
 .. code-block:: bash
 
     python -m pip install -U thermalprinter
-
 
 From sources
 ============
@@ -23,7 +18,7 @@ Alternatively, you can get a copy of the module from GitHub.
     git clone https://github.com/BoboTiG/thermalprinter.git
     cd thermalprinter
 
-2. Install them module:
+2. Install the module:
 
 .. code-block:: bash
 
