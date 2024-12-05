@@ -1,6 +1,6 @@
-========
-Printers
-========
+==================
+Supporter Printers
+==================
 
 Known printers to be supported:
 
