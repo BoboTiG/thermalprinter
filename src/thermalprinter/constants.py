@@ -140,6 +140,14 @@ class Command(Enum):
     GS = 29
 
 
+class Justify(Enum):
+    """Text justifications."""
+
+    LEFT = 0
+    CENTER = 1
+    RIGHT = 2
+
+
 class Underline(Enum):
     """Underline weights."""
 

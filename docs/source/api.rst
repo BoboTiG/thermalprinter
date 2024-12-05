@@ -144,7 +144,12 @@ Commands
 
 .. autoenum:: Command
 
-Underline
----------
+Text Justification
+------------------
+
+.. autoenum:: Justify
+
+Text Underline
+--------------
 
 .. autoenum:: Underline

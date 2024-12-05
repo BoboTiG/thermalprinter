@@ -23,6 +23,7 @@ from thermalprinter.constants import (
     CodePage,
     CodePageConverted,
     Command,
+    Justify,
     Underline,
 )
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
@@ -82,13 +83,13 @@ class ThermalPrinter(Serial):
     _double_height = False
     _double_width = False
     _inverse = False
-    _justify = "L"
+    _justify = Justify.LEFT
     _left_margin = 0
     _line_spacing = 30
     _rotate = False
     _size = "S"
     _strike = False
-    _underline = 0
+    _underline = Underline.OFF
     _upside_down = False
 
     def __init__(  # noqa: PLR0913
@@ -224,15 +225,15 @@ class ThermalPrinter(Serial):
 
         You can pass formatting instructions directly via arguments:
 
-        >>> printer.out(data, justify="C", inverse=True)
+        >>> printer.out(data, justify=Justify.CENTER, inverse=True)
 
         This is a quicker way to do:
 
-        >>> printer.justify("C")
+        >>> printer.justify(Justify.CENTER)
         >>> printer.inverse(True)
         >>> printer.out(data)
         >>> printer.inverse(False)
-        >>> printer.justify("L")
+        >>> printer.justify(Justify.LEFT)
         """
         if data is None:
             return
@@ -541,31 +542,15 @@ class ThermalPrinter(Serial):
             self._inverse = state
             self.send_command(Command.GS, 66, int(state))
 
-    def justify(self, value: str = "L") -> None:
+    def justify(self, position: Justify = Justify.LEFT) -> None:
         """Set the text justification.
 
-        :param str value: The new justification:
-
-            - ``L`` to align left (default)
-            - ``C`` to align center
-            - ``R`` to align right
-
-        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
+        .. versionchanged:: 0.4.0
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Justify`.
         """
-        if not isinstance(value, str) or value not in "LCRlcr" or len(value) != 1:
-            err = "value should be one of L (left, default), C (center)  or R (right)."
-            raise ThermalPrinterValueError(err)
-
-        value = value.upper()
-        if value != self._justify:
-            self._justify = value
-            if value == "C":
-                pos = 1
-            elif value == "R":
-                pos = 2
-            else:
-                pos = 0
-            self.send_command(Command.ESC, 97, pos)
+        if position != self._justify:
+            self._justify = position
+            self.send_command(Command.ESC, 97, position.value)
 
     def left_margin(self, margin: int = 0) -> None:
         """Set the left margin.
@@ -634,13 +619,13 @@ class ThermalPrinter(Serial):
         self._double_height = False
         self._double_width = False
         self._inverse = False
-        self._justify = "L"
+        self._justify = Justify.LEFT
         self._left_margin = 0
         self._line_spacing = 30
         self._rotate = False
         self._size = "S"
         self._strike = False
-        self._underline = 0
+        self._underline = Underline.OFF
         self._upside_down = False
 
     def rotate(self, state: bool = False) -> None:
@@ -749,8 +734,8 @@ class ThermalPrinter(Serial):
         .. versionchanged:: 0.4.0
             The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`constants.Underline`.
         """
-        if weight.value != self._underline:
-            self._underline = weight.value
+        if weight != self._underline:
+            self._underline = weight
             self.send_command(Command.ESC, 45, weight.value)
 
     def upside_down(self, state: bool = False) -> None:

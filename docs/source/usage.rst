@@ -40,7 +40,13 @@ An example is better than a thousand words:
         printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
 
         # Accents
-        printer.out("Voilà !", justify="C", strike=True, underline=Underline.THICK, codepage=CodePage.ISO_8859_1)
+        printer.out(
+            "Voilà !",
+            justify=Justify.CENTER,
+            strike=True,
+            underline=Underline.THICK,
+            codepage=CodePage.ISO_8859_1,
+        )
 
         # Line feeds
         printer.feed(2)

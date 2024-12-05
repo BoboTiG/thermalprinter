@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from thermalprinter.constants import CONSTANTS, BarCode, BarCodePosition, Chinese, CodePage, Underline
+from thermalprinter.constants import CONSTANTS, BarCode, BarCodePosition, Chinese, CodePage, Justify, Underline
 from thermalprinter.exceptions import ThermalPrinterError
 from thermalprinter.thermalprinter import ThermalPrinter
 
@@ -318,7 +318,13 @@ def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool
             printer.out("Underline", underline=Underline.THIN)
             printer.out("Upside down", upside_down=True)
 
-            printer.out("Voilà !", justify="C", strike=True, underline=Underline.THICK, codepage=CodePage.ISO_8859_1)
+            printer.out(
+                "Voilà !",
+                justify=Justify.CENTER,
+                strike=True,
+                underline=Underline.THICK,
+                codepage=CodePage.ISO_8859_1,
+            )
 
             printer.feed(2)
     except ThermalPrinterError as ex:
