@@ -255,8 +255,8 @@ def print_char(char: str, *, printer: ThermalPrinter | None = None) -> None:
     >>> for codepage in list(CodePage):
     ...    printer.out(f"{codepage.name}: {char}")
 
-    .. versionchanged:: 0.2.0
-        Added the ``printer`` keyword-argument.
+    .. versionadded:: 0.2.0
+        The ``printer`` keyword-argument.
     """
     if not printer:
         printer = ThermalPrinter()
@@ -272,20 +272,11 @@ def printer_tests(*, printer: ThermalPrinter | None = None, *, raise_on_error: b
     :param ThermalPrinter printer: Optional printer to use.
     :param bool raise_on_error: Raise on error.
 
-    Using a printer with the default configuration:
-
-    >>> printer_tests()
-
-    Using a specific printer configuration:
-
-    >>> printer = ThermalPrinter(port="/dev/ttyS0", heat_time=120)
-    >>> printer_tests(printer=printer)
-
     .. versionchanged:: 0.2.0
+        Removed ``port``, and ``heat_time``, keyword-arguments.
 
-        - Removed ``port``, and ``heat_time``, keyword-arguments.
-        - Added ``printer``, and ``raise_on_error``, keyword-arguments.
-
+    .. versionadded:: 0.2.0
+        ``printer``, and ``raise_on_error``, keyword-arguments.
     """
     try:
         if not printer:
