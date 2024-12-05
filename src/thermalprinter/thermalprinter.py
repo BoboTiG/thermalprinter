@@ -24,6 +24,7 @@ from thermalprinter.constants import (
     CodePageConverted,
     Command,
     Justify,
+    Size,
     Underline,
 )
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
@@ -87,7 +88,7 @@ class ThermalPrinter(Serial):
     _left_margin = 0
     _line_spacing = 30
     _rotate = False
-    _size = "S"
+    _size = Size.SMALL
     _strike = False
     _underline = Underline.OFF
     _upside_down = False
@@ -249,7 +250,7 @@ class ThermalPrinter(Serial):
             self.__lines += 1
 
             # Sizes M and L are double height
-            if self._size != "S":
+            if self._size != Size.SMALL:
                 self.__lines += 1
 
         sleep(2 * self._dot_feed_time * self._char_height)
@@ -542,15 +543,15 @@ class ThermalPrinter(Serial):
             self._inverse = state
             self.send_command(Command.GS, 66, int(state))
 
-    def justify(self, position: Justify = Justify.LEFT) -> None:
+    def justify(self, value: Justify = Justify.LEFT) -> None:
         """Set the text justification.
 
         .. versionchanged:: 0.4.0
             The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Justify`.
         """
-        if position != self._justify:
-            self._justify = position
-            self.send_command(Command.ESC, 97, position.value)
+        if value != self._justify:
+            self._justify = value
+            self.send_command(Command.ESC, 97, value.value)
 
     def left_margin(self, margin: int = 0) -> None:
         """Set the left margin.
@@ -623,7 +624,7 @@ class ThermalPrinter(Serial):
         self._left_margin = 0
         self._line_spacing = 30
         self._rotate = False
-        self._size = "S"
+        self._size = Size.SMALL
         self._strike = False
         self._underline = Underline.OFF
         self._upside_down = False
@@ -637,33 +638,18 @@ class ThermalPrinter(Serial):
             self._rotate = state
             self.send_command(Command.ESC, 86, int(state))
 
-    def size(self, value: str = "S") -> None:
+    def size(self, value: Size = Size.SMALL) -> None:
         """Set the text size.
 
-        :param str value: The new text size:
+        .. versionchanged:: 0.4.0
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Size`.
 
-            - ``S`` for small (default)
-            - ``M`` for medium: double height
-            - ``L`` for large: double both width, and height
-
-        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
-
-        :Note: This method affects :attr:`max_column`.
+        .. note::
+            This method affects :attr:`max_column`.
         """
-        if not isinstance(value, str) or value not in "SMLsml" or len(value) != 1:
-            err = "value should be one of S (small, default), M (medium)  or L (large)."
-            raise ThermalPrinterValueError(err)
-
-        value = value.upper()
         if value != self._size:
             self._size = value
-            if value == "L":  # Large: double both width, and height
-                size, self._char_height, self.__max_column = 0x11, 48, 16
-            elif value == "M":  # Medium: double height
-                size, self._char_height, self.__max_column = 0x01, 48, 32
-            else:
-                size, self._char_height, self.__max_column = 0x00, 24, 32
-
+            size, self._char_height, self.__max_column = value.value
             self.send_command(Command.GS, 33, size)
 
     def sleep(self, seconds: int = 1) -> None:

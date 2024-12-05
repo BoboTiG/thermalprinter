@@ -12,6 +12,7 @@ Release date: `2024-12-xx`
 ## Technical Changes
 
 - Added the printer enum constant `Justify` to use in `ThermalPrinter.justify()` method (**breaking change**).
+- Added the printer enum constant `Size` to use in `ThermalPrinter.size()` method (**breaking change**).
 - Added the printer enum constant `Underline` to use in `ThermalPrinter.underline()` method (**breaking change**).
 - Added the printer constant `DEFAULT_BAUDRATE` (integer, defaults to `19200`).
 - Added the printer constant `DEFAULT_PORT` (string, defaults to `/dev/ttyAMA0`).

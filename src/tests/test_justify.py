@@ -1,4 +1,3 @@
-
 from thermalprinter.constants import Justify
 from thermalprinter.thermalprinter import ThermalPrinter
 

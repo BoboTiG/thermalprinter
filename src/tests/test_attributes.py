@@ -23,7 +23,7 @@ def test_repr(printer: ThermalPrinter) -> None:
         " left_margin=0,"
         " line_spacing=30,"
         " rotate=False,"
-        " size=S,"
+        " size=Size.SMALL,"
         " strike=False,"
         " underline=Underline.OFF,"
         " upside_down=False"

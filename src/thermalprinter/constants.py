@@ -148,8 +148,21 @@ class Justify(Enum):
     RIGHT = 2
 
 
+class Size(Enum):
+    """Text sizes.
+
+    - ``MEDIUM`` will double the text height.
+    - ``LARGE`` will both double the text height, and its width.
+    """
+
+    # Syntax: (code, char height, max column)
+    SMALL = (0x00, 24, 32)
+    MEDIUM = (0x01, 48, 32)
+    LARGE = (0x11, 48, 16)
+
+
 class Underline(Enum):
-    """Underline weights."""
+    """Text underline weights."""
 
     OFF = 0
     THIN = 1

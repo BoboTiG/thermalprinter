@@ -149,6 +149,11 @@ Text Justification
 
 .. autoenum:: Justify
 
+Text Size
+---------
+
+.. autoenum:: Size
+
 Text Underline
 --------------
 

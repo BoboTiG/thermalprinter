@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from thermalprinter.constants import CONSTANTS, BarCode, BarCodePosition, Chinese, CodePage, Justify, Underline
+from thermalprinter.constants import CONSTANTS, BarCode, BarCodePosition, Chinese, CodePage, Justify, Size, Underline
 from thermalprinter.exceptions import ThermalPrinterError
 from thermalprinter.thermalprinter import ThermalPrinter
 
@@ -314,6 +314,7 @@ def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool
             printer.out("Double width", double_width=True)
             printer.out("Inverse", inverse=True)
             printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
+            printer.out("Size", size=Size.MEDIUM)
             printer.out("Strike", strike=True)
             printer.out("Underline", underline=Underline.THIN)
             printer.out("Upside down", upside_down=True)
