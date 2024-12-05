@@ -31,8 +31,8 @@ html_theme_options = {
     "globaltoc_expand_depth": 2,
     "nav_links": [
         {"title": "Recipes", "url": "https://github.com/BoboTiG/thermalprinter-recipes"},
-        {"title": "GitHub", "url": "https://github.com/BoboTiG/thermalprinter"},
-        {"title": "PyPI", "url": "https://pypi.org/project/thermalprinter/"},
+        {"title": "Sources", "url": "https://github.com/BoboTiG/thermalprinter"},
+        {"title": "Package", "url": "https://pypi.org/project/thermalprinter/"},
     ],
 }
 html_context = {

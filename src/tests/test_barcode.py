@@ -11,11 +11,7 @@ from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr() -> None:
-    assert repr(BarCode.UPC_A) == "65, range: 11 <= len(data) <= 12"
-
-
-def test_str() -> None:
-    assert str(BarCode.UPC_A) == "UPC_A"
+    assert repr(BarCode.UPC_A) == "<BarCode.UPC_A: 65, range: 11 <= len(data) <= 12>"
 
 
 def test_empty_values(printer: ThermalPrinter) -> None:

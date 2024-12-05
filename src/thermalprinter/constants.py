@@ -24,10 +24,10 @@ class BarCode(Enum):
     CODE128 = (73, (2, 255), 3)
 
     def __repr__(self) -> str:
-        return f"{self.value[0]}, range: {self.value[1][0]} <= len(data) <= {self.value[1][1]}"
-
-    def __str__(self) -> str:
-        return self.name
+        return (
+            f"<{type(self).__name__}.{self.name}: {self.value[0]}"
+            f", range: {self.value[1][0]} <= len(data) <= {self.value[1][1]}>"
+        )
 
 
 class BarCodePosition(Enum):
@@ -37,12 +37,6 @@ class BarCodePosition(Enum):
     ABOVE = 1
     BELOW = 2
     BOTH = 3
-
-    def __repr__(self) -> str:
-        return str(self.value)
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class CharSet(Enum):
@@ -65,12 +59,6 @@ class CharSet(Enum):
     SLOVENIA = 14
     CHINA = 15
 
-    def __repr__(self) -> str:
-        return str(self.value)
-
-    def __str__(self) -> str:
-        return self.name
-
 
 class Chinese(Enum):
     """Chinese formats."""
@@ -78,12 +66,6 @@ class Chinese(Enum):
     GBK = 0
     UTF_8 = 1
     BIG5 = 3
-
-    def __repr__(self) -> str:
-        return str(self.value)
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class CodePage(Enum):
@@ -134,33 +116,18 @@ class CodePage(Enum):
     CP856 = (46, "")
     CP874 = (47, "")
 
-    def __repr__(self) -> str:
-        ret = str(self.value[0])
-        if self.value[1]:
-            ret += f" ({self.value[1]})"
-        return ret
-
-    def __str__(self) -> str:
-        return self.name
-
 
 class CodePageConverted(Enum):
     """Some code pages are not available on Python, so we use a little translation table."""
 
     # unsupported encoding -> best replacement
-    MIK = "iso8859-5"
-    CP755 = "utf-8"
-    IRAN = "cp1256"
-    IRAN2 = "utf-8"  # noqa: PIE796
-    LATVIA = "iso8859-4"
-    THAI = "iso8859-11"
-    THAI2 = "utf-8"  # noqa: PIE796
-
-    def __repr__(self) -> str:
-        return self.value
-
-    def __str__(self) -> str:
-        return self.name
+    MIK = "ISO-8859-5"
+    CP755 = "UTF-8"
+    IRAN = "CP1256"
+    IRAN2 = "UTF-8"  # noqa: PIE796
+    LATVIA = "ISO-8859-4"
+    THAI = "ISO-8859-11"
+    THAI2 = "UTF-8"  # noqa: PIE796
 
 
 class Command(Enum):
@@ -171,12 +138,6 @@ class Command(Enum):
     ESC = 27
     FS = 28
     GS = 29
-
-    def __repr__(self) -> str:
-        return str(self.value)
-
-    def __str__(self) -> str:
-        return self.name
 
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted]

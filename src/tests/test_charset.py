@@ -5,14 +5,6 @@ from thermalprinter.exceptions import ThermalPrinterConstantError
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
-def test_repr() -> None:
-    assert repr(CharSet.CHINA) == "15"
-
-
-def test_str() -> None:
-    assert str(CharSet.CHINA) == "CHINA"
-
-
 def test_default_value(printer: ThermalPrinter) -> None:
     assert printer._charset is CharSet.USA
 

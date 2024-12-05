@@ -214,7 +214,7 @@ class ThermalPrinter(Serial):
 
     # Module's methods
 
-    def out(self, data: Any, line_feed: bool = True, **kwargs: Any) -> None:
+    def out(self, data: Any, *, line_feed: bool = True, **kwargs: Any) -> None:
         """Send one line to the printer.
 
         :param mixed data: The data to print.
@@ -697,7 +697,7 @@ class ThermalPrinter(Serial):
             self.__is_sleeping = True
         self.send_command(Command.ESC, 56, seconds, seconds >> 8)
 
-    def status(self, raise_on_error: bool = True) -> dict[str, bool]:
+    def status(self, *, raise_on_error: bool = True) -> dict[str, bool]:
         """Return the printer status.
 
         :param bool raise_on_error: Raise on error.
