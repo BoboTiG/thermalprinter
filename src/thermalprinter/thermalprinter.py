@@ -548,7 +548,7 @@ class ThermalPrinter(Serial):
 
         :param str value: The new justification:
 
-            - ``L`` to align left
+            - ``L`` to align left (default)
             - ``C`` to align center
             - ``R`` to align right
 
@@ -646,7 +646,7 @@ class ThermalPrinter(Serial):
         self._upside_down = False
 
     def rotate(self, state: bool = False) -> None:
-        """Turn on/off clockwise rotation of 90°.
+        """Turn on/off 90° clockwise rotation.
 
         :param bool state: Enabled if ``state`` is ``True``, else disabled.
         """
@@ -659,9 +659,9 @@ class ThermalPrinter(Serial):
 
         :param str value: The new text size:
 
-            - ``S`` for small
-            - ``M`` for medium (double height)
-            - ``L`` for large (double both width, and height)
+            - ``S`` for small (default)
+            - ``M`` for medium,: double height
+            - ``L`` for large: double both width, and height
 
         :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
 
@@ -750,9 +750,9 @@ class ThermalPrinter(Serial):
 
         :param int weight: The new underline's weight:
 
-            - ``0`` to turn off
-            - ``1`` for 1 dot thick underline
-            - ``2`` for 2 dots thick underline
+            - ``0`` to turn off (default)
+            - ``1`` for one dot thick underline
+            - ``2`` for two dots thick underline
 
         :exception ThermalPrinterValueError: On incorrect ``weight``'s type, or value.
         """
