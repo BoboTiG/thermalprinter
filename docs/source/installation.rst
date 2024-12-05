@@ -6,7 +6,7 @@ Installation
 
     python -m pip install -U thermalprinter
 
-From sources
+From Sources
 ============
 
 Alternatively, you can get a copy of the module from GitHub.
