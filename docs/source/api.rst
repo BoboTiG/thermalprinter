@@ -12,8 +12,8 @@ Class
 Methods
 =======
 
-Bar codes
----------
+Barcodes
+--------
 
 .. automethod:: ThermalPrinter.barcode
 .. automethod:: ThermalPrinter.barcode_height
@@ -26,7 +26,7 @@ Images
 
 .. automethod:: ThermalPrinter.image
 
-Text styling
+Text Styling
 ------------
 
 .. automethod:: ThermalPrinter.bold
@@ -43,7 +43,7 @@ Text styling
 .. automethod:: ThermalPrinter.underline
 .. automethod:: ThermalPrinter.upside_down
 
-Encoding and charsets
+Encoding and Charsets
 ---------------------
 
 .. automethod:: ThermalPrinter.charset
@@ -61,7 +61,7 @@ Printing
 .. automethod:: ThermalPrinter.feed
 .. automethod:: ThermalPrinter.out
 
-Printer state
+Printer State
 -------------
 
 .. automethod:: ThermalPrinter.offline
@@ -72,7 +72,7 @@ Printer state
 .. automethod:: ThermalPrinter.test
 .. automethod:: ThermalPrinter.wake
 
-Special methods
+Special Methods
 ---------------
 
 .. automethod:: ThermalPrinter.flush
@@ -105,32 +105,32 @@ Constants
 
 .. module:: thermalprinter.constants
 
-Bar codes types
----------------
+Barcode Types
+--------------
 
 .. autoenum:: BarCode
 
-Bar codes positions
--------------------
+Barcode Positions
+-----------------
 
 .. autoenum:: BarCodePosition
 
-Characters sets
+Characters Sets
 ---------------
 
 .. autoenum:: CharSet
 
-Chinese formats
+Chinese Formats
 ---------------
 
 .. autoenum:: Chinese
 
-Code pages
+Code Pages
 ----------
 
 .. autoenum:: CodePage
 
-Code pages fallback
+Code Pages Fallback
 -------------------
 
 .. autoenum:: CodePageConverted
