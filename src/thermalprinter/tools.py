@@ -239,7 +239,7 @@ def ls(*constants: Any) -> None:
         print()
 
 
-def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
+def print_char(char: str, *, printer: ThermalPrinter | None = None) -> None:
     """Test one character with all possible code pages.
 
     :param str char: The character to print.
@@ -256,7 +256,7 @@ def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
     ...    printer.out(f"{codepage.name}: {char}")
 
     .. versionchanged:: 0.2.0
-        Added ``printer`` argument.
+        Added the ``printer`` keyword-argument.
     """
     if not printer:
         printer = ThermalPrinter()
@@ -266,7 +266,7 @@ def print_char(char: str, printer: ThermalPrinter | None = None) -> None:
             printer.out(f"{codepage.name}: {char}")
 
 
-def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool = True) -> None:
+def printer_tests(*, printer: ThermalPrinter | None = None, *, raise_on_error: bool = True) -> None:
     """Send to the printer several instructions to test every printing functions.
 
     :param ThermalPrinter printer: Optional printer to use.
