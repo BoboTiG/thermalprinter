@@ -1,5 +1,5 @@
 ==================
-Supporter Printers
+Supported Printers
 ==================
 
 Known printers to be supported:
