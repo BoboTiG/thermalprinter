@@ -9,11 +9,12 @@ An example is better than a thousand words:
     from PIL import Image
     from thermalprinter import *
 
-    with ThermalPrinter(port="/dev/ttyAMA0") as printer:
+
+    with ThermalPrinter() as printer:
         # Picture
         printer.image(Image.open("gnu.png"))
 
-        # Bar codes
+        # Barcode
         printer.barcode_height(80)
         printer.barcode_position(BarCodePosition.BELOW)
         printer.barcode_width(3)
@@ -45,8 +46,8 @@ An example is better than a thousand words:
         printer.feed(2)
 
 
-Instance the class
-==================
+Instantiate the Class
+=====================
 
 Import the module:
 
@@ -54,7 +55,7 @@ Import the module:
 
     from thermalprinter import ThermalPrinter
 
-So the module can be used as simply as:
+So the module can be used as a context manager:
 
 .. code-block:: python
 
