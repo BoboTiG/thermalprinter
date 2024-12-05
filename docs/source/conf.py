@@ -41,6 +41,7 @@ html_context = {
     "source_type": "github",
     "source_user": "BoboTiG",
     "source_repo": "thermalprinter",
+    "source_docs_path": "/source/",
     "source_version": "main",
 }
 
