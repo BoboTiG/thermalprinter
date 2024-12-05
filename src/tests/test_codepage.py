@@ -9,6 +9,10 @@ def test_repr() -> None:
     assert repr(CodePage.CP1250) == "30 (Central Europe [WCP1250])"
 
 
+def test_repr_no_description() -> None:
+    assert repr(CodePage.CP874) == "47"
+
+
 def test_str() -> None:
     assert str(CodePage.CP1250) == "CP1250"
 

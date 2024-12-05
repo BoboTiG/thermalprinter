@@ -135,7 +135,10 @@ class CodePage(Enum):
     CP874 = (47, "")
 
     def __repr__(self) -> str:
-        return f"{self.value[0]} ({self.value[1]})"
+        ret = str(self.value[0])
+        if self.value[1]:
+            ret += f" ({self.value[1]})"
+        return ret
 
     def __str__(self) -> str:
         return self.name
