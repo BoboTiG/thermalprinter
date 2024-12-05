@@ -257,20 +257,19 @@ class ThermalPrinter(Serial):
         for style in kwargs:
             getattr(self, style)()
 
-    def send_command(self, command: Command, *data: int) -> None:
+    def send_command(self, command: Command, *args: int) -> None:
         """Send a command to the printer.
 
         :param Command command: The command to send to the printer.
-        :param list[int] data: Eventual command arguments.
+        :param list[int] args: Eventual command arguments.
         """
-        # The command
         if command is not Command.NONE:
             self.write(bytes([command.value]))
 
-        # Its data
-        for arg in data:
+        for arg in args:
             self.write(bytes([arg]))
-        sleep((1 + len(data)) * self._byte_time)
+
+        sleep((1 + len(args)) * self._byte_time)
 
     def to_bytes(self, data: Any) -> bytes:
         """Convert data before sending to the printer.
