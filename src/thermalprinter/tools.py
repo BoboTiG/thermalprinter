@@ -224,12 +224,12 @@ def ls(*constants: Any) -> None:
 
     >>> ls()
 
-    You can print only constants you want too:
+    Print Chinese constant values:
 
-    >>> # Print Chinese constant values:
     >>> ls(Chinese)
 
-    >>> # Print Chinese, and CodePage, constant values:
+    Print Chinese, and CodePage, constant values:
+
     >>> ls(Chinese, CharSet)
     """
     for constant in constants or CONSTANTS:
@@ -276,12 +276,12 @@ def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool
         Removed ``port`` and ``heat_time`` arguments.
         Added ``printer`` and ``raise_on_error`` arguments.
 
-    Examples:
+    Using a printer with the default configuration:
 
-    >>> # Using a printer with the default configuration:
     >>> printer_tests()
 
-    >>> # Using a specific printer configuration:
+    Using a specific printer configuration:
+
     >>> printer = ThermalPrinter(port="/dev/ttyS0", heat_time=120)
     >>> printer_tests(printer=printer)
 
