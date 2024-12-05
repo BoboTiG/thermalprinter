@@ -16,6 +16,9 @@ def test_offline(printer: ThermalPrinter) -> None:
 
 
 def test_online_after_offline(printer: ThermalPrinter) -> None:
+    printer.offline()
+    assert not printer.is_online
+
     printer.online()
     assert printer.is_online
 

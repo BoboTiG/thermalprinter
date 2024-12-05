@@ -1,3 +1,5 @@
+from unittest.mock import Mock, patch
+
 import pytest
 
 from thermalprinter.exceptions import ThermalPrinterValueError
@@ -23,12 +25,33 @@ def test_sleep(printer: ThermalPrinter) -> None:
     assert printer.is_sleeping
 
 
+def test_sleep_twice(printer: ThermalPrinter) -> None:
+    assert not printer.is_sleeping
+    with patch.object(printer, "send_command", Mock()) as mocked:
+        printer.sleep(2)
+        assert printer.is_sleeping
+        printer.sleep(2)
+        assert printer.is_sleeping
+    mocked.assert_called_once()
+
+
 def test_wake(printer: ThermalPrinter) -> None:
+    assert not printer.is_sleeping
+
+    printer.sleep()
+    assert printer.is_sleeping
+
     printer.wake()
     assert not printer.is_sleeping
 
 
 def test_sleep_after_wake(printer: ThermalPrinter) -> None:
+    printer.sleep()
+    assert printer.is_sleeping
+
+    printer.wake()
+    assert not printer.is_sleeping
+
     printer.sleep()
     assert printer.is_sleeping
 

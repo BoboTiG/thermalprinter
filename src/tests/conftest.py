@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import os
 import pty
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING
 
 import pytest
 
 from tests.faker import FakeThermalPrinter
 
 if TYPE_CHECKING:
+    from typing import Generator
+
     from thermalprinter import ThermalPrinter
 
 
@@ -30,6 +32,6 @@ def port() -> str:
     return os.ttyname(slave)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def printer(port: str) -> type[ThermalPrinter]:
     return FakeThermalPrinter(port=port)

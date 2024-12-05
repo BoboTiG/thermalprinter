@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from atexit import register
 from time import sleep
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from serial import Serial
 
@@ -16,7 +16,6 @@ from thermalprinter.constants import (
     DEFAULT_HEAT_TIME,
     DEFAULT_MOST_HEATED_POINT,
     DEFAULT_PORT,
-    BarCode,
     BarCodePosition,
     CharSet,
     Chinese,
@@ -38,6 +37,9 @@ from thermalprinter.validate import (
 
 if TYPE_CHECKING:
     from types import TracebackType
+    from typing import Any
+
+    from thermalprinter.constants import BarCode
 
 
 class ThermalPrinter(Serial):
@@ -236,9 +238,6 @@ class ThermalPrinter(Serial):
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
         """
-        if data is None:
-            return
-
         # Apply styles
         for style, value in kwargs.items():
             getattr(self, style)(value)
@@ -686,7 +685,7 @@ class ThermalPrinter(Serial):
         .. versionadded:: 0.2.0
            The ``raise_on_error`` keyword-argument.
         """
-        ret = {"movement": True, "paper": True, "temp": True, "voltage": True}
+        ret = {"movement": False, "paper": False, "temp": False, "voltage": False}
         self.send_command(Command.ESC, 118, 0)
         sleep(self._command_timeout)
         if self.in_waiting:

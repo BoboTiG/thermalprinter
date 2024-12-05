@@ -10,7 +10,7 @@ def test_print_one_line(printer: ThermalPrinter) -> None:
 def test_print_two_line(printer: ThermalPrinter) -> None:
     printer.out("This is the line 1,")
     printer.out("and the seconds one.")
-    assert printer.lines == 2 + 1
+    assert printer.lines == 2
 
 
 def test_print_one_line_centered(printer: ThermalPrinter) -> None:

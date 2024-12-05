@@ -11,22 +11,22 @@ def test_changing_no_value(printer: ThermalPrinter) -> None:
 
 def test_changing_good_value(printer: ThermalPrinter) -> None:
     printer.feed(42)
-    assert printer.feeds == 42 + 1
+    assert printer.feeds == 42
 
 
 def test_bad_value__not_int(printer: ThermalPrinter) -> None:
     with pytest.raises(ThermalPrinterValueError):
         printer.feed("42")  # type: ignore[arg-type]
-    assert printer.feeds == 42 + 1
+    assert not printer.feeds
 
 
 def test_changing_bad_value__not_in_range_low(printer: ThermalPrinter) -> None:
     with pytest.raises(ThermalPrinterValueError):
         printer.feed(-42)
-    assert printer.feeds == 42 + 1
+    assert not printer.feeds
 
 
 def test_changing_bad_value__not_in_range_high(printer: ThermalPrinter) -> None:
     with pytest.raises(ThermalPrinterValueError):
         printer.feed(512)
-    assert printer.feeds == 42 + 1
+    assert not printer.feeds
