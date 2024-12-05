@@ -49,7 +49,7 @@ class ThermalPrinter(Serial):
     :param int heat_interval: Printer heat time interval.
     :param int most_heated_point: Printer most heated point.
     :param bool run_setup_cmd: Set to ``False`` to disable the automatic one-shot run of the printer settings command (that ay be problematic on some devices).
-    :param flat sleep_sec_after_init: Initial *mandatory* time to wait right after the serial initialisation.
+    :param flat sleep_sec_after_init: Initial *mandatory* time-to-wait right after the serial initialisation.
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
 
