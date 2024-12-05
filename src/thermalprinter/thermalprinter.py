@@ -660,7 +660,7 @@ class ThermalPrinter(Serial):
         :param str value: The new text size:
 
             - ``S`` for small (default)
-            - ``M`` for medium,: double height
+            - ``M`` for medium: double height
             - ``L`` for large: double both width, and height
 
         :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
