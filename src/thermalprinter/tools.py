@@ -282,8 +282,8 @@ def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool
     >>> printer_tests(printer=printer)
 
     .. versionchanged:: 0.2.0
-        Removed ``port`` and ``heat_time`` arguments.
-        Added ``printer`` and ``raise_on_error`` arguments.
+        Removed ``port``, and ``heat_time``, keyword-arguments.
+        Added ``printer``, and ``raise_on_error``, keyword-arguments.
     """
     try:
         if not printer:
