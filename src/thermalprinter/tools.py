@@ -272,10 +272,6 @@ def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool
     :param ThermalPrinter printer: Optional printer to use.
     :param bool raise_on_error: Raise on error.
 
-    .. versionchanged:: 0.2.0
-        Removed ``port`` and ``heat_time`` arguments.
-        Added ``printer`` and ``raise_on_error`` arguments.
-
     Using a printer with the default configuration:
 
     >>> printer_tests()
@@ -285,6 +281,9 @@ def printer_tests(printer: ThermalPrinter | None = None, *, raise_on_error: bool
     >>> printer = ThermalPrinter(port="/dev/ttyS0", heat_time=120)
     >>> printer_tests(printer=printer)
 
+    .. versionchanged:: 0.2.0
+        Removed ``port`` and ``heat_time`` arguments.
+        Added ``printer`` and ``raise_on_error`` arguments.
     """
     try:
         if not printer:
