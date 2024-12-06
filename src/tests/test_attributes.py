@@ -31,6 +31,10 @@ def test_repr(printer: ThermalPrinter) -> None:
     )
 
 
+def test_attribute_has_paper(printer: ThermalPrinter) -> None:
+    assert not printer.has_paper
+
+
 def test_attribute_get_is_online(printer: ThermalPrinter) -> None:
     assert printer.is_online
 

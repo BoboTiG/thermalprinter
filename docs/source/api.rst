@@ -85,6 +85,7 @@ Attributes
 All these attributes are **read-only**.
 
 .. autoproperty:: ThermalPrinter.feeds
+.. autoproperty:: ThermalPrinter.has_paper
 .. autoproperty:: ThermalPrinter.is_online
 .. autoproperty:: ThermalPrinter.is_sleeping
 .. autoproperty:: ThermalPrinter.lines

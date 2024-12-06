@@ -193,6 +193,11 @@ class ThermalPrinter(Serial):
     # Protect some attributes to being modified outside this class.
 
     @property
+    def has_paper(self) -> bool:
+        """Return ``True`` if there is paper."""
+        return self.status(raise_on_error=False)["paper"]
+
+    @property
     def is_online(self) -> bool:
         """The printer online status."""
         return self.__is_online
