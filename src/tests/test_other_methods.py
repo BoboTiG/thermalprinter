@@ -8,6 +8,10 @@ def test_flush(printer: ThermalPrinter) -> None:
     printer.flush(True)
 
 
+def test_init(printer: ThermalPrinter) -> None:
+    printer.init(42)
+
+
 def test_status(printer: ThermalPrinter) -> None:
     with pytest.raises(ThermalPrinterCommunicationError):
         assert printer.status()

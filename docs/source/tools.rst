@@ -6,6 +6,11 @@ Tools
 
 Few helpers, and they are free ☺️
 
+Calibrate
+=========
+
+.. autofunction:: calibrate
+
 Constants
 =========
 

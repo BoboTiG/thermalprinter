@@ -5,7 +5,11 @@ import pytest
 
 from thermalprinter import constants as c
 from thermalprinter.thermalprinter import ThermalPrinter
-from thermalprinter.tools import ls, print_char, printer_tests
+from thermalprinter.tools import calibrate, ls, print_char, printer_tests
+
+
+def test_calibrate(printer: ThermalPrinter) -> None:
+    calibrate(printer)
 
 
 def test_print_char(printer: ThermalPrinter) -> None:

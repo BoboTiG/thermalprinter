@@ -76,6 +76,7 @@ Special Methods
 ---------------
 
 .. automethod:: ThermalPrinter.flush
+.. automethod:: ThermalPrinter.init
 .. automethod:: ThermalPrinter.send_command
 .. automethod:: ThermalPrinter.to_bytes
 

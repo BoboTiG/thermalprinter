@@ -215,6 +215,38 @@ vubvf6wtbamlSknLzX9PK9vwCI7TMGVaPIrHS5JuU5bNzzhE21SqCpVqtaWWP7gLN7k002BDN0lF
 gg=="""
 
 
+def calibrate(printer: ThermalPrinter, *, with_info: bool = True) -> None:
+    """Thermal calibration.
+    Run this method before using the printer for the first time, any
+    time a different power supply is used, or when using paper from a
+    different source.
+
+    Prints a series of black bars with increasing "heat time" settings.
+    Because printed sections have different "grip" characteristics than
+    blank paper, as this progresses the paper will usually at some point
+    jam -- either uniformly, making a short bar, or at one side or the
+    other, making a wedge shape. In some cases, the Raspberry Pi may reset
+    for lack of power.
+
+    Whatever the outcome, take the last number printed **before** any
+    distorted bar, and use that value as ``heat_time`` keyword-argument
+    when instantiating the printer.
+
+    :param ThermalPrinter printer: Optional printer to use.
+    :param bool with_info: Set to ``False`` to skip displaying the information.
+
+    .. note::
+        Source: [adafruit/Python-Thermal-Printer](https://github.com/adafruit/Python-Thermal-Printer/blob/master/calibrate.py)
+    """
+    if with_info:
+        print(str(calibrate.__doc__).split(":param", 1)[0])
+
+    for heat_time in range(0, 256, 15):
+        printer.init(heat_time)
+        printer.out(heat_time)
+        printer.out(" " * printer.max_column, inverse=True)
+
+
 def ls(*constants: Any) -> None:
     """Print constants values.
 

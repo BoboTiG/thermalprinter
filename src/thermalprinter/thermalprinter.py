@@ -136,7 +136,7 @@ class ThermalPrinter(Serial):
 
         # Printer settings
         if run_setup_cmd:
-            self.send_command(Command.ESC, 55, self._most_heated_point, self._heat_time, self._heat_interval)
+            self.init(self._heat_time)
 
         # Factory settings
         self.reset()
@@ -537,6 +537,13 @@ class ThermalPrinter(Serial):
                 idx += row_bytes - row_bytes_clipped
 
         self.__lines += height // self._line_spacing + 1
+
+    def init(self, heat_time: int) -> None:
+        """Set printer heat properties.
+
+        :param int heat_time: Printer heat time.
+        """
+        self.send_command(Command.ESC, 55, self._most_heated_point, heat_time, self._heat_interval)
 
     def inverse(self, state: bool = False) -> None:
         """Turn on/off the white/black reverse printing mode.
