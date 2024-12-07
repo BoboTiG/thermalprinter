@@ -217,6 +217,7 @@ gg=="""
 
 def calibrate(printer: ThermalPrinter, *, with_info: bool = True) -> None:
     """Thermal calibration.
+
     Run this method before using the printer for the first time, any
     time a different power supply is used, or when using paper from a
     different source.
@@ -245,6 +246,7 @@ def calibrate(printer: ThermalPrinter, *, with_info: bool = True) -> None:
         printer.init(heat_time)
         printer.out(heat_time)
         printer.out(" " * printer.max_column, inverse=True)
+    printer.feed(2)
 
 
 def ls(*constants: Any) -> None:

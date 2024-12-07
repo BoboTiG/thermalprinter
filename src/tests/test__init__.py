@@ -1,6 +1,12 @@
 import pytest
 
 from tests.faker import FakeThermalPrinter
+from thermalprinter.constants import (
+    DEFAULT_BAUDRATE,
+    DEFAULT_HEAT_INTERVAL,
+    DEFAULT_HEAT_TIME,
+    DEFAULT_MOST_HEATED_POINT,
+)
 from thermalprinter.exceptions import ThermalPrinterValueError
 
 
@@ -17,10 +23,10 @@ def test_initialiation_without_context_manager(port: str) -> None:
 def test_default_values(port: str) -> None:
     printer = FakeThermalPrinter(port=port)
     assert repr(printer)
-    assert printer._baudrate == 19200
-    assert printer._heat_time == 80
-    assert printer._heat_interval == 12
-    assert printer._most_heated_point == 3
+    assert printer._baudrate == DEFAULT_BAUDRATE
+    assert printer._heat_time == DEFAULT_HEAT_TIME
+    assert printer._heat_interval == DEFAULT_HEAT_INTERVAL
+    assert printer._most_heated_point == DEFAULT_MOST_HEATED_POINT
 
 
 def test_changing_good_values(port: str) -> None:

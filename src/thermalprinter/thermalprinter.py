@@ -111,8 +111,8 @@ class ThermalPrinter(Serial):
         self.is_open = False
         self._baudrate = baudrate
         self._byte_time = 11.0 / float(self._baudrate)
-        self._dot_feed_time = 0.0025
-        self._dot_print_time = 0.033
+        self._dot_feed_time = 0.0021
+        self._dot_print_time = 0.03
         self._command_timeout = command_timeout
         self._heat_time = heat_time
         self._heat_interval = heat_interval
