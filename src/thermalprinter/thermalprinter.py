@@ -12,9 +12,12 @@ from typing import TYPE_CHECKING
 from serial import Serial
 
 from thermalprinter.constants import (
+    DEFAULT_BARCODE_HEIGHT,
+    DEFAULT_BARCODE_WIDTH,
     DEFAULT_BAUDRATE,
     DEFAULT_HEAT_INTERVAL,
     DEFAULT_HEAT_TIME,
+    DEFAULT_LINE_SPACING,
     DEFAULT_MOST_HEATED_POINT,
     DEFAULT_PORT,
     BarCodePosition,
@@ -71,10 +74,10 @@ class ThermalPrinter(Serial):
     __max_column = 32
     __is_online = True
     __is_sleeping = False
-    _barcode_height = 162
+    _barcode_height = DEFAULT_BARCODE_HEIGHT
     _barcode_left_margin = 0
     _barcode_position = BarCodePosition.HIDDEN
-    _barcode_width = 3
+    _barcode_width = DEFAULT_BARCODE_WIDTH
     _bold = False
     _charset = CharSet.USA
     _char_spacing = 0
@@ -87,7 +90,7 @@ class ThermalPrinter(Serial):
     _inverse = False
     _justify = Justify.LEFT
     _left_margin = 0
-    _line_spacing = 30
+    _line_spacing = DEFAULT_LINE_SPACING
     _rotate = False
     _size = Size.SMALL
     _strike = False
@@ -319,21 +322,23 @@ class ThermalPrinter(Serial):
         :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
         """
         validate_barcode(data, barcode_type)
-        code = barcode_type.value[0]
-        self.send_command(Command.GS, 107, code, len(data))
+        self.send_command(Command.GS, 107, barcode_type.value[0], len(data))
+
+        # Check if we can print line-by-line
         for char in data:
             self.write(bytes([ord(char)]))
+
         sleep((self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.__lines += int(self._barcode_height / self._line_spacing) + 1
 
-    def barcode_height(self, height: int = 162) -> None:
+    def barcode_height(self, height: int = DEFAULT_BARCODE_HEIGHT) -> None:
         """Set the barcode height.
 
         :param int height: The barcode height (min=1, max=255).
         :exception ThermalPrinterValueError: On incorrect ``height``'s type, or value.
         """
         if not isinstance(height, int) or not 1 <= height <= 255:
-            msg = "height should be between 1 and 255 (default: 162)."
+            msg = f"height should be between 1 and 255 (default: {DEFAULT_BARCODE_HEIGHT})."
             raise ThermalPrinterValueError(msg)
 
         if height != self._barcode_height:
@@ -363,14 +368,14 @@ class ThermalPrinter(Serial):
             self._barcode_position = position
             self.send_command(Command.GS, 72, position.value)
 
-    def barcode_width(self, width: int = 3) -> None:
+    def barcode_width(self, width: int = DEFAULT_BARCODE_WIDTH) -> None:
         """Set the barcode width.
 
         :param int width: The barcode with (min=2, max=6).
         :exception ThermalPrinterValueError: On incorrect ``width``'s type, or value.
         """
         if not isinstance(width, int) or not 2 <= width <= 6:
-            msg = "width should be between 2 and 6 (default: 3)."
+            msg = f"width should be between 2 and 6 (default: {DEFAULT_BARCODE_WIDTH})."
             raise ThermalPrinterValueError(msg)
 
         if width != self._barcode_width:
@@ -405,7 +410,7 @@ class ThermalPrinter(Serial):
             msg = "spacing should be between 0 and 255 (default: 0)."
             raise ThermalPrinterValueError(msg)
 
-        if spacing is not self._char_spacing:
+        if spacing != self._char_spacing:
             self._char_spacing = spacing
             self.send_command(Command.ESC, 32, spacing)
 
@@ -527,6 +532,8 @@ class ThermalPrinter(Serial):
         for row_start in range(0, height, 255):
             chunk_height = min(height - row_start, 255)
             self.send_command(Command.DC2, 42, chunk_height, row_bytes_clipped)
+
+            # Check if we can do line-by-line
             for _ in range(chunk_height):
                 for _ in range(row_bytes_clipped):
                     self.write(bytes([bitmap[idx]]))
@@ -576,14 +583,14 @@ class ThermalPrinter(Serial):
             self._left_margin = margin
             self.send_command(Command.ESC, 66, margin)
 
-    def line_spacing(self, spacing: int = 30) -> None:
+    def line_spacing(self, spacing: int = DEFAULT_LINE_SPACING) -> None:
         """Set the line spacing.
 
         :param int spacing: The new spacing (min=0, max=255).
         :exception ThermalPrinterValueError: On incorrect ``spacing``'s type, or value.
         """
         if not isinstance(spacing, int) or not 0 <= spacing <= 255:
-            msg = "spacing should be between 0 and 255 (default: 30)."
+            msg = f"spacing should be between 0 and 255 (default: {DEFAULT_LINE_SPACING})."
             raise ThermalPrinterValueError(msg)
 
         if spacing != self._line_spacing:
@@ -619,10 +626,10 @@ class ThermalPrinter(Serial):
         self.__is_online = True
         self.__is_sleeping = False
 
-        self._barcode_height = 162
+        self._barcode_height = DEFAULT_BARCODE_HEIGHT
         self._barcode_left_margin = 0
         self._barcode_position = BarCodePosition.HIDDEN
-        self._barcode_width = 3
+        self._barcode_width = DEFAULT_BARCODE_WIDTH
         self._bold = False
         self._charset = CharSet.USA
         self._char_spacing = 0
@@ -635,7 +642,7 @@ class ThermalPrinter(Serial):
         self._inverse = False
         self._justify = Justify.LEFT
         self._left_margin = 0
-        self._line_spacing = 30
+        self._line_spacing = DEFAULT_LINE_SPACING
         self._rotate = False
         self._size = Size.SMALL
         self._strike = False

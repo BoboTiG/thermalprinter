@@ -1,16 +1,17 @@
 import pytest
 
+from thermalprinter.constants import DEFAULT_LINE_SPACING
 from thermalprinter.exceptions import ThermalPrinterValueError
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_default_value(printer: ThermalPrinter) -> None:
-    assert printer._line_spacing == 30
+    assert printer._line_spacing == DEFAULT_LINE_SPACING
 
 
 def test_changing_no_value(printer: ThermalPrinter) -> None:
     printer.line_spacing()
-    assert printer._line_spacing == 30
+    assert printer._line_spacing == DEFAULT_LINE_SPACING
 
 
 def test_changing_good_value(printer: ThermalPrinter) -> None:
@@ -35,4 +36,4 @@ def test_changing_bad_value__not_in_range_high(printer: ThermalPrinter) -> None:
 
 def test_reset_value(printer: ThermalPrinter) -> None:
     printer.reset()
-    assert printer._line_spacing == 30
+    assert printer._line_spacing == DEFAULT_LINE_SPACING

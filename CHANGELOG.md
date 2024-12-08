@@ -14,11 +14,14 @@ Release date: `2024-12-xx`
 - Added the printer enum constant `Justify` to use in `ThermalPrinter.justify()` method (**breaking change**).
 - Added the printer enum constant `Size` to use in `ThermalPrinter.size()` method (**breaking change**).
 - Added the printer enum constant `Underline` to use in `ThermalPrinter.underline()` method (**breaking change**).
+- Added the printer constant `DEFAULT_BARCODE_HEIGHT` (integer, defaults to `162`).
+- Added the printer constant `DEFAULT_BARCODE_WIDTH` (integer, defaults to `3`).
 - Added the printer constant `DEFAULT_BAUDRATE` (integer, defaults to `19200`).
-- Added the printer constant `DEFAULT_PORT` (string, defaults to `/dev/ttyAMA0`).
 - Added the printer constant `DEFAULT_HEAT_TIME` (integer, defaults to `80`).
 - Added the printer constant `DEFAULT_HEAT_INTERVAL` (integer, defaults to `12`).
+- Added the printer constant `DEFAULT_LINE_SPACING` (integer, defaults to `30`).
 - Added the printer constant `DEFAULT_MOST_HEATED_POINT` (integer, defaults to `3`).
+- Added the printer constant `DEFAULT_PORT` (string, defaults to `/dev/ttyAMA0`).
 - Added the convenient `ThermalPrinter.has_paper` property.
 - Added the `ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
 - Removed the `validate.validate_barcode_position()` function.
