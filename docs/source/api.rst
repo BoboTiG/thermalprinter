@@ -99,7 +99,6 @@ Exceptions
 
 .. autoexception:: ThermalPrinterError
 .. autoexception:: ThermalPrinterCommunicationError
-.. autoexception:: ThermalPrinterConstantError
 .. autoexception:: ThermalPrinterValueError
 
 Constants

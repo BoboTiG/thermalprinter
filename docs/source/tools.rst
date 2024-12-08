@@ -32,7 +32,3 @@ Data Validators
 .. module:: thermalprinter.validate
 
 .. autofunction:: validate_barcode
-.. autofunction:: validate_barcode_position
-.. autofunction:: validate_charset
-.. autofunction:: validate_chinese_format
-.. autofunction:: validate_codepage

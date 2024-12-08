@@ -309,12 +309,10 @@ class ThermalPrinter(Serial):
         :param str data: The data to print.
         :param BarCode barecode_type: The barcode type to use.
         :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
-        :exception ThermalPrinterConstantError: On bad ``barecode_type``'s type.
         """
         validate_barcode(data, barcode_type)
         code = barcode_type.value[0]
         self.send_command(Command.GS, 107, code, len(data))
-        # Idea to test: use self.out()
         for char in data:
             self.write(bytes([ord(char)]))
         sleep((self._barcode_height + self._line_spacing) * self._dot_print_time)
@@ -352,9 +350,7 @@ class ThermalPrinter(Serial):
         """Set the position of the text relative to the barcode.
 
         :param BarCodePosition position: The barcode position to use.
-        :exception ThermalPrinterConstantError: On bad ``position``'s type.
         """
-        validate_barcode_position(position)
         if position is not self._barcode_position:
             self._barcode_position = position
             self.send_command(Command.GS, 72, position.value)
@@ -386,9 +382,7 @@ class ThermalPrinter(Serial):
         """Set the character set.
 
         :param CharSet charset: The new charset to use.
-        :exception ThermalPrinterConstantError: On bad ``charset``'s type.
         """
-        validate_charset(charset)
         if charset is not self._charset:
             self._charset = charset
             self.send_command(Command.ESC, 82, charset.value)
@@ -403,7 +397,7 @@ class ThermalPrinter(Serial):
             msg = "spacing should be between 0 and 255 (default: 0)."
             raise ThermalPrinterValueError(msg)
 
-        if spacing != self._char_spacing:
+        if spacing is not self._char_spacing:
             self._char_spacing = spacing
             self.send_command(Command.ESC, 32, spacing)
 
@@ -420,9 +414,7 @@ class ThermalPrinter(Serial):
         """Set the Chinese format.
 
         :param Chinese fmt: The new Chinese format to use.
-        :exception ThermalPrinterConstantError: On bad ``fmt``'s type.
         """
-        validate_chinese_format(fmt)
         if fmt is not self._chinese_format:
             self._chinese_format = fmt
             self.send_command(Command.ESC, 57, fmt.value)
@@ -431,9 +423,7 @@ class ThermalPrinter(Serial):
         """Set the character code table.
 
         :param CodePage codepage: The new code page to use.
-        :exception ThermalPrinterConstantError: On bad ``codepage``'s type.
         """
-        validate_codepage(codepage)
         if not self._chinese and codepage is not self._codepage:
             self._codepage = codepage
             value, _ = codepage.value
@@ -560,7 +550,7 @@ class ThermalPrinter(Serial):
         .. versionchanged:: 0.4.0
             The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Justify`.
         """
-        if value != self._justify:
+        if value is not self._justify:
             self._justify = value
             self.send_command(Command.ESC, 97, value.value)
 
@@ -658,7 +648,7 @@ class ThermalPrinter(Serial):
         .. note::
             This method affects :attr:`max_column`.
         """
-        if value != self._size:
+        if value is not self._size:
             self._size = value
             size, self._char_height, self.__max_column = value.value
             self.send_command(Command.GS, 33, size)
@@ -731,7 +721,7 @@ class ThermalPrinter(Serial):
         .. versionchanged:: 0.4.0
             The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`constants.Underline`.
         """
-        if weight != self._underline:
+        if weight is not self._underline:
             self._underline = weight
             self.send_command(Command.ESC, 45, weight.value)
 

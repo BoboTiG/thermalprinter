@@ -13,9 +13,5 @@ class ThermalPrinterCommunicationError(ThermalPrinterError):
     """Raised on communication error with the printer."""
 
 
-class ThermalPrinterConstantError(ThermalPrinterError):
-    """Raised on inexistant, or out-of-range, constants."""
-
-
 class ThermalPrinterValueError(ThermalPrinterError):
     """Raised on incorrect type, or value, passed to any method."""

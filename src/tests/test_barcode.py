@@ -6,7 +6,7 @@ JAN8 == EAN8, skipping the last one.
 import pytest
 
 from thermalprinter.constants import BarCode
-from thermalprinter.exceptions import ThermalPrinterConstantError, ThermalPrinterValueError
+from thermalprinter.exceptions import ThermalPrinterValueError
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
@@ -17,11 +17,6 @@ def test_repr() -> None:
 def test_empty_values(printer: ThermalPrinter) -> None:
     with pytest.raises(TypeError):
         printer.barcode()  # type: ignore[call-arg]
-
-
-def test_bad_values(printer: ThermalPrinter) -> None:
-    with pytest.raises(ThermalPrinterConstantError):
-        printer.barcode("42", "EAN13")  # type: ignore[arg-type]
 
 
 def test_UPC_A_bad_values_too_few(printer: ThermalPrinter) -> None:

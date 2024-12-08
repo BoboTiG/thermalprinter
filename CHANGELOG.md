@@ -21,6 +21,12 @@ Release date: `2024-12-xx`
 - Added the printer constant `DEFAULT_MOST_HEATED_POINT` (integer, defaults to `3`).
 - Added the convenient `ThermalPrinter.has_paper` property.
 - Added the `ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
+- Removed the `validate.validate_barcode_position()` function.
+- Removed the `validate.validate_charset()` function.
+- Removed the `validate.validate_chinese_format()` function.
+- Removed the `validate.validate_codepage()` function.
+- Removed the `exceptions.ThermalPrinterConstantError` class.
+- Removed the `line_feed` keyword-argument from `ThermalPrinter.out()`.
 
 # 0.3.0
 
