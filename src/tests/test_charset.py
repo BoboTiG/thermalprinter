@@ -1,4 +1,3 @@
-
 from thermalprinter.constants import CharSet
 from thermalprinter.thermalprinter import ThermalPrinter
 

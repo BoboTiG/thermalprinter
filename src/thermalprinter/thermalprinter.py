@@ -118,15 +118,15 @@ class ThermalPrinter(Serial):
         self._most_heated_point = most_heated_point
 
         # Several checks
-        error = ""
+        msg = ""
         if not 0 <= heat_time <= 255:
-            error = f"heat_time should be between 0 and 255 (default: {DEFAULT_HEAT_TIME})."
+            msg = f"heat_time should be between 0 and 255 (default: {DEFAULT_HEAT_TIME})."
         elif not 0 <= heat_interval <= 255:
-            error = f"heat_interval should be between 0 and 255 (default: {DEFAULT_HEAT_INTERVAL})."
+            msg = f"heat_interval should be between 0 and 255 (default: {DEFAULT_HEAT_INTERVAL})."
         elif not 0 <= most_heated_point <= 255:
-            error = f"most_heated_point should be between 0 and 255 (default: {DEFAULT_MOST_HEATED_POINT})."
-        if error:
-            raise ThermalPrinterValueError(error)
+            msg = f"most_heated_point should be between 0 and 255 (default: {DEFAULT_MOST_HEATED_POINT})."
+        if msg:
+            raise ThermalPrinterValueError(msg)
 
         # Init the serial
         super().__init__(port=port, baudrate=self._baudrate)
@@ -183,11 +183,7 @@ class ThermalPrinter(Serial):
                     continue
                 states.append(f"{var[1:]}={getattr(self, var)}")
 
-        return (
-            f"{type(self).__name__}"
-            f"<id=0x{id(self):x}, {', '.join(sorted(settings))}>"
-            f"({', '.join(sorted(states))})"
-        )
+        return f"{type(self).__name__}<{', '.join(sorted(settings))}>({', '.join(sorted(states))})"
 
     def read(self, size: int = 1) -> bytes:
         res = super().read(size=size)

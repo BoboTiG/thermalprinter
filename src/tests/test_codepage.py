@@ -1,4 +1,3 @@
-
 from thermalprinter.constants import CodePage
 from thermalprinter.thermalprinter import ThermalPrinter
 

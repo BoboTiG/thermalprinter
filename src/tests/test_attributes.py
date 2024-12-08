@@ -4,8 +4,8 @@ from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr(printer: ThermalPrinter) -> None:
-    assert repr(printer).endswith(
-        "baudrate=19200, is_open=True>("
+    assert repr(printer) == (
+        "FakeThermalPrinter<baudrate=19200, is_open=True>("
         "barcode_height=162,"
         " barcode_left_margin=0,"
         " barcode_position=BarCodePosition.HIDDEN,"

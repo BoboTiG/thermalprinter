@@ -1,4 +1,3 @@
-
 from thermalprinter.constants import Chinese
 from thermalprinter.thermalprinter import ThermalPrinter
 

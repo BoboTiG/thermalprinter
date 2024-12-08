@@ -1,4 +1,3 @@
-
 from thermalprinter.constants import BarCodePosition
 from thermalprinter.thermalprinter import ThermalPrinter
 
