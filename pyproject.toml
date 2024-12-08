@@ -133,6 +133,7 @@ addopts = """
     --cov-report=term-missing:skip-covered
     --cov=thermalprinter
     --no-cov-on-fail
+    --log-cli-level=DEBUG
     --showlocals
     --strict-markers
     -r fE

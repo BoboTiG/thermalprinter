@@ -7,8 +7,6 @@ from thermalprinter import ThermalPrinter
 if TYPE_CHECKING:
     from typing import Any
 
-    from _typeshed import ReadableBuffer
-
 
 class FakeThermalPrinter(ThermalPrinter):
     def __init__(self, port: str, **kwargs: Any) -> None:
@@ -18,6 +16,3 @@ class FakeThermalPrinter(ThermalPrinter):
         self._byte_time = 0
         self._dot_feed_time = 0
         self._dot_print_time = 0
-
-    def write(self, b: ReadableBuffer) -> None:
-        pass

@@ -5,6 +5,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 from __future__ import annotations
 
 from atexit import register
+from logging import getLogger
 from time import sleep
 from typing import TYPE_CHECKING
 
@@ -27,19 +28,17 @@ from thermalprinter.constants import (
     Underline,
 )
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
-from thermalprinter.validate import (
-    validate_barcode,
-    validate_barcode_position,
-    validate_charset,
-    validate_chinese_format,
-    validate_codepage,
-)
+from thermalprinter.validate import validate_barcode
 
 if TYPE_CHECKING:
     from types import TracebackType
     from typing import Any
 
+    from _typeshed import ReadableBuffer
+
     from thermalprinter.constants import BarCode
+
+log = getLogger(__name__)
 
 
 class ThermalPrinter(Serial):
@@ -190,6 +189,15 @@ class ThermalPrinter(Serial):
             f"({', '.join(sorted(states))})"
         )
 
+    def read(self, size: int = 1) -> bytes:
+        res = super().read(size=size)
+        log.debug(" <<< READ %r", res)
+        return res
+
+    def write(self, b: ReadableBuffer, /) -> int | None:
+        log.debug(" >>> WRITE %r", b)
+        return super().write(b)
+
     # Protect some attributes to being modified outside this class.
 
     @property
@@ -224,11 +232,10 @@ class ThermalPrinter(Serial):
 
     # Module's methods
 
-    def out(self, data: Any, *, line_feed: bool = True, **kwargs: Any) -> None:
+    def out(self, data: Any, **kwargs: Any) -> None:
         """Send one line to the printer.
 
         :param mixed data: The data to print.
-        :param bool line_feed: Send a line break after the printed data.
         :param dict kwargs: Additional styles to apply.
 
         You can pass formatting instructions directly via arguments:
@@ -243,24 +250,25 @@ class ThermalPrinter(Serial):
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
         """
+        log.debug("Line: %r (%s)", data, ", ".join(f"{k}={v}" for k, v in kwargs.items()))
+
         # Apply styles
         for style, value in kwargs.items():
+            log.debug("Apply style: %s: %r", style, value)
             getattr(self, style)(value)
 
-        self.write(self.to_bytes(data))
+        self.write(self.to_bytes(data) + b"\n")
+        self.__lines += 1
 
-        if line_feed:
-            self.write(b"\n")
+        # Sizes M, and L, are double height
+        if self._size is not Size.SMALL:
             self.__lines += 1
-
-            # Sizes M and L are double height
-            if self._size != Size.SMALL:
-                self.__lines += 1
 
         sleep(2 * self._dot_feed_time * self._char_height)
 
         # Restore default styles
         for style in kwargs:
+            log.debug("Restore style: %s", style)
             getattr(self, style)()
 
     def send_command(self, command: Command, *args: int) -> None:
@@ -269,11 +277,15 @@ class ThermalPrinter(Serial):
         :param Command command: The command to send to the printer.
         :param list[int] args: Eventual command arguments.
         """
+        data = []
         if command is not Command.NONE:
-            self.write(bytes([command.value]))
+            log.debug("Command: %s %s", command.name, ", ".join(str(arg) for arg in args))
+            data.append(bytes([command.value]))
+        else:
+            log.debug("Command: %s", ", ".join(str(arg) for arg in args))
 
-        for arg in args:
-            self.write(bytes([arg]))
+        data.extend(bytes([arg]) for arg in args)
+        self.write(b"".join(data))
 
         sleep((1 + len(args)) * self._byte_time)
 
