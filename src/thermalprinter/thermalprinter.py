@@ -614,6 +614,10 @@ class ThermalPrinter(Serial):
         """Reset the printer to factory defaults."""
         self.send_command(Command.ESC, 64)
 
+        print_density = 10  # 100%
+        print_break_time = 2  # 500 uS
+        self.send_command(Command.DC2, 35, (print_break_time << 5) | print_density)
+
         # Default values
         self.__max_column = 32
         self.__is_online = True
