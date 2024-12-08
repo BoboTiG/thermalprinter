@@ -33,5 +33,6 @@ def port() -> str:
 
 
 @pytest.fixture
-def printer(port: str) -> type[ThermalPrinter]:
-    return FakeThermalPrinter(port=port)
+def printer(port: str) -> Generator[ThermalPrinter]:
+    with FakeThermalPrinter(port=port) as device:
+        yield device
