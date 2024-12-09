@@ -171,11 +171,12 @@ class Underline(Enum):
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted, Underline]
 
-DEFAULT_BARCODE_HEIGHT = 162
-DEFAULT_BARCODE_WIDTH = 3
-DEFAULT_BAUDRATE = 19200
-DEFAULT_HEAT_INTERVAL = 12
-DEFAULT_HEAT_TIME = 80
-DEFAULT_LINE_SPACING = 30
-DEFAULT_MOST_HEATED_POINT = 3
-DEFAULT_PORT = "/dev/ttyAMA0"
+DEFAULT_BARCODE_HEIGHT = 162  #: Default barcode height.
+DEFAULT_BARCODE_WIDTH = 3  #: Default barcode width.
+DEFAULT_BAUDRATE = 19200  #: Default serial baudrate.
+DEFAULT_HEAT_INTERVAL = 12  #: Default printer heat time interval.
+DEFAULT_HEAT_TIME = 80  #: Default printer heat time.
+DEFAULT_LINE_SPACING = 30  #: Default line spacing.
+DEFAULT_MOST_HEATED_POINT = 3  #: Default Printer most heated point.
+DEFAULT_PORT = "/dev/ttyAMA0"  #: Default serial port.
+MAX_IMAGE_WIDTH = 384  #: Max image width.

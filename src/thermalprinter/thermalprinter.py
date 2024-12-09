@@ -20,6 +20,7 @@ from thermalprinter.constants import (
     DEFAULT_LINE_SPACING,
     DEFAULT_MOST_HEATED_POINT,
     DEFAULT_PORT,
+    MAX_IMAGE_WIDTH,
     BarCode,
     BarCodePosition,
     CharSet,
@@ -532,14 +533,11 @@ class ThermalPrinter(Serial):
             self.reset_input_buffer()
 
     def image(self, image: Any) -> None:
-        """Picture printing. Requires the Python Imaging Library (Pillow).
-        The image will be cropped to 384 pixels width if
-        necessary, and converted to 1-bit w/diffusion dithering.
-        For any other behavior (scale, B&W threshold, etc.), use
-        the Imaging Library to perform such operations before
-        passing the result to this function.
+        """Picture printing.
 
-        Max width: 384px.
+        Requires the Python Imaging Library (Pillow).
+        The image will be resized to 384 pixels width  (:const:`constants.MAX_IMAGE_WIDTH`)
+        if necessary, and converted to 1-bit w/diffusion dithering.
 
         :param PIL.Image image: The PIL Image object to use.
 
@@ -547,12 +545,23 @@ class ThermalPrinter(Serial):
 
         >>> from PIL import Image
         >>> printer.image(Image.open("picture.png"))
+
+        .. tip::
+            Since **v0.4** the image will be automatically resized when too wide.
+            Note that the original ``image`` object will not be altered.
         """
         if image.mode != "1":
             image = image.convert("1")
 
-        width = min(image.size[0], 384)
-        height = image.size[1]
+        width, height = image.size
+        if width > MAX_IMAGE_WIDTH:
+            from PIL.Image import Resampling
+
+            image = image.copy()
+            image.thumbnail((MAX_IMAGE_WIDTH, int(MAX_IMAGE_WIDTH * height / width)), Resampling.LANCZOS)
+            log.info("Resized the image from %dx%d to %dx%d", width, height, *image.size)
+            width, height = image.size
+
         row_bytes = int((width + 7) / 8)
         row_bytes_clipped = min(row_bytes, 48)
         bitmap = bytearray(row_bytes * height)
