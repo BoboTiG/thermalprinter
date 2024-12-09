@@ -9,7 +9,7 @@ An example is better than a thousand words:
 .. code-block:: python
 
     with ThermalPrinter() as printer:
-        printer.out("Show time, here is the demonstration!")
+        printer.out("Show time, here comes the demonstration!")
         printer.feed()
         printer.demo()
 
