@@ -24,7 +24,7 @@ def ls(*constants: Any) -> None:
 
     Print Chinese, and CodePage, constant values:
 
-    >>> ls(Chinese, CharSet)
+    >>> ls(Chinese, CodePage)
     """
     for constant in constants or CONSTANTS:
         print("---")

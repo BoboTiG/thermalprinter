@@ -7,12 +7,11 @@ Setup
 
 1. First, you need to fork the `GitHub repository <https://github.com/BoboTiG/thermalprinter>`_.
 
-.. note::
-
+   .. note::
     Always work on a **specific branch** dedicated to your patch.
 
-2. Then, you could need the :download:`Embedded printer DP-EH600 Technical Manual <../Embedded printer DP-EH600 Technical Manual.pdf>` and take a look at the `features advancement <https://github.com/BoboTiG/thermalprinter/issues/1>`_.
-3. Finally, be sure to add/update tests and documentation within your patch.
+2. Then, you could need the :download:`Embedded printer DP-EH600 Technical Manual <../Embedded printer DP-EH600 Technical Manual.pdf>`, and take a look at the `features advancement <https://github.com/BoboTiG/thermalprinter/issues/1>`_.
+3. Finally, be sure to add/update tests, and documentation, within your patch.
 
 Testing
 =======
@@ -33,7 +32,7 @@ How to test?
 
     python -m pytest
 
-And you can :doc:`test printing functions <tools>` (if you added a styling method, you can add it to this function).
+And you can enhance the :doc:`demo <usage>` if you introduced a styling method.
 
 Validating the code
 ===================
