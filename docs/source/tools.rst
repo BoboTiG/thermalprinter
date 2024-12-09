@@ -25,10 +25,3 @@ Code Pages
 ==========
 
 .. autofunction:: print_char
-
-Data Validators
-===============
-
-.. module:: thermalprinter.validate
-
-.. autofunction:: validate_barcode

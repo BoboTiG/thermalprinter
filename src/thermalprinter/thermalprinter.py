@@ -20,6 +20,7 @@ from thermalprinter.constants import (
     DEFAULT_LINE_SPACING,
     DEFAULT_MOST_HEATED_POINT,
     DEFAULT_PORT,
+    BarCode,
     BarCodePosition,
     CharSet,
     Chinese,
@@ -31,7 +32,6 @@ from thermalprinter.constants import (
     Underline,
 )
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
-from thermalprinter.validate import validate_barcode
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -39,7 +39,6 @@ if TYPE_CHECKING:
 
     from _typeshed import ReadableBuffer
 
-    from thermalprinter.constants import BarCode
 
 log = getLogger(__name__)
 
@@ -312,6 +311,49 @@ class ThermalPrinter(Serial):
             encoding = CodePageConverted[self._codepage.name].value
             return bytes(data, encoding, errors="replace")
 
+    def validate_barcode(self, data: str, barcode_type: BarCode) -> None:
+        """Validate data against the barcode type.
+
+        :param str data: The data to print.
+        :param BarCode barecode_type: The barcode type to validate.
+        :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
+        """
+
+        def _range0(min_: int = 48, max_: int = 57) -> list[int]:
+            return list(range(min_, max_ + 1))
+
+        def _range1() -> list[int]:
+            range_ = [32, 36, 37, 43]
+            range_.extend(_range0(45, 57))
+            range_.extend(_range0(65, 90))
+            return range_
+
+        def _range2() -> list[int]:
+            range_ = [36, 43]
+            range_.extend(_range0(45, 58))
+            range_.extend(_range0(65, 68))
+            return range_
+
+        def _range3() -> list[int]:
+            return _range0(0, 127)
+
+        _, (min_, max_), range_type = barcode_type.value
+        data_len = len(data)
+        range_: list[int] = [_range0, _range1, _range2, _range3][range_type]()  # type: ignore[operator]
+
+        if not min_ <= data_len <= max_:
+            msg = f"[{barcode_type.name}] Should be {min_} <= len(data) <= {max_} (current: {data_len})."
+            raise ThermalPrinterValueError(msg)
+
+        if barcode_type is BarCode.ITF and data_len % 2 != 0:
+            msg = "[BarCode.ITF] len(data) must be even."
+            raise ThermalPrinterValueError(msg)
+
+        if any(ord(char) not in range_ for char in data):
+            valid = map(chr, range_) if range_type != 3 else map(hex, range_)
+            err = f"[{barcode_type.name}] Valid characters: {', '.join(valid)}."
+            raise ThermalPrinterValueError(err)
+
     # Printer's methods
 
     def barcode(self, data: str, barcode_type: BarCode) -> None:
@@ -321,7 +363,7 @@ class ThermalPrinter(Serial):
         :param BarCode barecode_type: The barcode type to use.
         :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
         """
-        validate_barcode(data, barcode_type)
+        self.validate_barcode(data, barcode_type)
         self.send_command(Command.GS, 107, barcode_type.value[0], len(data))
 
         # Check if we can print line-by-line

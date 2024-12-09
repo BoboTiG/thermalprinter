@@ -20,6 +20,7 @@ Barcodes
 .. automethod:: ThermalPrinter.barcode_left_margin
 .. automethod:: ThermalPrinter.barcode_position
 .. automethod:: ThermalPrinter.barcode_width
+.. automethod:: ThermalPrinter.validate_barcode
 
 Images
 ------

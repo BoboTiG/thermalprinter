@@ -24,6 +24,7 @@ Release date: `2024-12-xx`
 - Added the printer constant `DEFAULT_PORT` (string, defaults to `/dev/ttyAMA0`).
 - Added the convenient `ThermalPrinter.has_paper` property.
 - Added the `ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
+- Moved the `validate.validate_barcode()` function to `ThermalPrinter.validate_barcode()` method.
 - Removed the `validate.validate_barcode_position()` function.
 - Removed the `validate.validate_charset()` function.
 - Removed the `validate.validate_chinese_format()` function.
