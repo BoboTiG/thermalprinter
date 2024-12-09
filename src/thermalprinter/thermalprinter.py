@@ -311,7 +311,8 @@ class ThermalPrinter(Serial):
             encoding = CodePageConverted[self._codepage.name].value
             return bytes(data, encoding, errors="replace")
 
-    def validate_barcode(self, data: str, barcode_type: BarCode) -> None:
+    @staticmethod
+    def validate_barcode(data: str, barcode_type: BarCode) -> None:
         """Validate data against the barcode type.
 
         :param str data: The data to print.
@@ -731,6 +732,26 @@ class ThermalPrinter(Serial):
             self.__is_sleeping = True
         self.send_command(Command.ESC, 56, seconds, seconds >> 8)
 
+    @staticmethod
+    def status_to_dict(stat: int) -> dict[str, bool]:
+        """Return the printer status as a ``dict``.
+
+        :rtype: dict[str, bool]
+        :return: Contains those keys:
+
+            - ``paper``: ``False`` if no paper
+            - ``temp``: ``False`` if the temperature exceeds 60°C
+            - ``voltage``: ``False`` if the voltage is higher than 9.5V
+
+        .. versionchanged:: 0.4.0
+           Removed the ``movement`` key as it would be always ``False``.
+        """
+        return {
+            "paper": stat & 0b00000100 == 0,
+            "temp": stat & 0b01000000 == 0,
+            "voltage": stat & 0b00001000 == 0,
+        }
+
     def status(self, *, raise_on_error: bool = True) -> dict[str, bool]:
         """Return the printer status.
 
@@ -738,29 +759,22 @@ class ThermalPrinter(Serial):
         :exception ThermalPrinterCommunicationError:
             If the RX pin is not connected, and if ``raise_on_error`` is ``True``.
         :rtype: dict[str, bool]
-        :return: A dict containing:
-
-            - ``movement``: ``False`` if the movement is not connected
-            - ``paper``: ``False`` if no paper
-            - ``temp``: ``False`` if the temperature exceeds 60°C
-            - ``voltage``: ``False`` if the voltage is higher than 9.5V
+        :return: See :func:`status_to_dict()`.
 
         .. versionadded:: 0.2.0
            The ``raise_on_error`` keyword-argument.
         """
-        ret = {"movement": False, "paper": False, "temp": False, "voltage": False}
         self.send_command(Command.ESC, 118, 0)
         sleep(self._command_timeout)
+
         if self.in_waiting:
             stat = ord(self.read(1))
-            ret["movement"] = stat & 0b00000001 == 1
-            ret["paper"] = stat & 0b00000100 == 0
-            ret["voltage"] = stat & 0b00001000 == 0
-            ret["temp"] = stat & 0b01000000 == 0
         elif raise_on_error:
             raise ThermalPrinterCommunicationError
+        else:
+            stat = -1
 
-        return ret
+        return self.status_to_dict(stat)
 
     def strike(self, state: bool = False) -> None:
         """Turn on/off the double-strike mode.

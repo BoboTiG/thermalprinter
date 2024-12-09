@@ -69,6 +69,7 @@ Printer State
 .. automethod:: ThermalPrinter.online
 .. automethod:: ThermalPrinter.sleep
 .. automethod:: ThermalPrinter.status
+.. automethod:: ThermalPrinter.status_to_dict
 .. automethod:: ThermalPrinter.reset
 .. automethod:: ThermalPrinter.test
 .. automethod:: ThermalPrinter.wake
