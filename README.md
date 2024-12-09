@@ -50,7 +50,7 @@ with ThermalPrinter() as printer:
     printer.out("Bold", bold=True)
     printer.out("Double height", double_height=True)
     printer.out("Double width", double_width=True)
-    printer.out("Fond B mode", font_b=True)
+    printer.out("Font B mode", font_b=True)
     printer.out("Inverse", inverse=True)
     printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
     printer.out("Size LARGE", size=Size.LARGE)
