@@ -90,6 +90,7 @@ class ThermalPrinter(Serial):
     _font_b = False
     _inverse = False
     _justify = Justify.LEFT
+    _left_blank = 0
     _left_margin = 0
     _line_spacing = DEFAULT_LINE_SPACING
     _rotate = False
@@ -676,6 +677,21 @@ class ThermalPrinter(Serial):
             self.__is_online = True
             self.send_command(Command.ESC, 61, 1)
 
+    def left_blank(self, value: int = 0) -> None:
+        """Set the left blank amount.
+
+        :param int value: Value to pass to the printer (min=0, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
+        """
+        if value == self._left_blank:
+            return
+
+        if not isinstance(value, int) or not (0 <= value <= 255):
+            msg = "value should be betwwen 0 and 255."
+            raise ThermalPrinterValueError(msg)
+
+        self.send_command(Command.GS, 76, value, 0)
+
     def reset(self) -> None:
         """Reset the printer to factory defaults."""
         self.flush(clear=True)
@@ -705,6 +721,7 @@ class ThermalPrinter(Serial):
         self._font_b = False
         self._inverse = False
         self._justify = Justify.LEFT
+        self._left_blank = 0
         self._left_margin = 0
         self._line_spacing = DEFAULT_LINE_SPACING
         self._rotate = False

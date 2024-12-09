@@ -57,6 +57,8 @@ with ThermalPrinter() as printer:
     printer.out("Strike", strike=True)
     printer.out("Underline", underline=Underline.THIN)
     printer.out("Upside down", upside_down=True)
+    printer.out("Left margin", left_margin=5)
+    printer.out("Left blank", left_margin=10)
 
     # Chinese (almost all alphabets exist)
     printer.out("现代汉语通用字表", chinese=True, chinese_format=Chinese.UTF_8)

@@ -353,6 +353,8 @@ def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool
             printer.out("Strike", strike=True)
             printer.out("Underline", underline=Underline.THIN)
             printer.out("Upside down", upside_down=True)
+            printer.out("Left margin", left_margin=5)
+            printer.out("Left blank", left_margin=10)
 
             printer.out(
                 "Voilà !",

@@ -22,6 +22,7 @@ def test_repr(printer: ThermalPrinter) -> None:
         " font_b=False,"
         " inverse=False,"
         " justify=Justify.LEFT,"
+        " left_blank=0,"
         " left_margin=0,"
         f" line_spacing={DEFAULT_LINE_SPACING},"
         " rotate=False,"
