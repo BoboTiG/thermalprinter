@@ -680,7 +680,7 @@ class ThermalPrinter(Serial):
 
     def reset(self) -> None:
         """Reset the printer to factory defaults."""
-        self.send_command(Command.ESC, 64)
+        self.flush(clear=True)
 
         print_density = 10  # 100%
         print_break_time = 2  # 500 uS
