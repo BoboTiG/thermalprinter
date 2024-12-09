@@ -19,6 +19,7 @@ def test_repr(printer: ThermalPrinter) -> None:
         " codepage=CodePage.CP437,"
         " double_height=False,"
         " double_width=False,"
+        " font_b=False,"
         " inverse=False,"
         " justify=Justify.LEFT,"
         " left_margin=0,"

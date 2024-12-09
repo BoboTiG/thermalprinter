@@ -346,6 +346,7 @@ def printer_tests(*, printer: ThermalPrinter | None = None, raise_on_error: bool
             printer.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
             printer.out("Double height", double_height=True)
             printer.out("Double width", double_width=True)
+            printer.out("Fond B mode", font_b=True)
             printer.out("Inverse", inverse=True)
             printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
             printer.out("Size LARGE", size=Size.LARGE)

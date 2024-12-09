@@ -34,6 +34,7 @@ Text Styling
 .. automethod:: ThermalPrinter.char_spacing
 .. automethod:: ThermalPrinter.double_height
 .. automethod:: ThermalPrinter.double_width
+.. automethod:: ThermalPrinter.font_b
 .. automethod:: ThermalPrinter.inverse
 .. automethod:: ThermalPrinter.justify
 .. automethod:: ThermalPrinter.left_margin

@@ -87,6 +87,7 @@ class ThermalPrinter(Serial):
     _codepage = CodePage.CP437
     _double_height = False
     _double_width = False
+    _font_b = False
     _inverse = False
     _justify = Justify.LEFT
     _left_margin = 0
@@ -532,12 +533,21 @@ class ThermalPrinter(Serial):
         if clear:
             self.reset_input_buffer()
 
+    def font_b(self, state: bool = False) -> None:
+        """Turn on/off the font B mode.
+
+        :param bool state: Enabled if ``state`` is ``True``, else disabled.
+        """
+        if state is not self._font_b:
+            self._font_b = state
+            self.send_command(Command.ESC, 33, int(state))
+
     def image(self, image: Any) -> None:
         """Picture printing.
 
         Requires the Python Imaging Library (Pillow).
         The image will be resized to 384 pixels width  (:const:`constants.MAX_IMAGE_WIDTH`)
-        if necessary, and converted to 1-bit w/diffusion dithering.
+        if necessary, and converted to 1-bit without diffusion dithering.
 
         :param PIL.Image image: The PIL Image object to use.
 
@@ -551,9 +561,12 @@ class ThermalPrinter(Serial):
             Note that the original ``image`` object will not be altered.
         """
         if image.mode != "1":
-            image = image.convert("1")
+            from PIL.Image import Dither
+
+            image = image.convert("1", dither=Dither.NONE)
 
         width, height = image.size
+
         if width > MAX_IMAGE_WIDTH:
             from PIL.Image import Resampling
 
@@ -691,6 +704,7 @@ class ThermalPrinter(Serial):
         self._codepage = CodePage.CP437
         self._double_height = False
         self._double_width = False
+        self._font_b = False
         self._inverse = False
         self._justify = Justify.LEFT
         self._left_margin = 0
