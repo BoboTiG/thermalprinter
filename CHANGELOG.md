@@ -7,7 +7,7 @@ Release date: `2024-12-xx`
 - New option to control printer settings at initialization: `ThermalPrinter(..., run_setup_cmd=bool)` (#15).
 - New option to specify the *mandatory* sleep time, in seconds, right after the serial initialization: `ThermalPrinter(..., sleep_sec_after_init=float)`.
 - Improved the documentation by fixing issues found with [Harper](https://github.com/elijah-potter/harper).
-- Improved tests coverage from 92% to 94%.
+- Improved tests coverage from 92% to 96%.
 
 ## Technical Changes
 

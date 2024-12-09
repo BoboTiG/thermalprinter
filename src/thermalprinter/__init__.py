@@ -12,7 +12,17 @@ If that URL should fail, try contacting the author.
 
 from __future__ import annotations
 
-from thermalprinter.constants import BarCode, BarCodePosition, CharSet, Chinese, CodePage, Command
+from thermalprinter.constants import (
+    BarCode,
+    BarCodePosition,
+    CharSet,
+    Chinese,
+    CodePage,
+    Command,
+    Justify,
+    Size,
+    Underline,
+)
 from thermalprinter.exceptions import ThermalPrinterError
 from thermalprinter.thermalprinter import ThermalPrinter
 
@@ -36,6 +46,9 @@ __all__ = [
     "Chinese",
     "CodePage",
     "Command",
+    "Justify",
+    "Size",
     "ThermalPrinter",
     "ThermalPrinterError",
+    "Underline",
 ]

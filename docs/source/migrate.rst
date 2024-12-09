@@ -5,85 +5,74 @@ Migration
 From v0.3 to v0.4
 =================
 
-`justify()`
-~~~~~~~~~~~
+.. currentmodule:: thermalprinter
 
-Code in v0.3:
+- :func:`ThermalPrinter.justify()`:
 
-.. code-block:: python
+  .. code-block:: diff
 
-    printer.justify("L")
-    printer.justify("C")
-    printer.justify("R")
+    + from thermalprinter import Justify
 
-Code in v0.4:
+    - printer.justify("L")
+    + printer.justify(Justify.LEFT)
+    
+    - printer.justify("C")
+    + printer.justify(Justify.CENTER)
 
-.. code-block:: python
+    - printer.justify("R")
+    + printer.justify(Justify.RIGHT)
 
-    from thermalprinter.constants import Justify
+- :func:`ThermalPrinter.size()`:
 
-    printer.justify(Justify.LEFT)
-    printer.justify(Justify.CENTER)
-    printer.justify(Justify.RIGHT)
+  .. code-block:: diff
 
-`size()`
-~~~~~~~~
+    + from thermalprinter import Size
 
-Code in v0.3:
+    - printer.size("S")
+    + printer.size(Size.SMALL)
+    
+    - printer.size("M")
+    + printer.size(Size.MEDIUM)
 
-.. code-block:: python
+    - printer.size("L")
+    + printer.size(Size.LARGE)
 
-    printer.size("S")
-    printer.size("M")
-    printer.size("L")
+- :func:`ThermalPrinter.underline()`:
 
-Code in v0.4:
+  .. code-block:: diff
 
-.. code-block:: python
+    + from thermalprinter import Underline
 
-    from thermalprinter.constants import Size
+    - printer.underline(0)
+    + printer.underline(Underline.OFF)
+    
+    - printer.underline(1)
+    + printer.underline(Underline.THIN)
 
-    printer.size(Size.SMALL)
-    printer.size(Size.MEDIUM)
-    printer.size(Size.LARGE)
-
-`underline()`
-~~~~~~~~~~~~~
-
-Code in v0.3:
-
-.. code-block:: python
-
-    printer.underline(0)
-    printer.underline(1)
-    printer.underline(2)
-
-Code in v0.4:
-
-.. code-block:: python
-
-    from thermalprinter.constants import Underline
-
-    printer.underline(Underline.OFF)
-    printer.underline(Underline.THIN)
-    printer.underline(Underline.THICK)
+    - printer.underline(2)
+    + printer.size(Size.LARGE)
 
 From v0.2 to v0.3
 =================
 
-Tools
-~~~~~
+.. currentmodule:: thermalprinter
 
-Code in v0.2:
+- :func:`tools.test_char()` → :func:`tools.print_char()`:
 
-.. code-block:: python
+  .. code-block:: diff
 
-    tools.test_char("现")
-    tools.testing()
+    - from thermalprinter.tools import test_char
+    + from thermalprinter.tools import print_char
 
-Code in v0.3:
+    - test_char("现")
+    + print_char("现")
 
-.. code-block:: python
+- :func:`tools.testing()` → :func:`tools.printer_tests()`:
 
-    tools.print_char("现")
-    tools.printer_tests()
+  .. code-block:: diff
+
+    - from thermalprinter.tools import testing
+    + from thermalprinter.tools import printer_tests
+
+    - testing()
+    + printer_tests()

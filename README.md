@@ -52,7 +52,7 @@ with ThermalPrinter() as printer:
     printer.out("Double width", double_width=True)
     printer.out("Inverse", inverse=True)
     printer.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
-    printer.out("Size", size=Size.MEDIUM)
+    printer.out("Size LARGE", size=Size.LARGE)
     printer.out("Strike", strike=True)
     printer.out("Underline", underline=Underline.THIN)
     printer.out("Upside down", upside_down=True)
