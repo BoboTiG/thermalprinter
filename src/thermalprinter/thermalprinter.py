@@ -558,7 +558,6 @@ class ThermalPrinter(Serial):
 
         .. tip::
             Since **v0.4** the image will be automatically resized when too wide.
-            Note that the original ``image`` object will not be altered.
         """
         if image.mode != "1":
             from PIL.Image import Dither
@@ -570,7 +569,6 @@ class ThermalPrinter(Serial):
         if width > MAX_IMAGE_WIDTH:
             from PIL.Image import Resampling
 
-            image = image.copy()
             image.thumbnail((MAX_IMAGE_WIDTH, int(MAX_IMAGE_WIDTH * height / width)), Resampling.LANCZOS)
             log.info("Resized the image from %dx%d to %dx%d", width, height, *image.size)
             width, height = image.size
