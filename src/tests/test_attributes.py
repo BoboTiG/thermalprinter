@@ -1,16 +1,16 @@
 import pytest
 
-from thermalprinter.constants import DEFAULT_BARCODE_HEIGHT, DEFAULT_BARCODE_WIDTH, DEFAULT_LINE_SPACING
+from thermalprinter.constants import Defaults
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr(printer: ThermalPrinter) -> None:
     assert repr(printer) == (
         "FakeThermalPrinter<baudrate=19200, is_open=True>("
-        f"barcode_height={DEFAULT_BARCODE_HEIGHT},"
+        f"barcode_height={Defaults.BARCODE_HEIGHT.value},"
         " barcode_left_margin=0,"
         " barcode_position=BarCodePosition.HIDDEN,"
-        f" barcode_width={DEFAULT_BARCODE_WIDTH},"
+        f" barcode_width={Defaults.BARCODE_WIDTH.value},"
         " bold=False,"
         " char_spacing=0,"
         " charset=CharSet.USA,"
@@ -24,7 +24,7 @@ def test_repr(printer: ThermalPrinter) -> None:
         " justify=Justify.LEFT,"
         " left_blank=0,"
         " left_margin=0,"
-        f" line_spacing={DEFAULT_LINE_SPACING},"
+        f" line_spacing={Defaults.LINE_SPACING.value},"
         " rotate=False,"
         " size=Size.SMALL,"
         " strike=False,"

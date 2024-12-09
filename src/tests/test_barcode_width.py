@@ -1,17 +1,17 @@
 import pytest
 
-from thermalprinter.constants import DEFAULT_BARCODE_WIDTH
+from thermalprinter.constants import Defaults
 from thermalprinter.exceptions import ThermalPrinterValueError
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_default_value(printer: ThermalPrinter) -> None:
-    assert printer._barcode_width == DEFAULT_BARCODE_WIDTH
+    assert printer._barcode_width == Defaults.BARCODE_WIDTH.value
 
 
 def test_changing_no_value(printer: ThermalPrinter) -> None:
     printer.barcode_width()
-    assert printer._barcode_width == DEFAULT_BARCODE_WIDTH
+    assert printer._barcode_width == Defaults.BARCODE_WIDTH.value
 
 
 def test_changing_good_value(printer: ThermalPrinter) -> None:
@@ -36,4 +36,4 @@ def test_changing_bad_value__not_in_range_high(printer: ThermalPrinter) -> None:
 
 def test_reset_value(printer: ThermalPrinter) -> None:
     printer.reset()
-    assert printer._barcode_width == DEFAULT_BARCODE_WIDTH
+    assert printer._barcode_width == Defaults.BARCODE_WIDTH.value

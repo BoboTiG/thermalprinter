@@ -154,16 +154,17 @@ line-ending = "auto"
 [tool.ruff.lint]
 extend-select = ["ALL"]
 ignore = [
-    "ANN401",  # allow Any for *constants
-    "COM812",  # conflict
-    "D",  # TODO
-    "FBT",  # boolean positional arguments are good for this project
-    "ISC001",  # conflict
-    "N802",  # test functions names should be lowercase
+    "ANN401",   # allow Any for *constants
+    "COM812",   # conflict
+    "D",        # TODO
+    "F403",     # star imports
+    "F405",     # star imports
+    "FBT",      # boolean positional arguments are good for this project
+    "ISC001",   # conflict
+    "N802",     # test functions names should be lowercase
     "PLR2004",  # magic values
-    "S",  # assert in tests
-    "SLF",  # private class access in tests
-    "T201",  # print()
+    "SLF",      # private class access in tests
+    "T201",     # print()
 ]
 fixable = ["ALL"]
 
@@ -173,4 +174,5 @@ fixable = ["ALL"]
 ]
 "src/tests/*" = [
     "E501",
+    "S",
 ]

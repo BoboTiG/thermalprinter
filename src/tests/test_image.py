@@ -6,7 +6,8 @@ import pytest
 from thermalprinter.thermalprinter import ThermalPrinter
 
 Image = pytest.importorskip("PIL.Image")
-GNU = Path(__file__).parent / "gnu.png"
+
+GNU = Path(__file__).parent.parent / "thermalprinter" / "gnu.png"
 BIG = Path(__file__).parent / "ordered-hlines.png"
 
 

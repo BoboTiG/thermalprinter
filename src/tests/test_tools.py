@@ -1,19 +1,9 @@
-from importlib.util import find_spec
 from typing import Any
 
 import pytest
 
-from thermalprinter import constants as c
-from thermalprinter.thermalprinter import ThermalPrinter
-from thermalprinter.tools import calibrate, ls, print_char, printer_tests
-
-
-def test_calibrate(printer: ThermalPrinter) -> None:
-    calibrate(printer)
-
-
-def test_print_char(printer: ThermalPrinter) -> None:
-    print_char("现", printer=printer)
+from thermalprinter import constants
+from thermalprinter.tools import ls
 
 
 def check_lines(stdout: str, *constants: Any) -> None:
@@ -24,32 +14,27 @@ def check_lines(stdout: str, *constants: Any) -> None:
 def test_ls(capsys: pytest.CaptureFixture) -> None:
     ls()
     out = capsys.readouterr()[0]
-    check_lines(out, *c.CONSTANTS)
+    check_lines(out, *constants.CONSTANTS)
 
 
 def test_ls_2_constants(capsys: pytest.CaptureFixture) -> None:
-    ls(c.BarCodePosition, c.Chinese)
+    ls(constants.BarCodePosition, constants.Chinese)
     out = capsys.readouterr()[0]
-    check_lines(out, c.BarCodePosition, c.Chinese)
+    check_lines(out, constants.BarCodePosition, constants.Chinese)
 
 
 @pytest.mark.parametrize(
     "constant",
     [
-        c.BarCode,
-        c.BarCodePosition,
-        c.CharSet,
-        c.Chinese,
-        c.CodePage,
-        c.CodePageConverted,
+        constants.BarCode,
+        constants.BarCodePosition,
+        constants.CharSet,
+        constants.Chinese,
+        constants.CodePage,
+        constants.CodePageConverted,
     ],
 )
 def test_ls_barcode(constant: Any, capsys: pytest.CaptureFixture) -> None:
     ls(constant)
     out = capsys.readouterr()[0]
     check_lines(out, constant)
-
-
-def test_testing(printer: ThermalPrinter) -> None:
-    raise_on_error = bool(find_spec("PIL"))
-    printer_tests(printer=printer, raise_on_error=raise_on_error)

@@ -78,8 +78,11 @@ Printer State
 Special Methods
 ---------------
 
+.. automethod:: ThermalPrinter.calibrate
+.. automethod:: ThermalPrinter.demo
 .. automethod:: ThermalPrinter.flush
 .. automethod:: ThermalPrinter.init
+.. automethod:: ThermalPrinter.print_char
 .. automethod:: ThermalPrinter.send_command
 .. automethod:: ThermalPrinter.to_bytes
 
@@ -148,6 +151,11 @@ Commands
 
 .. autoenum:: Command
 
+Defaults Parameters
+-------------------
+
+.. autoenum:: Defaults
+
 Text Justification
 ------------------
 
@@ -166,12 +174,4 @@ Text Underline
 Other
 -----
 
-.. autodata:: DEFAULT_BARCODE_HEIGHT
-.. autodata:: DEFAULT_BARCODE_WIDTH
-.. autodata:: DEFAULT_BAUDRATE
-.. autodata:: DEFAULT_HEAT_INTERVAL
-.. autodata:: DEFAULT_HEAT_TIME
-.. autodata:: DEFAULT_LINE_SPACING
-.. autodata:: DEFAULT_MOST_HEATED_POINT
-.. autodata:: DEFAULT_PORT
 .. autodata:: MAX_IMAGE_WIDTH

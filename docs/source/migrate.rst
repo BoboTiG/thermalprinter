@@ -50,7 +50,7 @@ From v0.3 to v0.4
     + printer.underline(Underline.THIN)
 
     - printer.underline(2)
-    + printer.size(Size.LARGE)
+    + printer.underline(Underline.THICK)
 
 From v0.2 to v0.3
 =================

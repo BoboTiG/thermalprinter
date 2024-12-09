@@ -6,32 +6,13 @@ from __future__ import annotations
 
 from atexit import register
 from logging import getLogger
+from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING
 
 from serial import Serial
 
-from thermalprinter.constants import (
-    DEFAULT_BARCODE_HEIGHT,
-    DEFAULT_BARCODE_WIDTH,
-    DEFAULT_BAUDRATE,
-    DEFAULT_HEAT_INTERVAL,
-    DEFAULT_HEAT_TIME,
-    DEFAULT_LINE_SPACING,
-    DEFAULT_MOST_HEATED_POINT,
-    DEFAULT_PORT,
-    MAX_IMAGE_WIDTH,
-    BarCode,
-    BarCodePosition,
-    CharSet,
-    Chinese,
-    CodePage,
-    CodePageConverted,
-    Command,
-    Justify,
-    Size,
-    Underline,
-)
+from thermalprinter.constants import *
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
 
 if TYPE_CHECKING:
@@ -42,6 +23,8 @@ if TYPE_CHECKING:
 
 
 log = getLogger(__name__)
+
+GNU_FILE = Path(__file__).parent / "gnu.png"
 
 
 class ThermalPrinter(Serial):
@@ -74,10 +57,10 @@ class ThermalPrinter(Serial):
     __max_column = 32
     __is_online = True
     __is_sleeping = False
-    _barcode_height = DEFAULT_BARCODE_HEIGHT
+    _barcode_height = Defaults.BARCODE_HEIGHT.value
     _barcode_left_margin = 0
     _barcode_position = BarCodePosition.HIDDEN
-    _barcode_width = DEFAULT_BARCODE_WIDTH
+    _barcode_width = Defaults.BARCODE_WIDTH.value
     _bold = False
     _charset = CharSet.USA
     _char_spacing = 0
@@ -92,7 +75,7 @@ class ThermalPrinter(Serial):
     _justify = Justify.LEFT
     _left_blank = 0
     _left_margin = 0
-    _line_spacing = DEFAULT_LINE_SPACING
+    _line_spacing = Defaults.LINE_SPACING.value
     _rotate = False
     _size = Size.SMALL
     _strike = False
@@ -101,13 +84,13 @@ class ThermalPrinter(Serial):
 
     def __init__(  # noqa: PLR0913
         self,
-        port: str = DEFAULT_PORT,
+        port: str = Defaults.PORT.value,
         *,
-        baudrate: int = DEFAULT_BAUDRATE,
+        baudrate: int = Defaults.BAUDRATE.value,
         command_timeout: float = 0.05,
-        heat_interval: int = DEFAULT_HEAT_INTERVAL,
-        heat_time: int = DEFAULT_HEAT_TIME,
-        most_heated_point: int = DEFAULT_MOST_HEATED_POINT,
+        heat_interval: int = Defaults.HEAT_INTERVAL.value,
+        heat_time: int = Defaults.HEAT_TIME.value,
+        most_heated_point: int = Defaults.MOST_HEATED_POINT.value,
         run_setup_cmd: bool = True,
         sleep_sec_after_init: float = 0.5,
     ) -> None:
@@ -125,11 +108,11 @@ class ThermalPrinter(Serial):
         # Several checks
         msg = ""
         if not 0 <= heat_time <= 255:
-            msg = f"heat_time should be between 0 and 255 (default: {DEFAULT_HEAT_TIME})."
+            msg = f"heat_time should be between 0 and 255 (default: {Defaults.HEAT_TIME.value})."
         elif not 0 <= heat_interval <= 255:
-            msg = f"heat_interval should be between 0 and 255 (default: {DEFAULT_HEAT_INTERVAL})."
+            msg = f"heat_interval should be between 0 and 255 (default: {Defaults.HEAT_INTERVAL.value})."
         elif not 0 <= most_heated_point <= 255:
-            msg = f"most_heated_point should be between 0 and 255 (default: {DEFAULT_MOST_HEATED_POINT})."
+            msg = f"most_heated_point should be between 0 and 255 (default: {Defaults.MOST_HEATED_POINT.value})."
         if msg:
             raise ThermalPrinterValueError(msg)
 
@@ -241,13 +224,13 @@ class ThermalPrinter(Serial):
 
         You can pass formatting instructions directly via arguments:
 
-        >>> printer.out(data, justify=Justify.CENTER, inverse=True)
+        >>> self.out(data, justify=Justify.CENTER, inverse=True)
 
         This is a quicker way to do:
 
         >>> printer.justify(Justify.CENTER)
         >>> printer.inverse(True)
-        >>> printer.out(data)
+        >>> self.out(data)
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
         """
@@ -377,14 +360,14 @@ class ThermalPrinter(Serial):
         sleep((self._barcode_height + self._line_spacing) * self._dot_print_time)
         self.__lines += int(self._barcode_height / self._line_spacing) + 1
 
-    def barcode_height(self, height: int = DEFAULT_BARCODE_HEIGHT) -> None:
+    def barcode_height(self, height: int = Defaults.BARCODE_HEIGHT.value) -> None:
         """Set the barcode height.
 
         :param int height: The barcode height (min=1, max=255).
         :exception ThermalPrinterValueError: On incorrect ``height``'s type, or value.
         """
         if not isinstance(height, int) or not 1 <= height <= 255:
-            msg = f"height should be between 1 and 255 (default: {DEFAULT_BARCODE_HEIGHT})."
+            msg = f"height should be between 1 and 255 (default: {Defaults.BARCODE_HEIGHT.value})."
             raise ThermalPrinterValueError(msg)
 
         if height != self._barcode_height:
@@ -414,14 +397,14 @@ class ThermalPrinter(Serial):
             self._barcode_position = position
             self.send_command(Command.GS, 72, position.value)
 
-    def barcode_width(self, width: int = DEFAULT_BARCODE_WIDTH) -> None:
+    def barcode_width(self, width: int = Defaults.BARCODE_WIDTH.value) -> None:
         """Set the barcode width.
 
         :param int width: The barcode with (min=2, max=6).
         :exception ThermalPrinterValueError: On incorrect ``width``'s type, or value.
         """
         if not isinstance(width, int) or not 2 <= width <= 6:
-            msg = f"width should be between 2 and 6 (default: {DEFAULT_BARCODE_WIDTH})."
+            msg = f"width should be between 2 and 6 (default: {Defaults.BARCODE_WIDTH.value})."
             raise ThermalPrinterValueError(msg)
 
         if width != self._barcode_width:
@@ -436,6 +419,39 @@ class ThermalPrinter(Serial):
         if state is not self._bold:
             self._bold = state
             self.send_command(Command.ESC, 69, int(state))
+
+    def calibrate(self, *, with_info: bool = True) -> None:
+        """Thermal calibration.
+
+        Run this method before using the printer for the first time, any
+        time a different power supply is used, or when using paper from a
+        different source.
+
+        Prints a series of black bars with increasing "heat time" settings.
+        Because printed sections have different "grip" characteristics than
+        blank paper, as this progresses the paper will usually at some point
+        jam -- either uniformly, making a short bar, or at one side or the
+        other, making a wedge shape. In some cases, the Raspberry Pi may reset
+        for lack of power.
+
+        Whatever the outcome, take the last number printed **before** any
+        distorted bar, and use that value as ``heat_time`` keyword-argument
+        when instantiating the printer.
+
+        :param ThermalPrinter printer: Optional printer to use.
+        :param bool with_info: Set to ``False`` to skip displaying the information.
+
+        .. note::
+            Source: [adafruit/Python-Thermal-Printer](https://github.com/adafruit/Python-Thermal-Printer/blob/master/calibrate.py)
+        """
+        if with_info:
+            print(str(self.calibrate.__doc__).split(":param", 1)[0])
+
+        for heat_time in range(0, 256, 15):
+            self.init(heat_time)
+            self.out(heat_time)
+            self.out(" " * self.max_column, inverse=True)
+        self.feed(2)
 
     def charset(self, charset: CharSet = CharSet.USA) -> None:
         """Set the character set.
@@ -488,6 +504,62 @@ class ThermalPrinter(Serial):
             value, _ = codepage.value
             self.send_command(Command.ESC, 116, value)
             sleep(self._command_timeout)
+
+    def demo(self) -> None:
+        """Show time!
+
+        Demonstrate printers capabilities.
+        """
+
+        # Image
+        try:
+            from PIL import Image
+        except ImportError:
+            print("The PIL module is not installed, skipping the image demo.")
+        else:
+            self.feed()
+            self.image(Image.open(GNU_FILE))
+            self.feed()
+
+        # Barcode
+        self.barcode_height(80)
+        self.barcode_position(BarCodePosition.BELOW)
+        self.barcode_width(3)
+        self.barcode("012345678901", BarCode.EAN13)
+
+        # Style
+        self.out("Bold", bold=True)
+        self.out("Double height", double_height=True)
+        self.out("Double width", double_width=True)
+        self.out("Font B mode", font_b=True)
+        self.out("Inverse", inverse=True)
+        self.out("Rotate 90°", rotate=True, codepage=CodePage.ISO_8859_1)
+        self.out("Size LARGE", size=Size.LARGE)
+        self.out("Strike", strike=True)
+        self.out("Underline", underline=Underline.THIN)
+        self.out("Upside down", upside_down=True)
+        self.out("Left margin", left_margin=5)
+        self.out("Left blank", left_margin=10)
+
+        # Chinese (almost all alphabets exist)
+        self.out("现代汉语通用字表", chinese=True, chinese_format=Chinese.UTF_8)
+
+        # Greek (excepted the ΐ character)
+        self.out("Στην υγειά μας!", codepage=CodePage.CP737)
+
+        # Other character
+        self.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
+
+        # Accent
+        self.out(
+            "Voilà !",
+            codepage=CodePage.ISO_8859_1,
+            justify=Justify.CENTER,
+            strike=True,
+            underline=Underline.THICK,
+        )
+
+        self.feed(2)
 
     def double_height(self, state: bool = False) -> None:
         """Turn on/off the double height mode.
@@ -547,7 +619,7 @@ class ThermalPrinter(Serial):
         """Picture printing.
 
         Requires the Python Imaging Library (Pillow).
-        The image will be resized to 384 pixels width  (:const:`constants.MAX_IMAGE_WIDTH`)
+        The image will be resized to 384 pixels width  (:const:`MAX_IMAGE_WIDTH`)
         if necessary, and converted to 1-bit without diffusion dithering.
 
         :param PIL.Image image: The PIL Image object to use.
@@ -627,7 +699,7 @@ class ThermalPrinter(Serial):
         """Set the text justification.
 
         .. versionchanged:: 0.4.0
-            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Justify`.
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`Justify`.
         """
         if value is not self._justify:
             self._justify = value
@@ -647,14 +719,14 @@ class ThermalPrinter(Serial):
             self._left_margin = margin
             self.send_command(Command.ESC, 66, margin)
 
-    def line_spacing(self, spacing: int = DEFAULT_LINE_SPACING) -> None:
+    def line_spacing(self, spacing: int = Defaults.LINE_SPACING.value) -> None:
         """Set the line spacing.
 
         :param int spacing: The new spacing (min=0, max=255).
         :exception ThermalPrinterValueError: On incorrect ``spacing``'s type, or value.
         """
         if not isinstance(spacing, int) or not 0 <= spacing <= 255:
-            msg = f"spacing should be between 0 and 255 (default: {DEFAULT_LINE_SPACING})."
+            msg = f"spacing should be between 0 and 255 (default: {Defaults.LINE_SPACING.value})."
             raise ThermalPrinterValueError(msg)
 
         if spacing != self._line_spacing:
@@ -692,6 +764,24 @@ class ThermalPrinter(Serial):
 
         self.send_command(Command.GS, 76, value, 0)
 
+    def print_char(self, char: str) -> None:
+        """Test one character with all supported code pages.
+
+        :param str char: The character to print.
+
+        Say you are looking for the good code page to print a sequence,
+        you can print it using every code pages:
+
+        >>> print_char("现")
+
+        This function is equivalent to:
+
+        >>> for codepage in list(CodePage):
+        ...    self.out(f"{codepage.name}: 现")
+        """
+        for codepage in list(CodePage):
+            self.out(f"{codepage.name}: {char}")
+
     def reset(self) -> None:
         """Reset the printer to factory defaults."""
         self.flush(clear=True)
@@ -705,10 +795,10 @@ class ThermalPrinter(Serial):
         self.__is_online = True
         self.__is_sleeping = False
 
-        self._barcode_height = DEFAULT_BARCODE_HEIGHT
+        self._barcode_height = Defaults.BARCODE_HEIGHT.value
         self._barcode_left_margin = 0
         self._barcode_position = BarCodePosition.HIDDEN
-        self._barcode_width = DEFAULT_BARCODE_WIDTH
+        self._barcode_width = Defaults.BARCODE_WIDTH.value
         self._bold = False
         self._charset = CharSet.USA
         self._char_spacing = 0
@@ -723,7 +813,7 @@ class ThermalPrinter(Serial):
         self._justify = Justify.LEFT
         self._left_blank = 0
         self._left_margin = 0
-        self._line_spacing = DEFAULT_LINE_SPACING
+        self._line_spacing = Defaults.LINE_SPACING.value
         self._rotate = False
         self._size = Size.SMALL
         self._strike = False
@@ -743,7 +833,7 @@ class ThermalPrinter(Serial):
         """Set the text size.
 
         .. versionchanged:: 0.4.0
-            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Size`.
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`Size`.
 
         .. note::
             This method affects :attr:`max_column`.
@@ -832,7 +922,7 @@ class ThermalPrinter(Serial):
         """Set the underline mode.
 
         .. versionchanged:: 0.4.0
-            The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`constants.Underline`.
+            The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`Underline`.
         """
         if weight is not self._underline:
             self._underline = weight
