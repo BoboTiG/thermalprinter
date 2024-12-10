@@ -1,6 +1,6 @@
-=====
-Usage
-=====
+========
+🧾 Usage
+========
 
 .. currentmodule:: thermalprinter
 

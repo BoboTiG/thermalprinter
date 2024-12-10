@@ -45,7 +45,7 @@ class ThermalPrinter(Serial):
     .. versionadded:: 0.3.0
         The ``command_timeout`` keyword-argument.
 
-    .. versionadded:: 0.4.0
+    .. versionadded:: 1.0.0
         ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
     """  # noqa: E501
 
@@ -508,7 +508,7 @@ class ThermalPrinter(Serial):
     def demo(self) -> None:
         """Show time!
 
-        Demonstrate printers capabilities.
+        Demonstrate printer capabilities.
         """
 
         # Image
@@ -630,7 +630,7 @@ class ThermalPrinter(Serial):
         >>> printer.image(Image.open("picture.png"))
 
         .. tip::
-            Since **v0.4** the image will be automatically resized when too wide.
+            Since **v1.0** the image will be automatically resized when too wide.
         """
         if image.mode != "1":
             from PIL.Image import Dither
@@ -698,7 +698,7 @@ class ThermalPrinter(Serial):
     def justify(self, value: Justify = Justify.LEFT) -> None:
         """Set the text justification.
 
-        .. versionchanged:: 0.4.0
+        .. versionchanged:: 1.0.0
             The ``value`` keyword-argument was converted from a :obj:`str` to :const:`Justify`.
         """
         if value is not self._justify:
@@ -832,7 +832,7 @@ class ThermalPrinter(Serial):
     def size(self, value: Size = Size.SMALL) -> None:
         """Set the text size.
 
-        .. versionchanged:: 0.4.0
+        .. versionchanged:: 1.0.0
             The ``value`` keyword-argument was converted from a :obj:`str` to :const:`Size`.
 
         .. note::
@@ -871,7 +871,7 @@ class ThermalPrinter(Serial):
             - ``temp``: ``False`` if the temperature exceeds 60°C
             - ``voltage``: ``False`` if the voltage is higher than 9.5V
 
-        .. versionchanged:: 0.4.0
+        .. versionchanged:: 1.0.0
            Removed the ``movement`` key as it would be always ``False``.
         """
         return {
@@ -921,7 +921,7 @@ class ThermalPrinter(Serial):
     def underline(self, weight: Underline = Underline.OFF) -> None:
         """Set the underline mode.
 
-        .. versionchanged:: 0.4.0
+        .. versionchanged:: 1.0.0
             The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`Underline`.
         """
         if weight is not self._underline:

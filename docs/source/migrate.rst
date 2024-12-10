@@ -1,8 +1,8 @@
-=========
-Migration
-=========
+============
+🕊️ Migration
+============
 
-From v0.3 to v0.4
+From v0.3 to v1.0
 =================
 
 .. currentmodule:: thermalprinter

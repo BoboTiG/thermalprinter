@@ -1,6 +1,17 @@
 ThermalPrinter's documentation
 ==============================
 
+.. image:: https://img.shields.io/pypi/v/thermalprinter.svg
+   :target: https://pypi.python.org/pypi/thermalprinter
+.. image:: https://img.shields.io/pypi/status/thermalprinter.svg
+   :target: https://pypi.python.org/pypi/thermalprinter
+.. image:: https://img.shields.io/pypi/pyversions/thermalprinter.svg
+   :target: https://pypi.python.org/pypi/thermalprinter
+.. image:: https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml/badge.svg?branch=master
+   :target: https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml
+.. image:: https://img.shields.io/github/license/BoboTiG/thermalprinter.svg
+   :target: https://github.com/BoboTiG/thermalprinter/blob/master/LICENSE
+
 Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 
 - **Python 3.7** minimum;
@@ -10,25 +21,25 @@ Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 - Also several useful `recipes <https://github.com/BoboTiG/thermalprinter-recipes>`_;
 - **Contibutors** are welcome, check the :doc:`developer guide <developers>`!
 
-+-------------------------+
-|         Content         |
-+-------------------------+
-|.. toctree::             |
-|   :maxdepth: 1          |
-|                         |
-|   printers              |
-|   installation          |
-|   setup                 |
-|   usage                 |
-|   tools                 |
-|   api                   |
-|   developers            |
-|   changelog             |
-|   migrate               |
-+-------------------------+
+.. toctree::
+    :caption: Table of Contents
 
-Indices and Tables
-==================
+    printers 
+    installation
+    setup    
+    usage    
+    api      
+    tools    
+    developers  
+    migrate  
+    changelog
 
-* :ref:`genindex`
-* :ref:`search`
+.. raw:: html
+
+    <div class="toctree-wrapper compound">
+        <p class="caption" role="heading"><span class="caption-text">Indices and Tables</span></p>
+    </div>
+
+- :ref:`genindex`
+- :ref:`modindex`
+- :ref:`search`

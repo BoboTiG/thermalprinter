@@ -1,6 +1,6 @@
-===
-API
-===
+======
+📘 API
+======
 
 .. currentmodule:: thermalprinter
 

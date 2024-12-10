@@ -1,6 +1,6 @@
-=====
-Tools
-=====
+========
+🧰 Tools
+========
 
 .. module:: thermalprinter.tools
 

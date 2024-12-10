@@ -17,7 +17,7 @@ master_doc = "index"
 project = "ThermalPrinter"
 author = "Mickaël Schoentgen"
 copyright = f"2016-2024, {author}"  # noqa: A001
-version = "0.3.0"
+version = "1.0.0"
 release = "latest"
 language = "en"
 exclude_patterns = []
@@ -29,7 +29,8 @@ todo_include_todos = False
 html_theme = "shibuya"
 html_theme_options = {
     "accent_color": "mint",
-    "globaltoc_expand_depth": 2,
+    "globaltoc_expand_depth": 1,
+    "toctree_titles_only": False,
     "nav_links": [
         {"title": "Recipes", "url": "https://github.com/BoboTiG/thermalprinter-recipes"},
         {"title": "Sources", "url": "https://github.com/BoboTiG/thermalprinter"},

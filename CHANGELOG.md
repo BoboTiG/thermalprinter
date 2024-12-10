@@ -1,4 +1,4 @@
-# 0.4.0
+# 1.0.0
 
 Release date: `2024-12-xx`
 
@@ -7,30 +7,22 @@ Release date: `2024-12-xx`
 - New option to control printer settings at initialization: `ThermalPrinter(..., run_setup_cmd=bool)` (#15).
 - New option to specify the *mandatory* sleep time, in seconds, right after the serial initialization: `ThermalPrinter(..., sleep_sec_after_init=float)`.
 - Improved the documentation by fixing issues found with [Harper](https://github.com/elijah-potter/harper).
-- Improved tests coverage from 92% to 96%.
+- 100% tests coverage!
 
 ## Technical Changes
 
-- Added the printer enum constant `Justify` to use in `ThermalPrinter.justify()` method (**breaking change**).
-- Added the printer enum constant `Size` to use in `ThermalPrinter.size()` method (**breaking change**).
-- Added the printer enum constant `Underline` to use in `ThermalPrinter.underline()` method (**breaking change**).
-- Added the printer constant `DEFAULT_BARCODE_HEIGHT` (integer, defaults to `162`).
-- Added the printer constant `DEFAULT_BARCODE_WIDTH` (integer, defaults to `3`).
-- Added the printer constant `DEFAULT_BAUDRATE` (integer, defaults to `19200`).
-- Added the printer constant `DEFAULT_HEAT_TIME` (integer, defaults to `80`).
-- Added the printer constant `DEFAULT_HEAT_INTERVAL` (integer, defaults to `12`).
-- Added the printer constant `DEFAULT_LINE_SPACING` (integer, defaults to `30`).
-- Added the printer constant `DEFAULT_MOST_HEATED_POINT` (integer, defaults to `3`).
-- Added the printer constant `DEFAULT_PORT` (string, defaults to `/dev/ttyAMA0`).
-- Added the convenient `ThermalPrinter.has_paper` property.
+- Added the `Justify` constant to use in the `ThermalPrinter.justify()` method (**breaking change**).
+- Added the `Size` constant to use in the `ThermalPrinter.size()` method (**breaking change**).
+- Added the `Underline` constant to use in the `ThermalPrinter.underline()` method (**breaking change**).
+- Added the `Defaults` constant.
 - Added the `ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
-- Moved the `validate.validate_barcode()` function to `ThermalPrinter.validate_barcode()` method.
-- Removed the `validate.validate_barcode_position()` function.
-- Removed the `validate.validate_charset()` function.
-- Removed the `validate.validate_chinese_format()` function.
-- Removed the `validate.validate_codepage()` function.
-- Removed the `exceptions.ThermalPrinterConstantError` class.
+- Added the `ThermalPrinter.has_paper` property.
+- Moved the `tools.printer_tests()` function to the `ThermalPrinter.demo()` method (**breaking change**).
+- Moved the `tools.print_char()` function to the `ThermalPrinter.print_char()` method (**breaking change**).
+- Moved the `validate.validate_barcode()` function to the `ThermalPrinter.validate_barcode()` method.
 - Removed the `line_feed` keyword-argument from `ThermalPrinter.out()`.
+- Removed the `validate.py` file, and most of `validate_*()` functions.
+- Removed the `exceptions.ThermalPrinterConstantError` class.
 
 # 0.3.0
 

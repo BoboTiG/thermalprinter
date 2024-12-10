@@ -1,6 +1,6 @@
-============
-Installation
-============
+===============
+💾 Installation
+===============
 
 .. code-block:: bash
 

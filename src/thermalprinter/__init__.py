@@ -26,7 +26,7 @@ from thermalprinter.constants import (
 from thermalprinter.exceptions import ThermalPrinterError
 from thermalprinter.thermalprinter import ThermalPrinter
 
-__version__ = "0.3.0"
+__version__ = "1.0.0"
 __author__ = "Mickaël Schoentgen"
 __copyright__ = f"""
 Copyright (c) 2016-2024, {__author__}
