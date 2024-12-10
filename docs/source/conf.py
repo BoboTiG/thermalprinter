@@ -1,6 +1,16 @@
 # ThermalPrinter documentation build configuration file, created by
 # sphinx-quickstart on Tue Sep 27 11:49:38 2016.
 
+# Lets prevent misses, and import the module to get the proper version.
+# So that the version in only defined once across the whole code base:
+#   src/thermalprinter/__init__.py
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+
+import thermalprinter
+
 # -- General configuration ------------------------------------------------
 
 extensions = [
@@ -11,24 +21,20 @@ extensions = [
     "sphinx.ext.intersphinx",
 ]
 myst_links_external_new_tab = True
-templates_path = []
 source_suffix = {".rst": "restructuredtext"}
-master_doc = "index"
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 project = "ThermalPrinter"
-author = "Mickaël Schoentgen"
-copyright = f"2016-2024, {author}"  # noqa: A001
-version = "1.0.0"
-release = "latest"
-language = "en"
-exclude_patterns = []
-pygments_style = "sphinx"
-todo_include_todos = False
+author = thermalprinter.__author__
+copyright = thermalprinter.__copyright__.splitlines()[1].removeprefix("Copyright (c) ").strip()  # noqa: A001
+version = thermalprinter.__version__
+
+master_doc = "index"
 
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = "shibuya"
 html_theme_options = {
-    "accent_color": "mint",
+    "accent_color": "orange",
     "globaltoc_expand_depth": 1,
     "toctree_titles_only": False,
     "nav_links": [
@@ -86,8 +92,3 @@ epub_title = project
 epub_author = author
 epub_publisher = author
 epub_copyright = copyright
-
-# For external links to standard library
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
-}

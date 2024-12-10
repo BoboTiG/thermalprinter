@@ -16,7 +16,7 @@ Raspberry Pi
 1. Ensure that ``ttyAMA0`` is not used for serial console access. Edit the file ``/boot/cmdline.txt`` to remove all name-value pairs containing ``ttyAMA0``.
 2. Add the user to the **dialout** group:
 
-.. code-block:: bash
+   .. code-block:: bash
 
     sudo usermod -a -G dialout $USER
 

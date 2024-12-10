@@ -98,15 +98,6 @@ All these attributes are **read-only**.
 .. autoproperty:: ThermalPrinter.lines
 .. autoproperty:: ThermalPrinter.max_column
 
-Exceptions
-==========
-
-.. module:: thermalprinter.exceptions
-
-.. autoexception:: ThermalPrinterError
-.. autoexception:: ThermalPrinterCommunicationError
-.. autoexception:: ThermalPrinterValueError
-
 Constants
 =========
 
@@ -175,3 +166,12 @@ Other
 -----
 
 .. autodata:: MAX_IMAGE_WIDTH
+
+Exceptions
+==========
+
+.. module:: thermalprinter.exceptions
+
+.. autoexception:: ThermalPrinterError
+.. autoexception:: ThermalPrinterCommunicationError
+.. autoexception:: ThermalPrinterValueError
