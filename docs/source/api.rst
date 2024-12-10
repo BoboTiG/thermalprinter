@@ -26,6 +26,8 @@ Images
 ------
 
 .. automethod:: ThermalPrinter.image
+.. automethod:: ThermalPrinter.image_convert
+.. automethod:: ThermalPrinter.image_resize
 
 Text Styling
 ------------

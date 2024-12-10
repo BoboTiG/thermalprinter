@@ -87,7 +87,10 @@ class ThermalPrinter(Serial):
         port: str = Defaults.PORT.value,
         *,
         baudrate: int = Defaults.BAUDRATE.value,
+        byte_time: float = Defaults.BYTE_TIME.value,
         command_timeout: float = 0.05,
+        dot_feed_time: float = Defaults.DOT_FEED_TIME.value,
+        dot_print_time: float = Defaults.DOT_PRINT_TIME.value,
         heat_interval: int = Defaults.HEAT_INTERVAL.value,
         heat_time: int = Defaults.HEAT_TIME.value,
         most_heated_point: int = Defaults.MOST_HEATED_POINT.value,
@@ -97,9 +100,9 @@ class ThermalPrinter(Serial):
         # Few important values
         self.is_open = False
         self._baudrate = baudrate
-        self._byte_time = 11 / baudrate
-        self._dot_feed_time = 0.0021
-        self._dot_print_time = 0.03
+        self._byte_time = byte_time
+        self._dot_feed_time = dot_feed_time
+        self._dot_print_time = dot_print_time
         self._command_timeout = command_timeout
         self._heat_time = heat_time
         self._heat_interval = heat_interval
@@ -619,10 +622,10 @@ class ThermalPrinter(Serial):
         """Picture printing.
 
         Requires the Python Imaging Library (Pillow).
-        The image will be resized to 384 pixels width  (:const:`MAX_IMAGE_WIDTH`)
+        The image will be resized to 384 pixels width (:const:`constants.MAX_IMAGE_WIDTH`)
         if necessary, and converted to 1-bit without diffusion dithering.
 
-        :param PIL.Image image: The PIL Image object to use.
+        :param PIL.Image image: The PIL Image object to print.
 
         Example:
 
@@ -632,22 +635,60 @@ class ThermalPrinter(Serial):
         .. tip::
             Since **v1.0** the image will be automatically resized when too wide.
         """
-        if image.mode != "1":
-            from PIL.Image import Dither
-
-            image = image.convert("1", dither=Dither.NONE)
+        image = self.image_convert(image)
+        image = self.image_resize(image)
+        bitmap = self.image_to_grayscale(image)
 
         width, height = image.size
+        row_bytes = int((width + 7) / 8)
+        idx = 0
+        for row_start in range(0, height, 255):
+            chunk_height = min(height - row_start, 255)
+            self.send_command(Command.DC2, 42, chunk_height, row_bytes)
 
-        if width > MAX_IMAGE_WIDTH:
-            from PIL.Image import Resampling
+            # Check if we can do line-by-line
+            for _ in range(chunk_height):
+                for _ in range(row_bytes):
+                    self.write(bytes([bitmap[idx]]))
+                    idx += 1
+                sleep(row_bytes * self._byte_time)
+                idx += row_bytes
 
-            image.thumbnail((MAX_IMAGE_WIDTH, int(MAX_IMAGE_WIDTH * height / width)), Resampling.LANCZOS)
-            log.info("Image resized from %dx%d to %dx%d", width, height, *image.size)
-            width, height = image.size
+        self.__lines += height // self._line_spacing + 1
+
+    def image_convert(self, image: Any) -> Any:
+        """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
+
+        :param PIL.Image image: The PIL Image object to convert.
+        :rtype: PIL.Image
+        :return: The converted image object, if converted, else the original ``image``.
+
+        .. hint::
+            Usually you do not need to call this method manually. It is used automatically
+            by the :func:`image()` method.
+        """
+        if image.mode == "1":
+            return image
+
+        from PIL.Image import Dither
+
+        log.info("Image converted from %s to 1", image.mode)
+        return image.convert("1", dither=Dither.NONE)
+
+    def image_to_grayscale(self, image: Any) -> bytearray:
+        """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
+
+        :param PIL.Image image: The PIL Image object to convert.
+        :rtype: PIL.Image
+        :return: The converted image object, if converted, else the original ``image``.
+
+        .. hint::
+            Usually you do not need to call this method manually. It is used automatically
+            by the :func:`image()` method.
+        """
+        width, height = image.size
 
         row_bytes = int((width + 7) / 8)
-        row_bytes_clipped = min(row_bytes, 48)
         bitmap = bytearray(row_bytes * height)
         pixels = image.load()
 
@@ -655,29 +696,41 @@ class ThermalPrinter(Serial):
             offset = col * row_bytes
             row = 0
             for pad in range(row_bytes):
-                sum_ = 0
+                bits_sum = 0
                 bit = 128
-                while bit > 0 and row < width:
+                while bit and row < width:
                     if pixels[row, col] == 0:
-                        sum_ |= bit
+                        bits_sum |= bit
                     row += 1
                     bit >>= 1
-                bitmap[offset + pad] = sum_
+                bitmap[offset + pad] = bits_sum
 
-        idx = 0
-        for row_start in range(0, height, 255):
-            chunk_height = min(height - row_start, 255)
-            self.send_command(Command.DC2, 42, chunk_height, row_bytes_clipped)
+        return bitmap
 
-            # Check if we can do line-by-line
-            for _ in range(chunk_height):
-                for _ in range(row_bytes_clipped):
-                    self.write(bytes([bitmap[idx]]))
-                    idx += 1
-                sleep(row_bytes_clipped * self._byte_time)
-                idx += row_bytes - row_bytes_clipped
+    def image_resize(self, image: Any) -> Any:
+        """Resize a given ``image`` to fit into the maximum width of 384 pixels (:const:`constants.MAX_IMAGE_WIDTH`),
+        *if necessary*.
+        The size proportion will be respected.
 
-        self.__lines += height // self._line_spacing + 1
+        :param PIL.Image image: The PIL Image object to resize.
+        :rtype: PIL.Image
+        :return: The resized image object, if resized, else the original ``image``.
+
+        .. hint::
+            Usually you do not need to call this method manually. It is used automatically
+            by the :func:`image()` method.
+        """
+        current_width, current_height = image.size
+        if current_width <= MAX_IMAGE_WIDTH:
+            return image
+
+        from PIL.Image import Resampling
+
+        new_width = MAX_IMAGE_WIDTH
+        new_height = int(new_width * current_height / current_width)
+        image.thumbnail((new_width, new_height), Resampling.LANCZOS)
+        log.info("Image resized from %dx%d to %dx%d", current_width, current_height, *image.size)
+        return image
 
     def init(self, heat_time: int) -> None:
         """Set printer heat properties.
@@ -699,7 +752,7 @@ class ThermalPrinter(Serial):
         """Set the text justification.
 
         .. versionchanged:: 1.0.0
-            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`Justify`.
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Justify`.
         """
         if value is not self._justify:
             self._justify = value
@@ -833,7 +886,7 @@ class ThermalPrinter(Serial):
         """Set the text size.
 
         .. versionchanged:: 1.0.0
-            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`Size`.
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Size`.
 
         .. note::
             This method affects :attr:`max_column`.
@@ -927,7 +980,7 @@ class ThermalPrinter(Serial):
         """Set the underline mode.
 
         .. versionchanged:: 1.0.0
-            The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`Underline`.
+            The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`constants.Underline`.
         """
         if weight is not self._underline:
             self._underline = weight
