@@ -4,6 +4,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 
 from __future__ import annotations
 
+import math
 from atexit import register
 from logging import getLogger
 from pathlib import Path
@@ -356,7 +357,6 @@ class ThermalPrinter(Serial):
         self.validate_barcode(data, barcode_type)
         self.send_command(Command.GS, 107, barcode_type.value[0], len(data))
 
-        # Check if we can print line-by-line
         for char in data:
             self.write(bytes([ord(char)]))
 
@@ -637,22 +637,28 @@ class ThermalPrinter(Serial):
         """
         image = self.image_convert(image)
         image = self.image_resize(image)
-        bitmap = self.image_to_grayscale(image)
+        bitmap = self.image_chunks(image)
 
         width, height = image.size
-        row_bytes = int((width + 7) / 8)
-        idx = 0
-        for row_start in range(0, height, 255):
-            chunk_height = min(height - row_start, 255)
-            self.send_command(Command.DC2, 42, chunk_height, row_bytes)
+        row_bytes = int((width + 7) / 8)  # Round up to next byte boundary
 
-            # Check if we can do line-by-line
-            for _ in range(chunk_height):
-                for _ in range(row_bytes):
-                    self.write(bytes([bitmap[idx]]))
-                    idx += 1
-                sleep(row_bytes * self._byte_time)
-                idx += row_bytes
+        self.send_command(
+            Command.GS,
+            118,
+            48,
+            0,
+            int(row_bytes % 256),
+            int(row_bytes / 256),
+            int(height % 256),
+            int(height / 256),
+        )
+
+        i = 0
+        for _ in range(height):
+            for _ in range(row_bytes):
+                self.write(bytes([bitmap[i]]))
+                i += 1
+        sleep(height * self._dot_print_time)
 
         self.__lines += height // self._line_spacing + 1
 
@@ -672,10 +678,11 @@ class ThermalPrinter(Serial):
 
         from PIL.Image import Dither
 
-        log.info("Image converted from %s to 1", image.mode)
-        return image.convert("1", dither=Dither.NONE)
+        new_mode = "1"
+        log.info("Image converted from %r to %r", image.mode, new_mode)
+        return image.convert(new_mode, dither=Dither.NONE)
 
-    def image_to_grayscale(self, image: Any) -> bytearray:
+    def image_chunks(self, image: Any) -> bytearray:
         """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
 
         :param PIL.Image image: The PIL Image object to convert.
@@ -687,23 +694,17 @@ class ThermalPrinter(Serial):
             by the :func:`image()` method.
         """
         width, height = image.size
+        chunks = math.ceil(width / 8)
+        bitmap = bytearray()
 
-        row_bytes = int((width + 7) / 8)
-        bitmap = bytearray(row_bytes * height)
-        pixels = image.load()
-
-        for col in range(height):
-            offset = col * row_bytes
-            row = 0
-            for pad in range(row_bytes):
-                bits_sum = 0
-                bit = 128
-                while bit and row < width:
-                    if pixels[row, col] == 0:
-                        bits_sum |= bit
-                    row += 1
-                    bit >>= 1
-                bitmap[offset + pad] = bits_sum
+        for y in range(height):
+            for chunk in range(chunks):
+                start = chunk * 8
+                byte = 0
+                for shift, x in enumerate(range(start, start + 8)):
+                    pixel = image.getpixel((x, y)) if x < image.width else 1
+                    byte |= int(not pixel) << (7 - shift)
+                bitmap.append(byte)
 
         return bitmap
 

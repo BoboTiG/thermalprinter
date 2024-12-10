@@ -22,7 +22,7 @@ def test_convert(printer: ThermalPrinter, caplog: pytest.CaptureFixture) -> None
     assert new_image.mode == "1"
 
     logs = [record.getMessage() for record in caplog.records if record.levelno == logging.INFO]
-    assert logs == ["Image converted from RGB to 1"]
+    assert logs == ["Image converted from 'RGB' to '1'"]
 
     # Second conversion, it should be a no-op
     caplog.clear()
@@ -33,11 +33,11 @@ def test_convert(printer: ThermalPrinter, caplog: pytest.CaptureFixture) -> None
     assert list(new_image.getdata()) == [255, 0, 255, 255, 255, 255, 0, 0, 0]
 
 
-def test_to_grayscale(printer: ThermalPrinter) -> None:
+def test_chunks(printer: ThermalPrinter) -> None:
     image = Image.open(SMALL)
     try:
         image = printer.image_convert(image)
-        bitmap = printer.image_to_grayscale(image)
+        bitmap = printer.image_chunks(image)
     finally:
         image.close()
 
@@ -66,3 +66,19 @@ def test_resize_is_necessary(printer: ThermalPrinter, caplog: pytest.CaptureFixt
 
     logs = [record.getMessage() for record in caplog.records if record.levelno == logging.INFO]
     assert logs == ["Image resized from 900x900 to 384x384"]
+
+
+def test_image(printer: ThermalPrinter) -> None:
+    image = Image.open(SMALL)
+    try:
+        printer.image(image)
+    finally:
+        image.close()
+
+
+def test_image_big(printer: ThermalPrinter) -> None:
+    image = Image.open(BIG)
+    try:
+        printer.image(image)
+    finally:
+        image.close()
