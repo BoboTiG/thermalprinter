@@ -37,6 +37,7 @@ html_theme_options = {
         {"title": "Package", "url": "https://pypi.org/project/thermalprinter/"},
     ],
 }
+html_favicon = "../icon.svg"
 html_context = {
     "source_type": "github",
     "source_user": "BoboTiG",

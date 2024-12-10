@@ -643,7 +643,7 @@ class ThermalPrinter(Serial):
             from PIL.Image import Resampling
 
             image.thumbnail((MAX_IMAGE_WIDTH, int(MAX_IMAGE_WIDTH * height / width)), Resampling.LANCZOS)
-            log.info("Resized the image from %dx%d to %dx%d", width, height, *image.size)
+            log.info("Image resized from %dx%d to %dx%d", width, height, *image.size)
             width, height = image.size
 
         row_bytes = int((width + 7) / 8)
