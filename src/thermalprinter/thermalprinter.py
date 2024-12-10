@@ -539,7 +539,7 @@ class ThermalPrinter(Serial):
         self.out("Underline", underline=Underline.THIN)
         self.out("Upside down", upside_down=True)
         self.out("Left margin", left_margin=5)
-        self.out("Left blank", left_margin=10)
+        self.out("Left blank", left_blank=10)
 
         # Chinese (almost all alphabets exist)
         self.out("现代汉语通用字表", chinese=True, chinese_format=Chinese.UTF_8)
@@ -705,8 +705,23 @@ class ThermalPrinter(Serial):
             self._justify = value
             self.send_command(Command.ESC, 97, value.value)
 
+    def left_blank(self, value: int = 0) -> None:
+        """Set the left margin, in points.
+
+        :param int value: Value to pass to the printer (min=0, max=255).
+        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
+        """
+        if value == self._left_blank:
+            return
+
+        if not isinstance(value, int) or not (0 <= value <= 255):
+            msg = "value should be betwwen 0 and 255."
+            raise ThermalPrinterValueError(msg)
+
+        self.send_command(Command.GS, 76, value, 0)
+
     def left_margin(self, margin: int = 0) -> None:
-        """Set the left margin.
+        """Set the left margin, in 8-points.
 
         :param int margin: The new margin (min=0, max=47).
         :exception ThermalPrinterValueError: On incorrect ``margin``'s type, or value.
@@ -748,21 +763,6 @@ class ThermalPrinter(Serial):
         if not self.is_online:
             self.__is_online = True
             self.send_command(Command.ESC, 61, 1)
-
-    def left_blank(self, value: int = 0) -> None:
-        """Set the left blank amount.
-
-        :param int value: Value to pass to the printer (min=0, max=255).
-        :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
-        """
-        if value == self._left_blank:
-            return
-
-        if not isinstance(value, int) or not (0 <= value <= 255):
-            msg = "value should be betwwen 0 and 255."
-            raise ThermalPrinterValueError(msg)
-
-        self.send_command(Command.GS, 76, value, 0)
 
     def print_char(self, char: str) -> None:
         """Test one character with all supported code pages.
@@ -916,7 +916,12 @@ class ThermalPrinter(Serial):
     def test(self) -> None:
         """Print the test page (including printer's settings)."""
         self.send_command(Command.DC2, 84)
-        sleep(self._dot_print_time * 24 * 26 + self._dot_feed_time * (8 * 26 + 32))
+
+        lines = 26
+        self.__lines += lines
+        self.__feeds += 1
+
+        sleep(self._dot_print_time * 24 * lines + self._dot_feed_time * (8 * lines + 32))
 
     def underline(self, weight: Underline = Underline.OFF) -> None:
         """Set the underline mode.
