@@ -12,17 +12,7 @@ If that URL should fail, try contacting the author.
 
 from __future__ import annotations
 
-from thermalprinter.constants import (
-    BarCode,
-    BarCodePosition,
-    CharSet,
-    Chinese,
-    CodePage,
-    Command,
-    Justify,
-    Size,
-    Underline,
-)
+from thermalprinter.constants import *
 from thermalprinter.exceptions import ThermalPrinterError
 from thermalprinter.thermalprinter import ThermalPrinter
 
