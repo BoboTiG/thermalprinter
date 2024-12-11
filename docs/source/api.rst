@@ -22,12 +22,16 @@ Barcodes
 .. automethod:: ThermalPrinter.barcode_width
 .. automethod:: ThermalPrinter.validate_barcode
 
+--------
+
 Images
 ------
 
 .. automethod:: ThermalPrinter.image
 .. automethod:: ThermalPrinter.image_convert
 .. automethod:: ThermalPrinter.image_resize
+
+--------
 
 Text Styling
 ------------
@@ -47,11 +51,15 @@ Text Styling
 .. automethod:: ThermalPrinter.underline
 .. automethod:: ThermalPrinter.upside_down
 
+--------
+
 Encoding and Charsets
 ---------------------
 
 .. automethod:: ThermalPrinter.charset
 .. automethod:: ThermalPrinter.codepage
+
+--------
 
 Chinese
 -------
@@ -59,11 +67,15 @@ Chinese
 .. automethod:: ThermalPrinter.chinese
 .. automethod:: ThermalPrinter.chinese_format
 
+--------
+
 Printing
 --------
 
 .. automethod:: ThermalPrinter.feed
 .. automethod:: ThermalPrinter.out
+
+--------
 
 Printer State
 -------------
@@ -76,6 +88,8 @@ Printer State
 .. automethod:: ThermalPrinter.reset
 .. automethod:: ThermalPrinter.test
 .. automethod:: ThermalPrinter.wake
+
+--------
 
 Special Methods
 ---------------
