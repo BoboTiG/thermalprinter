@@ -121,7 +121,16 @@ class ThermalPrinter(Serial):
             raise ThermalPrinterValueError(msg)
 
         # Init the serial
-        super().__init__(port=port, baudrate=baudrate, bytesize=8, parity="N", stopbits=1, timeout=1.00, dsrdtr=True)
+        super().__init__(
+            port=port,
+            baudrate=baudrate,
+            bytesize=8,
+            parity="N",
+            stopbits=1,
+            timeout=0,
+            write_timeout=0,
+            dsrdtr=True,
+        )
         sleep(sleep_sec_after_init)  # Important
         register(self._on_exit)
 
@@ -184,6 +193,8 @@ class ThermalPrinter(Serial):
 
     def write(self, b: ReadableBuffer, /) -> int | None:
         log.debug(" >>> WRITE %r", b)
+        while self.out_waiting:
+            pass
         return super().write(b)
 
     # Protect some attributes to being modified outside this class.
@@ -347,16 +358,33 @@ class ThermalPrinter(Serial):
 
     # Printer's methods
 
-    def barcode(self, data: str, barcode_type: BarCode) -> None:
+    def barcode(self, data: str, barcode_type: BarCode, **kwargs: Any) -> None:
         """Barcode printing. All checks are done to ensure the data validity.
 
         :param str data: The data to print.
         :param BarCode barecode_type: The barcode type to use.
+        :param dict kwargs: Additional barcode properties to apply.
         :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
+
+        You can set additional barcode properties via arguments:
+
+        >>> self.barcode("012345678901", BarCode.EAN13, width=4, height=80, position=BarCodePosition.BELOW)
+
+        This is a quicker way to do:
+
+        >>> printer.barcode_width(4)
+        >>> printer.barcode_height(80)
+        >>> printer.barcode_position(BarCodePosition.BELOW)
+        >>> printer.barcode("012345678901", BarCode.EAN13)
         """
         self.validate_barcode(data, barcode_type)
-        self.send_command(Command.GS, 107, barcode_type.value[0], len(data))
 
+        # Set barcode properties, if any
+        for prop, value in kwargs.items():
+            log.debug("Apply barcode property: %s: %r", prop, value)
+            getattr(self, f"barcode_{prop}")(value)
+
+        self.send_command(Command.GS, 107, barcode_type.value[0], len(data))
         for char in data:
             self.write(bytes([ord(char)]))
 
@@ -525,10 +553,7 @@ class ThermalPrinter(Serial):
             self.feed()
 
         # Barcode
-        self.barcode_height(80)
-        self.barcode_position(BarCodePosition.BELOW)
-        self.barcode_width(3)
-        self.barcode("012345678901", BarCode.EAN13)
+        self.barcode("012345678901", BarCode.EAN13, width=4, height=80, position=BarCodePosition.BELOW)
 
         # Style
         self.out("Bold", bold=True)
