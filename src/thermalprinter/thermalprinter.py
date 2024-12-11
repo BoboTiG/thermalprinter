@@ -152,6 +152,9 @@ class ThermalPrinter(Serial):
         """To be sure we keep stats and cleanup."""
         if self._use_stats and (self.lines or self.feeds):
             stats_save(self)
+            self.__feeds = 0
+            self.__lines = 0
+
         self.close()
 
     def __repr__(self) -> str:
