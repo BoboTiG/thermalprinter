@@ -15,7 +15,6 @@ from serial import Serial
 
 from thermalprinter.constants import *
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
-from thermalprinter.tools import stats_save
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -151,6 +150,8 @@ class ThermalPrinter(Serial):
     def _on_exit(self) -> None:
         """To be sure we keep stats, and cleanup."""
         if self._use_stats and (self.lines or self.feeds):
+            from thermalprinter.tools import stats_save
+
             stats_save(self)
             self.__feeds = 0
             self.__lines = 0
