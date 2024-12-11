@@ -509,7 +509,13 @@ class ThermalPrinter:
             self.feed()
 
         # Barcode
-        self.barcode("012345678901", BarCode.EAN13, width=4, height=80, position=BarCodePosition.BELOW)
+        self.barcode(
+            "012345678901",
+            BarCode.EAN13,
+            width=4,
+            height=80,
+            position=BarCodePosition.BELOW,
+        )
 
         # Style
         self.out("Bold", bold=True)
