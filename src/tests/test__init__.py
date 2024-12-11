@@ -18,7 +18,7 @@ def test_initialiation_without_context_manager(port: str) -> None:
 def test_default_values(port: str) -> None:
     printer = FakeThermalPrinter(port=port)
     assert repr(printer)
-    assert printer._baudrate == Defaults.BAUDRATE.value
+    assert printer._conn.baudrate == Defaults.BAUDRATE.value
     assert printer._heat_time == Defaults.HEAT_TIME.value
     assert printer._heat_interval == Defaults.HEAT_INTERVAL.value
     assert printer._most_heated_point == Defaults.MOST_HEATED_POINT.value
@@ -27,7 +27,7 @@ def test_default_values(port: str) -> None:
 def test_changing_good_values(port: str) -> None:
     opt = {"heat_time": 120, "heat_interval": 8, "most_heated_point": 5}
     printer = FakeThermalPrinter(port=port, baudrate=9600, **opt)
-    assert printer._baudrate == 9600
+    assert printer._conn.baudrate == 9600
     assert printer._heat_time == 120
     assert printer._heat_interval == 8
     assert printer._most_heated_point == 5

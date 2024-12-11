@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-import pty
 from typing import TYPE_CHECKING
 
 import pytest
@@ -27,12 +25,16 @@ def _no_warnings(recwarn: pytest.WarningsRecorder) -> Generator:
 
 @pytest.fixture(scope="session")
 def port() -> str:
-    """http://allican.be/blog/2017/01/15/python-dummy-serial-port.html."""
-    _, slave = pty.openpty()
-    return os.ttyname(slave)
+    """A serial port for unit tests.
+
+    Sources:
+        - https://github.com/pyserial/pyserial/blob/v3.5/test/test.py
+        - https://github.com/pyserial/pyserial/blob/v3.5/serial/urlhandler/protocol_loop.py
+    """
+    return "loop://"
 
 
 @pytest.fixture
 def printer(port: str) -> Generator[ThermalPrinter]:
-    with FakeThermalPrinter(port=port) as device:
+    with FakeThermalPrinter(port) as device:
         yield device

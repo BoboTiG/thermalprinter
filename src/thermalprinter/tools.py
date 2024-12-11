@@ -74,4 +74,4 @@ def stats_save(printer: ThermalPrinter) -> None:
 
     file = stats_file()
     file.write_text(json.dumps(stats))
-    log.debug("Saved statistics %r into %s.", stats, file)
+    log.debug("Saved statistics %r into %r.", stats, str(file))

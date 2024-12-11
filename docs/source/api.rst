@@ -80,7 +80,6 @@ Printer State
 Special Methods
 ---------------
 
-.. automethod:: ThermalPrinter.calibrate
 .. automethod:: ThermalPrinter.demo
 .. automethod:: ThermalPrinter.flush
 .. automethod:: ThermalPrinter.init

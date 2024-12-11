@@ -56,9 +56,6 @@ Sponsor = "https://github.com/sponsors/BoboTiG"
 Tracker = "https://github.com/BoboTiG/thermalprinter/issues"
 "Released Versions" = "https://github.com/BoboTiG/thermalprinter/releases"
 
-[project.scripts]
-calibrate-printer = "thermalprinter.__main__:main"
-
 [project.optional-dependencies]
 dev = [
   "build==1.2.2.post1",

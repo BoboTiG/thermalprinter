@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import queue
 from typing import TYPE_CHECKING
 
 from thermalprinter import ThermalPrinter
@@ -16,7 +17,9 @@ class FakeThermalPrinter(ThermalPrinter):
             command_timeout=0.0,
             dot_feed_time=0.0,
             dot_print_time=0.0,
-            sleep_sec_after_init=0.0,
             use_stats=False,
             **kwargs,
         )
+
+        # Larger queue to handle all cases
+        self._conn.queue = queue.Queue(4096 * 10)

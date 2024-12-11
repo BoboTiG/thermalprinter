@@ -11,7 +11,7 @@ from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING
 
-from serial import Serial
+import serial
 
 from thermalprinter.constants import *
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
@@ -28,7 +28,7 @@ log = getLogger(__name__)
 GNU_FILE = Path(__file__).parent / "gnu.png"
 
 
-class ThermalPrinter(Serial):
+class ThermalPrinter:
     """
     The class managing the thermal printer.
 
@@ -48,7 +48,7 @@ class ThermalPrinter(Serial):
         The ``command_timeout`` keyword-argument.
 
     .. versionadded:: 1.0.0
-        ``run_setup_cmd``, ``sleep_sec_after_init``, and ``use_stats``, keyword-arguments.
+        ``run_setup_cmd``, and ``use_stats``, keyword-arguments.
     """  # noqa: E501
 
     # Counters
@@ -96,13 +96,12 @@ class ThermalPrinter(Serial):
         heat_interval: int = Defaults.HEAT_INTERVAL.value,
         heat_time: int = Defaults.HEAT_TIME.value,
         most_heated_point: int = Defaults.MOST_HEATED_POINT.value,
+        read_timeout: float = Defaults.READ_TIMEOUT.value,
         run_setup_cmd: bool = True,
-        sleep_sec_after_init: float = 0.5,
         use_stats: bool = True,
+        write_timeout: float = Defaults.WRITE_TIMEOUT.value,
     ) -> None:
         # Few important values
-        self.is_open = False
-        self._baudrate = baudrate
         self._byte_time = byte_time
         self._dot_feed_time = dot_feed_time
         self._dot_print_time = dot_print_time
@@ -124,9 +123,8 @@ class ThermalPrinter(Serial):
             raise ThermalPrinterValueError(msg)
 
         # Init the serial
-        super().__init__(port=port, baudrate=baudrate, timeout=0, write_timeout=0, dsrdtr=True)
-        sleep(sleep_sec_after_init)  # Important
-        register(self._on_exit)
+        self._conn = serial.serial_for_url(port, baudrate=baudrate, timeout=read_timeout, write_timeout=write_timeout)
+        register(self.close)
 
         # Printer settings
         if run_setup_cmd:
@@ -145,9 +143,9 @@ class ThermalPrinter(Serial):
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
     ) -> None:
-        self._on_exit()
+        self.close()
 
-    def _on_exit(self) -> None:
+    def close(self) -> None:
         """To be sure we keep stats, and cleanup."""
         if self._use_stats and (self.lines or self.feeds):
             from thermalprinter.tools import stats_save
@@ -156,7 +154,7 @@ class ThermalPrinter(Serial):
             self.__feeds = 0
             self.__lines = 0
 
-        self.close()
+        self._conn.close()
 
     def __repr__(self) -> str:
         """Representation of the current printer settings and its state.
@@ -166,37 +164,29 @@ class ThermalPrinter(Serial):
         >>> printer = ThermalPrinter()
         >>> repr(super(type(printer), printer))
         """
-        settings = (
-            f"baudrate={self.baudrate}",
-            f"is_open={self.is_open}",
-        )
         states = []
-
         for var in vars(self):
-            if not var.startswith("_"):
-                continue
-
-            try:
-                attr = getattr(self, var[1:])
-            except AttributeError:
-                continue
-            else:
-                if not callable(attr):
+            if var.startswith("_"):
+                try:
+                    attr = getattr(self, var[1:])
+                except AttributeError:
                     continue
-                states.append(f"{var[1:]}={getattr(self, var)}")
+                else:
+                    if callable(attr):
+                        states.append(f"{var[1:]}={getattr(self, var)}")
 
-        return f"{type(self).__name__}<{', '.join(sorted(settings))}>({', '.join(sorted(states))})"
+        conn = repr(self._conn).split(", ", 1)[1]
+
+        return f"{type(self).__name__}<{conn}[{', '.join(sorted(states))}]"
 
     def read(self, size: int = 1) -> bytes:
-        res = super().read(size=size)
+        res = self._conn.read(size=size)
         log.debug(" <<< READ %r", res)
         return res
 
     def write(self, b: ReadableBuffer, /) -> int | None:
         log.debug(" >>> WRITE %r", b)
-        while self.out_waiting:
-            pass
-        return super().write(b)
+        return self._conn.write(b)
 
     # Protect some attributes to being modified outside this class.
 
@@ -452,39 +442,6 @@ class ThermalPrinter(Serial):
             self._bold = state
             self.send_command(Command.ESC, 69, int(state))
 
-    def calibrate(self, *, with_info: bool = True) -> None:
-        """Thermal calibration.
-
-        Run this method before using the printer for the first time, any
-        time a different power supply is used, or when using paper from a
-        different source.
-
-        Prints a series of black bars with increasing "heat time" settings.
-        Because printed sections have different "grip" characteristics than
-        blank paper, as this progresses the paper will usually at some point
-        jam -- either uniformly, making a short bar, or at one side or the
-        other, making a wedge shape. In some cases, the Raspberry Pi may reset
-        for lack of power.
-
-        Whatever the outcome, take the last number printed **before** any
-        distorted bar, and use that value as ``heat_time`` keyword-argument
-        when instantiating the printer.
-
-        :param ThermalPrinter printer: Optional printer to use.
-        :param bool with_info: Set to ``False`` to skip displaying the information.
-
-        .. note::
-            Source: [adafruit/Python-Thermal-Printer](https://github.com/adafruit/Python-Thermal-Printer/blob/master/calibrate.py)
-        """
-        if with_info:
-            print(str(self.calibrate.__doc__).split(":param", 1)[0])
-
-        for heat_time in range(0, 256, 15):
-            self.init(heat_time)
-            self.out(heat_time)
-            self.out(" " * self.max_column, inverse=True)
-        self.feed(2)
-
     def charset(self, charset: CharSet = CharSet.USA) -> None:
         """Set the character set.
 
@@ -546,7 +503,7 @@ class ThermalPrinter(Serial):
         # Image
         try:
             from PIL import Image
-        except ImportError:
+        except ImportError:  # pragma: nocover
             print("The PIL module is not installed, skipping the image demo.")
         else:
             self.feed()
@@ -630,10 +587,10 @@ class ThermalPrinter(Serial):
         :param bool clear: Set to ``True`` to also clear the input buffer.
         """
         self.send_command(Command.ESC, 64)
-        self.reset_output_buffer()
+        self._conn.reset_output_buffer()
         sleep(self._command_timeout)
         if clear:
-            self.reset_input_buffer()
+            self._conn.reset_input_buffer()
 
     def font_b(self, state: bool = False) -> None:
         """Turn on/off the font B mode.
@@ -791,14 +748,13 @@ class ThermalPrinter(Serial):
         :param int value: Value to pass to the printer (min=0, max=255).
         :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
         """
-        if value == self._left_blank:
-            return
-
         if not isinstance(value, int) or not (0 <= value <= 255):
             msg = "value should be betwwen 0 and 255."
             raise ThermalPrinterValueError(msg)
 
-        self.send_command(Command.GS, 76, value, 0)
+        if value != self._left_blank:
+            self._left_blank = value
+            self.send_command(Command.GS, 76, value, 0)
 
     def left_margin(self, margin: int = 0) -> None:
         """Set the left margin, in 8-points.
@@ -975,12 +931,11 @@ class ThermalPrinter(Serial):
         self.send_command(Command.ESC, 118, 0)
         sleep(self._command_timeout)
 
-        if self.in_waiting:
+        stat = -1
+        if self._conn.in_waiting:
             stat = ord(self.read(1))
-        elif raise_on_error:
+        elif raise_on_error:  # pragma: nocover
             raise ThermalPrinterCommunicationError
-        else:
-            stat = -1
 
         return self.status_to_dict(stat)
 

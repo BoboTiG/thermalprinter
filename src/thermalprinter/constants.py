@@ -183,6 +183,8 @@ class Defaults(Enum):
     LINE_SPACING = 30
     MOST_HEATED_POINT = 9
     PORT = "/dev/ttyAMA0"
+    READ_TIMEOUT = 0.0
+    WRITE_TIMEOUT = 1.0
 
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted, Justify, Size, Underline]

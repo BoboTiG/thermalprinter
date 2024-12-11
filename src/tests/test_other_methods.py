@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from thermalprinter.exceptions import ThermalPrinterCommunicationError
-
 if TYPE_CHECKING:
     from thermalprinter.thermalprinter import ThermalPrinter
 
@@ -18,10 +16,13 @@ def test_init(printer: ThermalPrinter) -> None:
     printer.init(42)
 
 
+def test_print_char(printer: ThermalPrinter) -> None:
+    printer.print_char("现")
+
+
 def test_status(printer: ThermalPrinter) -> None:
-    with pytest.raises(ThermalPrinterCommunicationError):
-        assert printer.status()
-    assert printer.status(raise_on_error=False) == printer.status_to_dict(-1)
+    printer.write(b" ")
+    assert printer.status() == printer.status_to_dict(ord(" "))
 
 
 @pytest.mark.parametrize(

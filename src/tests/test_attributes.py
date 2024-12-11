@@ -1,41 +1,43 @@
 import pytest
 
-from thermalprinter.constants import Defaults
 from thermalprinter.thermalprinter import ThermalPrinter
 
 
 def test_repr(printer: ThermalPrinter) -> None:
-    assert repr(printer) == (
-        f"FakeThermalPrinter<baudrate={Defaults.BAUDRATE.value}, is_open=True>("
-        f"barcode_height={Defaults.BARCODE_HEIGHT.value},"
-        " barcode_left_margin=0,"
-        " barcode_position=BarCodePosition.HIDDEN,"
-        f" barcode_width={Defaults.BARCODE_WIDTH.value},"
-        " bold=False,"
-        " char_spacing=0,"
-        " charset=CharSet.USA,"
-        " chinese=False,"
-        " chinese_format=Chinese.GBK,"
-        " codepage=CodePage.CP437,"
-        " double_height=False,"
-        " double_width=False,"
-        " font_b=False,"
-        " inverse=False,"
-        " justify=Justify.LEFT,"
-        " left_blank=0,"
-        " left_margin=0,"
-        f" line_spacing={Defaults.LINE_SPACING.value},"
-        " rotate=False,"
-        " size=Size.SMALL,"
-        " strike=False,"
-        " underline=Underline.OFF,"
-        " upside_down=False"
-        ")"
+    expected = (
+        "FakeThermalPrinter"
+        "<open=True>(port='loop://', baudrate=19200, bytesize=8, parity='N', stopbits=1, timeout=0.0, xonxoff=False, rtscts=False, dsrdtr=False)"
+        "["
+        "barcode_height=162"
+        ", barcode_left_margin=0"
+        ", barcode_position=BarCodePosition.HIDDEN"
+        ", barcode_width=3"
+        ", bold=False"
+        ", char_spacing=0"
+        ", charset=CharSet.USA"
+        ", chinese=False"
+        ", chinese_format=Chinese.GBK"
+        ", codepage=CodePage.CP437"
+        ", double_height=False"
+        ", double_width=False"
+        ", font_b=False"
+        ", inverse=False"
+        ", justify=Justify.LEFT"
+        ", left_blank=0"
+        ", left_margin=0"
+        ", line_spacing=30"
+        ", rotate=False"
+        ", size=Size.SMALL"
+        ", strike=False"
+        ", underline=Underline.OFF"
+        ", upside_down=False"
+        "]"
     )
+    assert repr(printer) == expected
 
 
 def test_attribute_has_paper(printer: ThermalPrinter) -> None:
-    assert not printer.has_paper
+    assert printer.has_paper
 
 
 def test_attribute_get_is_online(printer: ThermalPrinter) -> None:
