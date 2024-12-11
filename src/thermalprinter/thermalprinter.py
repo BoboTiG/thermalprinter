@@ -375,11 +375,9 @@ class ThermalPrinter:
             log.debug("Apply barcode property: %s: %r", prop, value)
             getattr(self, f"barcode_{prop}")(value)
 
-        self.send_command(Command.GS, 107, barcode_type.value[0], len(data))
-        for char in data:
-            self.write(bytes([ord(char)]))
+        self.send_command(Command.GS, 107, barcode_type.value[0], len(data), *list(map(ord, data)))
 
-        sleep((self._barcode_height + self._line_spacing) * self._dot_print_time)
+        sleep((self._barcode_height / self._line_spacing) * self._dot_print_time)
         self.__lines += int(self._barcode_height / self._line_spacing) + 1
 
     def barcode_height(self, height: int = Defaults.BARCODE_HEIGHT.value) -> None:
@@ -635,14 +633,10 @@ class ThermalPrinter:
             int(height % 256),
             int(height / 256),
         )
+        for bit in bitmap:
+            self.write(bytes([bit]))
 
-        i = 0
-        for _ in range(height):
-            for _ in range(row_bytes):
-                self.write(bytes([bitmap[i]]))
-                i += 1
-        sleep(height * self._dot_print_time)
-
+        sleep(height / self._line_spacing * self._dot_print_time)
         self.__lines += height // self._line_spacing + 1
 
     def image_convert(self, image: Any) -> Any:
