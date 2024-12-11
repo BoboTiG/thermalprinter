@@ -39,7 +39,6 @@ class ThermalPrinter:
     :param int heat_interval: Printer heat time interval.
     :param int most_heated_point: Printer most heated point.
     :param bool run_setup_cmd: Set to ``False`` to disable the automatic one-shot run of the printer settings command (that ay be problematic on some devices).
-    :param flat sleep_sec_after_init: Initial *mandatory* time-to-wait right after the serial initialisation.
     :param bool use_stats: Set to ``False`` to disable statistics persistence. See :doc:`tools <tools>` for its usage.
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
@@ -359,12 +358,19 @@ class ThermalPrinter:
 
         You can set additional barcode properties via arguments:
 
-        >>> self.barcode("012345678901", BarCode.EAN13, width=3, height=80, position=BarCodePosition.BELOW)
+        >>> printer.barcode(
+        ...     "012345678901",
+        ...     BarCode.EAN13,
+        ...     width=3,
+        ...     height=80,
+        ...     left_margin=2,
+        ...     position=BarCodePosition.BELOW)
 
         This is a quicker way to do:
 
         >>> printer.barcode_width(3)
         >>> printer.barcode_height(80)
+        >>> printer.barcode_left_margin(2)
         >>> printer.barcode_position(BarCodePosition.BELOW)
         >>> printer.barcode("012345678901", BarCode.EAN13)
         """
@@ -512,8 +518,9 @@ class ThermalPrinter:
         self.barcode(
             "012345678901",
             BarCode.EAN13,
-            width=4,
+            width=3,
             height=80,
+            left_margin=2,
             position=BarCodePosition.BELOW,
         )
 
