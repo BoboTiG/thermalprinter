@@ -815,12 +815,12 @@ class ThermalPrinter:
         Say you are looking for the good code page to print a sequence,
         you can print it using every code pages:
 
-        >>> print_char("现")
+        >>> printer.print_char("现")
 
         This function is equivalent to:
 
         >>> for codepage in list(CodePage):
-        ...    self.out(f"{codepage.name}: 现")
+        ...    printer.out(f"{codepage.name}: 现")
         """
         for codepage in list(CodePage):
             self.out(f"{codepage.name}: {char}")
