@@ -41,7 +41,7 @@ class ThermalPrinter(Serial):
     :param int most_heated_point: Printer most heated point.
     :param bool run_setup_cmd: Set to ``False`` to disable the automatic one-shot run of the printer settings command (that ay be problematic on some devices).
     :param flat sleep_sec_after_init: Initial *mandatory* time-to-wait right after the serial initialisation.
-    :param bool use_stats: Set to ``False`` to disable statistics persistence.
+    :param bool use_stats: Set to ``False`` to disable statistics persistence. See :doc:`tools <tools>` for its usage.
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
 
@@ -49,7 +49,7 @@ class ThermalPrinter(Serial):
         The ``command_timeout`` keyword-argument.
 
     .. versionadded:: 1.0.0
-        ``run_setup_cmd``, and ``sleep_sec_after_init``, ``use_stats``, keyword-arguments.
+        ``run_setup_cmd``, ``sleep_sec_after_init``, and ``use_stats``, keyword-arguments.
     """  # noqa: E501
 
     # Counters
@@ -149,7 +149,7 @@ class ThermalPrinter(Serial):
         self._on_exit()
 
     def _on_exit(self) -> None:
-        """To be sure we keep stats and cleanup."""
+        """To be sure we keep stats, and cleanup."""
         if self._use_stats and (self.lines or self.feeds):
             stats_save(self)
             self.__feeds = 0
