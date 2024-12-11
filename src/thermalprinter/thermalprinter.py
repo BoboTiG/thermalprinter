@@ -121,7 +121,7 @@ class ThermalPrinter(Serial):
             raise ThermalPrinterValueError(msg)
 
         # Init the serial
-        super().__init__(port=port, baudrate=self._baudrate)
+        super().__init__(port=port, baudrate=baudrate, bytesize=8, parity="N", stopbits=1, timeout=1.00, dsrdtr=True)
         sleep(sleep_sec_after_init)  # Important
         register(self._on_exit)
 
