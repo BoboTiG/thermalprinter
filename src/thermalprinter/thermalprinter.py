@@ -15,6 +15,7 @@ from serial import Serial
 
 from thermalprinter.constants import *
 from thermalprinter.exceptions import ThermalPrinterCommunicationError, ThermalPrinterValueError
+from thermalprinter.tools import stats_save
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -40,6 +41,7 @@ class ThermalPrinter(Serial):
     :param int most_heated_point: Printer most heated point.
     :param bool run_setup_cmd: Set to ``False`` to disable the automatic one-shot run of the printer settings command (that ay be problematic on some devices).
     :param flat sleep_sec_after_init: Initial *mandatory* time-to-wait right after the serial initialisation.
+    :param bool use_stats: Set to ``False`` to disable statistics persistence.
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
 
@@ -47,7 +49,7 @@ class ThermalPrinter(Serial):
         The ``command_timeout`` keyword-argument.
 
     .. versionadded:: 1.0.0
-        ``run_setup_cmd``, and ``sleep_sec_after_init``, keyword-arguments.
+        ``run_setup_cmd``, and ``sleep_sec_after_init``, ``use_stats``, keyword-arguments.
     """  # noqa: E501
 
     # Counters
@@ -97,6 +99,7 @@ class ThermalPrinter(Serial):
         most_heated_point: int = Defaults.MOST_HEATED_POINT.value,
         run_setup_cmd: bool = True,
         sleep_sec_after_init: float = 0.5,
+        use_stats: bool = True,
     ) -> None:
         # Few important values
         self.is_open = False
@@ -108,6 +111,7 @@ class ThermalPrinter(Serial):
         self._heat_time = heat_time
         self._heat_interval = heat_interval
         self._most_heated_point = most_heated_point
+        self._use_stats = use_stats
 
         # Several checks
         msg = ""
@@ -155,6 +159,8 @@ class ThermalPrinter(Serial):
 
     def _on_exit(self) -> None:
         """To be sure we keep stats and cleanup."""
+        if self._use_stats and (self.lines or self.feeds):
+            stats_save(self)
         self.close()
 
     def __repr__(self) -> str:
@@ -368,11 +374,11 @@ class ThermalPrinter(Serial):
 
         You can set additional barcode properties via arguments:
 
-        >>> self.barcode("012345678901", BarCode.EAN13, width=4, height=80, position=BarCodePosition.BELOW)
+        >>> self.barcode("012345678901", BarCode.EAN13, width=3, height=80, position=BarCodePosition.BELOW)
 
         This is a quicker way to do:
 
-        >>> printer.barcode_width(4)
+        >>> printer.barcode_width(3)
         >>> printer.barcode_height(80)
         >>> printer.barcode_position(BarCodePosition.BELOW)
         >>> printer.barcode("012345678901", BarCode.EAN13)

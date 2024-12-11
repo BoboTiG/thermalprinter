@@ -187,3 +187,4 @@ class Defaults(Enum):
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted, Justify, Size, Underline]
 MAX_IMAGE_WIDTH = 384  #: Max image width.
+STATS_FILE = "~/.thermalprinter.json"  #: Printer statistics file. See :doc:`tools <tools>` for its usage.

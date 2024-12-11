@@ -168,6 +168,7 @@ Other
 -----
 
 .. autodata:: MAX_IMAGE_WIDTH
+.. autodata:: STATS_FILE
 
 Exceptions
 ==========

@@ -17,5 +17,6 @@ class FakeThermalPrinter(ThermalPrinter):
             dot_feed_time=0.0,
             dot_print_time=0.0,
             sleep_sec_after_init=0.0,
+            use_stats=False,
             **kwargs,
         )
