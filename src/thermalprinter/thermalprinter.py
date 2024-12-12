@@ -229,13 +229,13 @@ class ThermalPrinter:
 
         You can pass formatting instructions directly via arguments:
 
-        >>> self.out(data, justify=Justify.CENTER, inverse=True)
+        >>> printer.out(data, justify=Justify.CENTER, inverse=True)
 
         This is a quicker way to do:
 
         >>> printer.justify(Justify.CENTER)
         >>> printer.inverse(True)
-        >>> self.out(data)
+        >>> printer.out(data)
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
         """
@@ -282,7 +282,7 @@ class ThermalPrinter:
         """Convert data before sending to the printer.
 
         :param mixed data: Any type of data to print.
-        :return bytes: The converted data in bytes
+        :return bytes: The converted data in bytes.
         """
         if isinstance(data, (bool, int, float, complex)):
             data = str(data)
@@ -820,7 +820,7 @@ class ThermalPrinter:
         This function is equivalent to:
 
         >>> for codepage in list(CodePage):
-        ...    printer.out(f"{codepage.name}: 现")
+        ...     printer.out(f"{codepage.name}: 现")
         """
         for codepage in list(CodePage):
             self.out(f"{codepage.name}: {char}")
