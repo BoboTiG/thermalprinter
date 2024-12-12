@@ -32,14 +32,19 @@ class ThermalPrinter:
     """
     The class managing the thermal printer.
 
-    :param str port: Serial port to use, known as the device name.
-    :param int baudrate: Baud rate.
-    :param float command_timeout: Command timeout, in seconds.
-    :param int heat_time: Printer heat time.
-    :param int heat_interval: Printer heat time interval.
-    :param int most_heated_point: Printer most heated point.
+    :param str port: Serial port to use, known as the device name (see :const:`constants.Defaults.PORT`).
+    :param int baudrate: Baud rate (see :const:`constants.Defaults.BAUDRATE`).
+    :param float byte_time: Number of seconds to issue one byte to the printer. 11 bits (not 8) to accommodate idle, start, and stop, bits. See :const:`constants.Defaults.BYTE_TIME`.
+    :param float command_timeout: Time to sleep after issuing a command to the printer, in seconds.
+    :param float dot_feed_time: Printer feed time, in seconds (see :const:`constants.Defaults.DOT_FEED_TIME`).
+    :param float dot_print_time: Printer dot time, in seconds (see :const:`constants.Defaults.DOT_PRINT_TIME`).
+    :param int heat_interval: Printer heat time interval (see :const:`constants.Defaults.HEAT_INTERVAL`).
+    :param int heat_time: Printer heat time (see :const:`constants.Defaults.HEAT_TIME`).
+    :param int most_heated_point: Printer most heated point (see :const:`constants.Defaults.MOST_HEATED_POINT`).
+    :param float read_timeout: Serial read timeout, in seconds (see :const:`constants.Defaults.READ_TIMEOUT`).
     :param bool run_setup_cmd: Set to ``False`` to disable the automatic one-shot run of the printer settings command (that ay be problematic on some devices).
     :param bool use_stats: Set to ``False`` to disable statistics persistence. See :doc:`tools <tools>` for its usage.
+    :param float write_timeout: Serial write timeout, in seconds (see :const:`constants.Defaults.WRITE_TIMEOUT`).
 
     :exception ThermalPrinterValueError: On incorrect argument's type, or value.
 
@@ -47,7 +52,7 @@ class ThermalPrinter:
         The ``command_timeout`` keyword-argument.
 
     .. versionadded:: 1.0.0
-        ``run_setup_cmd``, and ``use_stats``, keyword-arguments.
+        ``byte_time``, ``dot_feed_time``, ``dot_print_time``, ``run_setup_cmd``, ``read_timeout``, ``use_stats``, and ``write_timeout``, keyword-arguments.
     """  # noqa: E501
 
     # Counters
@@ -183,9 +188,10 @@ class ThermalPrinter:
         log.debug(" <<< READ %r", res)
         return res
 
-    def write(self, b: ReadableBuffer, /) -> int | None:
-        log.debug(" >>> WRITE %r", b)
-        return self._conn.write(b)
+    def write(self, data: ReadableBuffer, *, should_log: bool = True) -> int | None:
+        if should_log:
+            log.debug(" >>> WRITE %r", data)
+        return self._conn.write(data)
 
     # Protect some attributes to being modified outside this class.
 
@@ -221,10 +227,11 @@ class ThermalPrinter:
 
     # Module's methods
 
-    def out(self, data: Any, **kwargs: Any) -> None:
+    def out(self, data: Any, line_feed: bool = True, **kwargs: Any) -> None:
         """Send one line to the printer.
 
         :param mixed data: The data to print.
+        :param bool line_feed: Wether or not to issue a final line feed (``\\n`` character).
         :param dict kwargs: Additional styles to apply.
 
         You can pass formatting instructions directly via arguments:
@@ -239,21 +246,25 @@ class ThermalPrinter:
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
         """
-        log.debug("Line: %r (%s)", data, ", ".join(f"{k}={v}" for k, v in kwargs.items()))
+        log.debug(
+            "Line: %r%s (%s)", data, (r" + '\n'" if line_feed else ""), "".join(f"{k}={v}" for k, v in kwargs.items())
+        )
 
         # Apply styles
         for style, value in kwargs.items():
             log.debug("Apply style: %s: %r", style, value)
             getattr(self, style)(value)
 
-        self.write(self.to_bytes(data) + b"\n")
-        self.__lines += 1
-
-        # Sizes M, and L, are double height
-        if self._size is not Size.SMALL:
+        self.write(self.to_bytes(data))
+        if line_feed:
+            self.write(b"\n")
             self.__lines += 1
 
-        sleep(2 * self._dot_feed_time * self._char_height)
+            # Sizes M, and L, have double height
+            if self._size is not Size.SMALL:
+                self.__lines += 1
+
+        sleep((1 + int(line_feed)) * self._dot_feed_time * self._char_height)
 
         # Restore default styles
         for style in kwargs:
@@ -309,6 +320,9 @@ class ThermalPrinter:
         :param str data: The data to print.
         :param BarCode barecode_type: The barcode type to validate.
         :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
+
+        .. versionadded:: 1.0.0
+
         """
 
         def _range0(min_: int = 48, max_: int = 57) -> list[int]:
@@ -373,6 +387,9 @@ class ThermalPrinter:
         >>> printer.barcode_left_margin(2)
         >>> printer.barcode_position(BarCodePosition.BELOW)
         >>> printer.barcode("012345678901", BarCode.EAN13)
+
+        .. versionadded:: 1.0.0
+            The ``kwargs`` keyword-argument to set additional barcode properties.
         """
         self.validate_barcode(data, barcode_type)
 
@@ -502,6 +519,9 @@ class ThermalPrinter:
         """Show time!
 
         Demonstrate printer capabilities.
+
+        .. versionadded:: 1.0.0
+
         """
 
         # Image
@@ -607,6 +627,9 @@ class ThermalPrinter:
         """Turn on/off the font B mode.
 
         :param bool state: Enabled if ``state`` is ``True``, else disabled.
+
+        .. versionadded:: 1.0.0
+
         """
         if state is not self._font_b:
             self._font_b = state
@@ -627,7 +650,7 @@ class ThermalPrinter:
         >>> printer.image(Image.open("picture.png"))
 
         .. tip::
-            Since **v1.0** the image will be automatically resized when too wide.
+            Since **v1.0.0** the image will be automatically resized when too wide.
         """
         image = self.image_convert(image)
         image = self.image_resize(image)
@@ -646,8 +669,9 @@ class ThermalPrinter:
             int(height % 256),
             int(height / 256),
         )
+        log.debug(" >>> WRITE %s bytes of image data", f"{len(bitmap):,}")
         for bit in bitmap:
-            self.write(bytes([bit]))
+            self.write(bytes([bit]), should_log=False)
 
         sleep(height / self._line_spacing * self._dot_print_time)
         self.__lines += height // self._line_spacing + 1
@@ -662,6 +686,9 @@ class ThermalPrinter:
         .. hint::
             Usually you do not need to call this method manually. It is used automatically
             by the :func:`image()` method.
+
+        .. versionadded:: 1.0.0
+
         """
         if image.mode == "1":
             return image
@@ -682,6 +709,9 @@ class ThermalPrinter:
         .. hint::
             Usually you do not need to call this method manually. It is used automatically
             by the :func:`image()` method.
+
+        .. versionadded:: 1.0.0
+
         """
         width, height = image.size
         chunks = math.ceil(width / 8)
@@ -710,6 +740,9 @@ class ThermalPrinter:
         .. hint::
             Usually you do not need to call this method manually. It is used automatically
             by the :func:`image()` method.
+
+        .. versionadded:: 1.0.0
+
         """
         current_width, current_height = image.size
         if current_width <= MAX_IMAGE_WIDTH:
@@ -727,6 +760,9 @@ class ThermalPrinter:
         """Set printer heat properties.
 
         :param int heat_time: Printer heat time.
+
+        .. versionadded:: 1.0.0
+
         """
         self.send_command(Command.ESC, 55, self._most_heated_point, heat_time, self._heat_interval)
 
@@ -754,6 +790,9 @@ class ThermalPrinter:
 
         :param int value: Value to pass to the printer (min=0, max=255).
         :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
+
+        .. versionadded:: 1.0.0
+
         """
         if not isinstance(value, int) or not (0 <= value <= 255):
             msg = "value should be betwwen 0 and 255."
@@ -821,6 +860,9 @@ class ThermalPrinter:
 
         >>> for codepage in list(CodePage):
         ...     printer.out(f"{codepage.name}: 现")
+
+        .. versionadded:: 1.0.0
+
         """
         for codepage in list(CodePage):
             self.out(f"{codepage.name}: {char}")
@@ -829,9 +871,9 @@ class ThermalPrinter:
         """Reset the printer to factory defaults."""
         self.flush(clear=True)
 
-        print_density = 10  # 100%
-        print_break_time = 2  # 500 uS
-        self.send_command(Command.DC2, 35, (print_break_time << 5) | print_density)
+        # print_density = 10  # 100%
+        # print_break_time = 2  # 500 uS
+        # self.send_command(Command.DC2, 35, (print_break_time << 5) | print_density)
 
         # Default values
         self.__max_column = 32
@@ -875,11 +917,11 @@ class ThermalPrinter:
     def size(self, value: Size = Size.SMALL) -> None:
         """Set the text size.
 
-        .. versionchanged:: 1.0.0
-            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Size`.
-
         .. note::
             This method affects :attr:`max_column`.
+
+        .. versionchanged:: 1.0.0
+            The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Size`.
         """
         if value is not self._size:
             self._size = value
@@ -914,8 +956,8 @@ class ThermalPrinter:
             - ``temp``: ``False`` if the temperature exceeds 60°C
             - ``voltage``: ``False`` if the voltage is higher than 9.5V
 
-        .. versionchanged:: 1.0.0
-           Removed the ``movement`` key as it would be always ``False``.
+        .. versionadded:: 1.0.0
+
         """
         return {
             "paper": stat & 0b00000100 == 0,
@@ -934,6 +976,9 @@ class ThermalPrinter:
 
         .. versionadded:: 0.2.0
            The ``raise_on_error`` keyword-argument.
+
+        .. versionremoved:: 1.0.0
+           The ``movement`` key as it would always be ``False``.
         """
         self.send_command(Command.ESC, 118, 0)
         sleep(self._command_timeout)
