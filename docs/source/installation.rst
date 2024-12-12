@@ -2,6 +2,9 @@
 💾 Installation
 ===============
 
+From a Package Manager
+======================
+
 .. code-block:: bash
 
     python -m pip install -U thermalprinter
