@@ -134,10 +134,10 @@ class Command(Enum):
     """Codes used to send commands."""
 
     NONE = 0
-    DC2 = 18  # Device control 2
-    ESC = 27  # Escape
-    FS = 28  # Field separator
-    GS = 29  # Group separator
+    DC2 = 18  #: Device control 2.
+    ESC = 27  #: Escape.
+    FS = 28  #: Field separator.
+    GS = 29  #: Group separator.
 
 
 class Justify(Enum):
