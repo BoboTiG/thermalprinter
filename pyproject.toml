@@ -90,12 +90,12 @@ skip-excluded-dirs = true
 [tool.hatch.build.targets.sdist]
 only-include = [
   "CHANGELOG.md",
-  "src/thermalprinter",
+  "src",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = [
-  "src/thermalprinter",
+  "src",
 ]
 
 [tool.coverage.report]
