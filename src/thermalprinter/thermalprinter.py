@@ -246,8 +246,11 @@ class ThermalPrinter:
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
         """
-        log.debug(
-            "Line: %r%s (%s)", data, (r" + '\n'" if line_feed else ""), "".join(f"{k}={v}" for k, v in kwargs.items())
+        log.info(
+            "Line: %r%s (%s)",
+            data,
+            (r" + '\n'" if line_feed else ""),
+            "".join(f"{k}={v}" for k, v in kwargs.items()),
         )
 
         # Apply styles
@@ -391,6 +394,7 @@ class ThermalPrinter:
         .. versionadded:: 1.0.0
             The ``kwargs`` keyword-argument to set additional barcode properties.
         """
+        log.info("Barcode: %r, type=%r", data, barcode_type)
         self.validate_barcode(data, barcode_type)
 
         # Set barcode properties, if any
@@ -652,6 +656,7 @@ class ThermalPrinter:
         .. tip::
             Since **v1.0.0** the image will be automatically resized when too wide.
         """
+        log.info("Image %r, %dx%d pixels, mode=%r", image.filename, *image.size, image.mode)
         image = self.image_convert(image)
         image = self.image_resize(image)
         bitmap = self.image_chunks(image)
@@ -934,6 +939,7 @@ class ThermalPrinter:
         :param int seconds: Value to pass to the printer (min=0).
         :exception ThermalPrinterValueError: On incorrect ``seconds``'s type, or value.
         """
+        log.info("Put the printer in low-energy state (currently sleeping: %s)", self.is_sleeping)
         if self.is_sleeping:
             return
 
@@ -1031,6 +1037,7 @@ class ThermalPrinter:
 
     def wake(self) -> None:
         """Wake up the printer."""
+        log.info("Wake-up the printer (currently sleeping: %s)", self.is_sleeping)
         if self.is_sleeping:
             self.__is_sleeping = False
             self.send_command(Command.NONE, 255)
