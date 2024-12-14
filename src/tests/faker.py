@@ -10,9 +10,16 @@ if TYPE_CHECKING:
 
 
 class FakeThermalPrinter(ThermalPrinter):
-    def __init__(self, port: str, **kwargs: Any) -> None:
+    """A fake thermal printer with a special serial port for unit tests.
+
+    Sources:
+        - https://github.com/pyserial/pyserial/blob/v3.5/test/test.py
+        - https://github.com/pyserial/pyserial/blob/v3.5/serial/urlhandler/protocol_loop.py
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(
-            port=port,
+            port="loop://",
             byte_time=0.0,
             command_timeout=0.0,
             dot_feed_time=0.0,

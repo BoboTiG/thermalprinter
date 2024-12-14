@@ -2,8 +2,15 @@
 
 Release date: `2024-12-xx`
 
+## Bug Fixes
+
+- Fixed printed lines counting in ``ThermalPrinter.out()``.
+
 ## Features
 
+- Recipe: calendar
+- Recipe: weather
+- Recipe: Persian text printing made easy using ``ThermalPrinter.out("...", persian=True")``.
 - New option to control printer settings at initialization: `ThermalPrinter(..., run_setup_cmd=bool)` (#15).
 - New option to specify the *mandatory* sleep time, in seconds, right after the serial initialization: `ThermalPrinter(..., sleep_sec_after_init=float)`.
 - Improved the documentation by fixing issues found with [Harper](https://github.com/elijah-potter/harper).

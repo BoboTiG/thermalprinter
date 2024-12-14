@@ -5,6 +5,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 from __future__ import annotations
 
 import math
+import struct
 from atexit import register
 from logging import getLogger
 from pathlib import Path
@@ -245,6 +246,18 @@ class ThermalPrinter:
         >>> printer.out(data)
         >>> printer.inverse(False)
         >>> printer.justify(Justify.LEFT)
+
+        .. hint::
+            A special boolean keyword-argument can be used to print Persian text: ``persian=True``.
+            It will reshape ``data``, and set proper text styles to issue the final text.
+
+            See :ref:`recipes <persian-text>` for required dependencies.
+
+            Credits go to `@ghorbanpirizad <https://github.com/ghorbanpirizad>`_ in `issue #4 <https://github.com/BoboTiG/thermalprinter/issues/4>`_.
+
+        .. versionadded:: 1.0.0
+            The ``persian`` keyword-argument.
+
         """
         log.info(
             "Line: %r%s (%s)",
@@ -253,21 +266,46 @@ class ThermalPrinter:
             "".join(f"{k}={v}" for k, v in kwargs.items()),
         )
 
+        persian = kwargs.pop("persian", False)
+        if persian:
+            try:
+                from thermalprinter.recipes import persian
+            except ImportError:
+                log.exception("Cannot print Persian text due to missing dependencies.")
+                return
+
+            data = persian.reshape(data)
+            data = persian.algorithm.get_display(data)
+
+            kwargs["codepage"] = CodePage.IRAN
+            kwargs["justify"] = Justify.RIGHT
+
+            transposed = []
+            for char in data:
+                val = ord(char)
+                if val > 128:
+                    # This char seems to be too high to be standard, so try
+                    # to use the Iran code map, and use "?" as fallback.
+                    val = persian.IRAN_SYSTEM_MAP.get(val, 0x3F)
+                transposed.append(bytes([val]))
+            data = b"".join(transposed)
+
         # Apply styles
         for style, value in kwargs.items():
             log.debug("Apply style: %s: %r", style, value)
             getattr(self, style)(value)
 
-        self.write(self.to_bytes(data))
+        data = self.to_bytes(data)
         if line_feed:
-            self.write(b"\n")
-            self.__lines += 1
+            data += b"\n"
 
-            # Sizes M, and L, have double height
-            if self._size is not Size.SMALL:
-                self.__lines += 1
+        self.write(data)
 
-        sleep((1 + int(line_feed)) * self._dot_feed_time * self._char_height)
+        # Sizes M, and L, have double height
+        written_lines_count = data.count(b"\n") * (1 if self._size is Size.SMALL else 2)
+        self.__lines += written_lines_count
+
+        sleep(written_lines_count * self._dot_feed_time * self._char_height)
 
         # Restore default styles
         for style in kwargs:
@@ -325,7 +363,6 @@ class ThermalPrinter:
         :exception ThermalPrinterValueError: On incorrect ``data``'s type, or value.
 
         .. versionadded:: 1.0.0
-
         """
 
         def _range0(min_: int = 48, max_: int = 57) -> list[int]:
@@ -525,18 +562,12 @@ class ThermalPrinter:
         Demonstrate printer capabilities.
 
         .. versionadded:: 1.0.0
-
         """
 
-        # Image
-        try:
-            from PIL import Image
-        except ImportError:  # pragma: nocover
-            print("The PIL module is not installed, skipping the image demo.")
-        else:
-            self.feed()
-            self.image(Image.open(GNU_FILE))
-            self.feed()
+        # Image (requires the PIL Image library)
+        self.feed()
+        self.image(GNU_FILE)
+        self.feed()
 
         # Barcode
         self.barcode(
@@ -568,7 +599,10 @@ class ThermalPrinter:
         # Greek (excepted the ΐ character)
         self.out("Στην υγειά μας!", codepage=CodePage.CP737)
 
-        # Other character
+        # Persian (see installation documentation for this to work)
+        self.out("سلام. این یک جمله فارسی است\nگل پژمرده خار آید", persian=True)
+
+        # Other characters
         self.out(b"Cards \xe8 \xe9 \xea \xeb", codepage=CodePage.CP932)
 
         # Accent
@@ -633,7 +667,6 @@ class ThermalPrinter:
         :param bool state: Enabled if ``state`` is ``True``, else disabled.
 
         .. versionadded:: 1.0.0
-
         """
         if state is not self._font_b:
             self._font_b = state
@@ -646,16 +679,33 @@ class ThermalPrinter:
         The image will be resized to 384 pixels width (:const:`constants.MAX_IMAGE_WIDTH`)
         if necessary, and converted to 1-bit without diffusion dithering.
 
-        :param PIL.Image image: The PIL Image object to print.
+        :param str | pathlib.Path | PIL.Image image: The file, or PIL Image object, to print.
 
-        Example:
+        Examples:
+
+        >>> printer.image("picture.png")
+
+        >>> from pathlib import Path
+        >>> printer.image(Path.home() / "picture.png")
 
         >>> from PIL import Image
         >>> printer.image(Image.open("picture.png"))
 
+        .. versionchanged:: 1.0.0
+            ``image`` can also be a :obj:`str`, or :obj:`pathlib.Path`.
+
         .. tip::
             Since **v1.0.0** the image will be automatically resized when too wide.
         """
+        if isinstance(image, (str, Path)):
+            try:
+                from PIL import Image
+            except ImportError:
+                print("The PIL module is not installed, skipping image printing.")
+                return
+            else:
+                image = Image.open(image)
+
         log.info("Image %r, %dx%d pixels, mode=%r", image.filename, *image.size, image.mode)
         image = self.image_convert(image)
         image = self.image_resize(image)
@@ -676,7 +726,7 @@ class ThermalPrinter:
         )
         log.debug(" >>> WRITE %s bytes of image data", f"{len(bitmap):,}")
         for bit in bitmap:
-            self.write(bytes([bit]), should_log=False)
+            self.write(struct.pack("B", bit), should_log=False)
 
         sleep(height / self._line_spacing * self._dot_print_time)
         self.__lines += height // self._line_spacing + 1
@@ -693,7 +743,6 @@ class ThermalPrinter:
             by the :func:`image()` method.
 
         .. versionadded:: 1.0.0
-
         """
         if image.mode == "1":
             return image
@@ -716,7 +765,6 @@ class ThermalPrinter:
             by the :func:`image()` method.
 
         .. versionadded:: 1.0.0
-
         """
         width, height = image.size
         chunks = math.ceil(width / 8)
@@ -747,7 +795,6 @@ class ThermalPrinter:
             by the :func:`image()` method.
 
         .. versionadded:: 1.0.0
-
         """
         current_width, current_height = image.size
         if current_width <= MAX_IMAGE_WIDTH:
@@ -767,7 +814,6 @@ class ThermalPrinter:
         :param int heat_time: Printer heat time.
 
         .. versionadded:: 1.0.0
-
         """
         self.send_command(Command.ESC, 55, self._most_heated_point, heat_time, self._heat_interval)
 
@@ -797,7 +843,6 @@ class ThermalPrinter:
         :exception ThermalPrinterValueError: On incorrect ``value``'s type, or value.
 
         .. versionadded:: 1.0.0
-
         """
         if not isinstance(value, int) or not (0 <= value <= 255):
             msg = "value should be betwwen 0 and 255."
@@ -867,7 +912,6 @@ class ThermalPrinter:
         ...     printer.out(f"{codepage.name}: 现")
 
         .. versionadded:: 1.0.0
-
         """
         for codepage in list(CodePage):
             self.out(f"{codepage.name}: {char}")
@@ -875,10 +919,6 @@ class ThermalPrinter:
     def reset(self) -> None:
         """Reset the printer to factory defaults."""
         self.flush(clear=True)
-
-        # print_density = 10  # 100%
-        # print_break_time = 2  # 500 uS
-        # self.send_command(Command.DC2, 35, (print_break_time << 5) | print_density)
 
         # Default values
         self.__max_column = 32
@@ -963,7 +1003,6 @@ class ThermalPrinter:
             - ``voltage``: ``False`` if the voltage is higher than 9.5V
 
         .. versionadded:: 1.0.0
-
         """
         return {
             "paper": stat & 0b00000100 == 0,

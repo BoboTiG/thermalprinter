@@ -1,5 +1,6 @@
 {
     "languageToolLinter.languageTool.ignoredWordsInWorkspace": [
         "adafruit"
-    ]
+    ],
+    "languageToolLinter.languageTool.disabledRules": "ENGLISH_WORD_REPEAT_BEGINNING_RULE"
 }

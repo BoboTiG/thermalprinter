@@ -56,7 +56,32 @@ Sponsor = "https://github.com/sponsors/BoboTiG"
 Tracker = "https://github.com/BoboTiG/thermalprinter/issues"
 "Released Versions" = "https://github.com/BoboTiG/thermalprinter/releases"
 
+[project.calendar.scripts]
+print-calendar = "thermalprinter.recipes.calendar.__main__:main"
+
+[project.weather.scripts]
+print-weather = "thermalprinter.recipes.weather.__main__:main"
+
 [project.optional-dependencies]
+# For users
+calendar = [
+  "cairosvg==2.7.1",
+  "icalevents ; python_version < '3.9'",
+  "icalevents==0.1.29 ; python_version >= '3.9'",
+  "pillow ; python_version < '3.9'",
+  "pillow==11.0.0 ; python_version >= '3.9'",
+  "pytz==2024.2",
+]
+persian = [
+  "arabic_reshaper==3.0.0",
+  "python-bidi ; python_version < '3.9'",
+  "python-bidi==0.6.3; python_version >= '3.9'",
+]
+weather = [
+  "requests==2.32.3",
+]
+
+# For developers
 dev = [
   "build==1.2.2.post1",
   "twine==6.0.1",
@@ -71,14 +96,19 @@ docs = [
 lint = [
   "mypy==1.13.0",
   "ruff==0.8.3",
+  "types-requests",
+  "types-python-dateutil",
+  "types-pytz",
 ]
 tests = [
+  "freezegun==1.5.1",
   "pillow ; python_version < '3.9'",
   "pillow==11.0.0 ; python_version >= '3.9'",
   "pytest ; python_version < '3.9'",
   "pytest==8.3.4 ; python_version >= '3.9'",
   "pytest-cov ; python_version < '3.9'",
   "pytest-cov==6.0.0 ; python_version >= '3.9'",
+  "responses==0.25.3",
 ]
 
 [tool.hatch.version]
@@ -90,17 +120,19 @@ skip-excluded-dirs = true
 [tool.hatch.build.targets.sdist]
 only-include = [
   "CHANGELOG.md",
-  "src",
+  "src/thermalprinter",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = [
-  "src",
+  "src/thermalprinter",
 ]
 
 [tool.coverage.report]
 exclude_also = [
     "if TYPE_CHECKING:",
+    'if __name__ == "__main__":',
+    "except ImportError:",
 ]
 
 [tool.mypy]
@@ -131,7 +163,6 @@ addopts = """
     --cov=thermalprinter
     --no-cov-on-fail
     --log-cli-level=DEBUG
-    --showlocals
     --strict-markers
     -r fE
     -vvv
@@ -152,6 +183,7 @@ line-ending = "auto"
 extend-select = ["ALL"]
 ignore = [
     "ANN401",   # allow Any for *constants
+    "C901",     # too complex
     "COM812",   # conflict
     "D",        # TODO
     "F403",     # star imports
@@ -160,6 +192,7 @@ ignore = [
     "ISC001",   # conflict
     "N802",     # test functions names should be lowercase
     "PLR2004",  # magic values
+    "PLW1508",  # invalid type for environment variable default
     "SLF",      # private class access in tests
     "T201",     # print()
 ]
@@ -169,7 +202,15 @@ fixable = ["ALL"]
 "docs/source/conf.py" = [
     "INP001",
 ]
+"src/thermalprinter/recipes/calendar/*.py" = [
+    "DTZ005",
+    "DTZ007",
+]
+"src/thermalprinter/recipes/weather/*.py" = [
+    "RUF001",
+]
 "src/tests/*" = [
     "E501",
+    "RUF001",
     "S",
 ]

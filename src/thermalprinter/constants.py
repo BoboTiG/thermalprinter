@@ -5,6 +5,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 from __future__ import annotations
 
 from enum import Enum
+from os import getenv
 
 
 class BarCode(Enum):
@@ -170,21 +171,26 @@ class Underline(Enum):
 
 
 class Defaults(Enum):
-    """Default printer parameters."""
+    """Default printer parameters.
+
+    .. hint::
+        Most of them can be tweaked by special environment variables following the given syntax: ``TP_XXX``.
+        Example: ``export TP_BAUDRATE=9600`` will set ``Defaults.BAUDRATE`` to ``9600``.
+    """
 
     BARCODE_HEIGHT = 162
     BARCODE_WIDTH = 3
-    BAUDRATE = 19200
-    BYTE_TIME = 0.00005
-    DOT_FEED_TIME = 0.0021
-    DOT_PRINT_TIME = 0.03
-    HEAT_INTERVAL = 2
-    HEAT_TIME = 80
+    BAUDRATE = int(getenv("TP_BAUDRATE", 19200))
+    BYTE_TIME = float(getenv("TP_BYTE_TIME", 0.00005))
+    DOT_FEED_TIME = float(getenv("TP_DOT_FEED_TIME", 0.0021))
+    DOT_PRINT_TIME = float(getenv("TP_DOT_PRINT_TIME", 0.03))
+    HEAT_INTERVAL = int(getenv("TP_HEAT_INTERVAL", 2))
+    HEAT_TIME = int(getenv("TP_HEAT_TIME", 80))
     LINE_SPACING = 30
-    MOST_HEATED_POINT = 9
+    MOST_HEATED_POINT = int(getenv("TP_MOST_HEATED_POINT", 9))
     PORT = "/dev/ttyAMA0"
-    READ_TIMEOUT = 0.0
-    WRITE_TIMEOUT = 1.0
+    READ_TIMEOUT = float(getenv("TP_READ_TIMEOUT", 0.0))
+    WRITE_TIMEOUT = float(getenv("TP_WRITE_TIMEOUT", 1.0))
 
 
 CONSTANTS = [BarCode, BarCodePosition, CharSet, Chinese, CodePage, CodePageConverted, Justify, Size, Underline]

@@ -34,6 +34,7 @@ Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
    setup
    usage
    api
+   recipes
    tools
    developers
    migrate

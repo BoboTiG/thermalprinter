@@ -12,6 +12,15 @@ Class
 Methods
 =======
 
+Printing
+--------
+
+.. automethod:: ThermalPrinter.demo
+.. automethod:: ThermalPrinter.feed
+.. automethod:: ThermalPrinter.out
+
+--------
+
 Barcodes
 --------
 
@@ -69,14 +78,6 @@ Chinese
 
 --------
 
-Printing
---------
-
-.. automethod:: ThermalPrinter.feed
-.. automethod:: ThermalPrinter.out
-
---------
-
 Printer State
 -------------
 
@@ -94,7 +95,6 @@ Printer State
 Special Methods
 ---------------
 
-.. automethod:: ThermalPrinter.demo
 .. automethod:: ThermalPrinter.flush
 .. automethod:: ThermalPrinter.init
 .. automethod:: ThermalPrinter.print_char

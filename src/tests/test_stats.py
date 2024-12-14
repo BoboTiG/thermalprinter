@@ -17,4 +17,4 @@ def test_stats_saved_on_exit(printer: ThermalPrinter, tmp_path: Path) -> None:
             printer.demo()
             printer._use_stats = True
 
-        assert tools.stats_load() == {"feeds": 9, "lines": 54}
+        assert tools.stats_load() == {"feeds": 9, "lines": 56}

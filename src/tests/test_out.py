@@ -13,6 +13,11 @@ def test_print_two_line(printer: ThermalPrinter) -> None:
     assert printer.lines == 2
 
 
+def test_print_two_line_condensed(printer: ThermalPrinter) -> None:
+    printer.out("This is the line 1,\nand the seconds one.")
+    assert printer.lines == 2
+
+
 def test_print_one_line_centered(printer: ThermalPrinter) -> None:
     printer.out("This is the centered line.", justify=Justify.CENTER)
     assert printer._justify == Justify.LEFT
@@ -71,3 +76,7 @@ def test_print_one_line_bytearray(printer: ThermalPrinter) -> None:
 
 def test_print_one_line_memoryview(printer: ThermalPrinter) -> None:
     printer.out(memoryview(b"42"))
+
+
+def test_persian(printer: ThermalPrinter) -> None:
+    printer.out("سلام. این یک جمله فارسی است\nگل پژمرده خار آید", persian=True)

@@ -59,4 +59,4 @@ def test_stats_save(printer: ThermalPrinter, tmp_path: Path) -> None:
         printer.demo()
 
         tools.stats_save(printer)
-        assert tools.stats_load() == {"feeds": 9, "lines": 54}
+        assert tools.stats_load() == {"feeds": 9, "lines": 56}

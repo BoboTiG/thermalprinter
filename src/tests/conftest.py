@@ -18,23 +18,12 @@ def _no_warnings(recwarn: pytest.WarningsRecorder) -> Generator:
     yield
 
     warnings = [f"{warning.filename}:{warning.lineno} {warning.message}" for warning in recwarn]
-    for warning in warnings:
+    for warning in warnings:  # pragma: nocover
         print(warning)
     assert not warnings
 
 
-@pytest.fixture(scope="session")
-def port() -> str:
-    """A serial port for unit tests.
-
-    Sources:
-        - https://github.com/pyserial/pyserial/blob/v3.5/test/test.py
-        - https://github.com/pyserial/pyserial/blob/v3.5/serial/urlhandler/protocol_loop.py
-    """
-    return "loop://"
-
-
 @pytest.fixture
-def printer(port: str) -> Generator[ThermalPrinter]:
-    with FakeThermalPrinter(port) as device:
+def printer() -> Generator[ThermalPrinter]:
+    with FakeThermalPrinter() as device:
         yield device
