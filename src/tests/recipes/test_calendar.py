@@ -9,7 +9,7 @@ from freezegun import freeze_time
 
 import thermalprinter.recipes.calendar
 from thermalprinter import ThermalPrinter
-from thermalprinter.recipes.calendar import AGENDA_MODEL_SIZE, Calendar
+from thermalprinter.recipes.calendar import Calendar
 from thermalprinter.recipes.calendar.__main__ import main
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ def calendar() -> Generator[Calendar]:
 
 def test_forge_header_image(calendar: Calendar) -> None:
     image = calendar.forge_header_image()
-    assert image.size == AGENDA_MODEL_SIZE
+    assert image.size == (189, 197)
 
 
 @pytest.mark.parametrize(
