@@ -19,8 +19,9 @@ extensions = [
     "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx_new_tab_link",
 ]
-myst_links_external_new_tab = True
+new_tab_link_show_external_link_icon = True
 source_suffix = {".rst": "restructuredtext"}
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 project = "ThermalPrinter"
