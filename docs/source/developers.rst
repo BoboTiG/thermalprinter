@@ -13,6 +13,13 @@ Setup
 2. Then, you could need the :download:`Embedded printer DP-EH600 Technical Manual <../Embedded printer DP-EH600 Technical Manual.pdf>`, and take a look at the `features advancement <https://github.com/BoboTiG/thermalprinter/issues/1>`_.
 3. Finally, be sure to add/update tests, and documentation, within your patch.
 
+Special Serial Device
+=====================
+
+.. hint::
+
+    Whenever you need a dummy serial device for your tests, you can use the ``loop://`` port.
+
 Testing
 =======
 

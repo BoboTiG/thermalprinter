@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 # Might be something you would like to translate
 BIRTHDAY = "C'est l'anniversaire de..."  #: Birthdays introduction.
-NICE_DAY = "Belle journée :)"  #:Printed at the end.
+NICE_DAY = "Belle journée :)"  #: Nice words printed at the end.
 WHOLE_DAY = "Toute la journée"  #: When an event takes the whole day.
 MONTH_NAMES = [
     "Janvier",
@@ -40,7 +40,7 @@ MONTH_NAMES = [
     "Octobre",
     "Novembre",
     "Décembre",
-]  #: Months transaltions
+]  #: Months names.
 
 #: File containing birthdays.
 BIRTHDAYS_FILE = "~/.birthdays.lst"
@@ -137,7 +137,7 @@ class Calendar:
 
         def header() -> None:
             """Print the header."""
-            printer.codepage(CodePage.ISO_8859_1)
+            # Check if still needed: printer.codepage(CodePage.ISO_8859_1)
             printer.feed()
             printer.image(self.forge_header_image())
             printer.feed()
@@ -149,7 +149,7 @@ class Calendar:
                 printer.out(f"  ... {name} ({years}) !", codepage=CodePage.ISO_8859_1)
             printer.feed()
 
-        def line(evt: Event, first_line: bool = False, last_line: bool = False) -> None:
+        def line(evt: Event, *, first_line: bool = False, last_line: bool = False) -> None:
             """Print an event."""
             start, end, sumary = evt
             hour = WHOLE_DAY if start == end else f"{start} - {end}"

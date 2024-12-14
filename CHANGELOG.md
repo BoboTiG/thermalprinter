@@ -4,30 +4,48 @@ Release date: `2024-12-xx`
 
 ## Bug Fixes
 
-- Fixed printed lines counting in ``ThermalPrinter.out()``.
+- Reworked images printing to, hopefully, fix all issues.
+- Fixed printed lines counting in `ThermalPrinter.out()`.
 
 ## Features
 
-- Recipe: calendar
-- Recipe: weather
-- Recipe: Persian text printing made easy using ``ThermalPrinter.out("...", persian=True")``.
+- New extra: `calendar`, to print daily stuff from your calendar, and birthdays as a bonus! It provides the `print-calendar` executable.
+- New extra: `persian`, to make your life easier when printing Persian text: `ThermalPrinter.out("...", persian=True")`.
+- New extra: `weather`, to print the weather alongside with the saint of the day! It provides the `print-weather` executable.
+- New text styles: `font_b`, and `left_blank`.
+- New options to tweak printer behaviors: `byte_time`, `dot_feed_time`, `dot_print_time`, `read_timeout`, and `write_timeout`.
 - New option to control printer settings at initialization: `ThermalPrinter(..., run_setup_cmd=bool)` (#15).
-- New option to specify the *mandatory* sleep time, in seconds, right after the serial initialization: `ThermalPrinter(..., sleep_sec_after_init=float)`.
+- It is now possible to pass barcode styling instructions in `ThermalPrinter.barcode(DATA, BARCODE_TYPE, **kwargs)`, in the same way it's done for `ThermalPrinter.out()`.
+- Introduced statistics persisted at exit. This behavior can be disabled by passing `use_stats=False` to the class.
+- Enhanced the demonstration code.
+- Rewrote the entire documentation to cover all possible stuff, and it is way prettier now, (thanks to the awesome [Shibuya theme(https://shibuya.lepture.com)]).
 - Improved the documentation by fixing issues found with [Harper](https://github.com/elijah-potter/harper).
 - 100% tests coverage!
+- Added lot of logs.
 
 ## Technical Changes
 
 - Added the `Justify` constant to use in the `ThermalPrinter.justify()` method (**breaking change**).
 - Added the `Size` constant to use in the `ThermalPrinter.size()` method (**breaking change**).
 - Added the `Underline` constant to use in the `ThermalPrinter.underline()` method (**breaking change**).
-- Added the `Defaults` constant.
+- Added the `Defaults` constant. And they can be tweaked via `TP_*` environment variables.
 - Added the `ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
 - Added the `ThermalPrinter.has_paper` property.
+- Added the `ThermalPrinter.close()` method.
+- Added the `ThermalPrinter.demo()` method.
+- Added the `ThermalPrinter.font_b()` method.
+- Added the `ThermalPrinter.image_chunks()` method.
+- Added the `ThermalPrinter.image_convert()` method.
+- Added the `ThermalPrinter.image_resize()` method.
+- Added the `ThermalPrinter.init()` method.
+- Added the `ThermalPrinter.left_blank()` method.
+- Added the `ThermalPrinter.status_to_dict()` method.
+- Added the `tools.stats_file()` function.
+- Added the `tools.stats_load()` function.
+- Added the `tools.stats_save()` function.
 - Moved the `tools.printer_tests()` function to the `ThermalPrinter.demo()` method (**breaking change**).
 - Moved the `tools.print_char()` function to the `ThermalPrinter.print_char()` method (**breaking change**).
 - Moved the `validate.validate_barcode()` function to the `ThermalPrinter.validate_barcode()` method.
-- Removed the `line_feed` keyword-argument from `ThermalPrinter.out()`.
 - Removed the `validate.py` file, and most of `validate_*()` functions.
 - Removed the `exceptions.ThermalPrinterConstantError` class.
 

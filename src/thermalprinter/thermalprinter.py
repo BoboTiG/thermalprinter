@@ -253,8 +253,6 @@ class ThermalPrinter:
 
             See :ref:`recipes <persian-text>` for required dependencies.
 
-            Credits go to `@ghorbanpirizad <https://github.com/ghorbanpirizad>`_ in `issue #4 <https://github.com/BoboTiG/thermalprinter/issues/4>`_.
-
         .. versionadded:: 1.0.0
             The ``persian`` keyword-argument.
 
@@ -599,7 +597,7 @@ class ThermalPrinter:
         # Greek (excepted the ΐ character)
         self.out("Στην υγειά μας!", codepage=CodePage.CP737)
 
-        # Persian (see installation documentation for this to work)
+        # Persian (check the recipes documentation for this to work)
         self.out("سلام. این یک جمله فارسی است\nگل پژمرده خار آید", persian=True)
 
         # Other characters
@@ -731,28 +729,6 @@ class ThermalPrinter:
         sleep(height / self._line_spacing * self._dot_print_time)
         self.__lines += height // self._line_spacing + 1
 
-    def image_convert(self, image: Any) -> Any:
-        """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
-
-        :param PIL.Image image: The PIL Image object to convert.
-        :rtype: PIL.Image
-        :return: The converted image object, if converted, else the original ``image``.
-
-        .. hint::
-            Usually you do not need to call this method manually. It is used automatically
-            by the :func:`image()` method.
-
-        .. versionadded:: 1.0.0
-        """
-        if image.mode == "1":
-            return image
-
-        from PIL.Image import Dither
-
-        new_mode = "1"
-        log.info("Image converted from %r to %r", image.mode, new_mode)
-        return image.convert(new_mode, dither=Dither.NONE)
-
     def image_chunks(self, image: Any) -> bytearray:
         """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
 
@@ -780,6 +756,28 @@ class ThermalPrinter:
                 bitmap.append(byte)
 
         return bitmap
+
+    def image_convert(self, image: Any) -> Any:
+        """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
+
+        :param PIL.Image image: The PIL Image object to convert.
+        :rtype: PIL.Image
+        :return: The converted image object, if converted, else the original ``image``.
+
+        .. hint::
+            Usually you do not need to call this method manually. It is used automatically
+            by the :func:`image()` method.
+
+        .. versionadded:: 1.0.0
+        """
+        if image.mode == "1":
+            return image
+
+        from PIL.Image import Dither
+
+        new_mode = "1"
+        log.info("Image converted from %r to %r", image.mode, new_mode)
+        return image.convert(new_mode, dither=Dither.NONE)
 
     def image_resize(self, image: Any) -> Any:
         """Resize a given ``image`` to fit into the maximum width of 384 pixels (:const:`constants.MAX_IMAGE_WIDTH`),

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 LAT = 42.0
 LON = 0.42
-APPID = "<APP_ID>"
+APPID = "<APPID>"
 RESPONSE = {
     "lat": 42.0,
     "lon": 0.42,

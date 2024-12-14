@@ -15,7 +15,7 @@ From v0.3 to v1.0
 
     - printer.justify("L")
     + printer.justify(Justify.LEFT)
-    
+
     - printer.justify("C")
     + printer.justify(Justify.CENTER)
 
@@ -30,7 +30,7 @@ From v0.3 to v1.0
 
     - printer.size("S")
     + printer.size(Size.SMALL)
-    
+
     - printer.size("M")
     + printer.size(Size.MEDIUM)
 
@@ -45,12 +45,31 @@ From v0.3 to v1.0
 
     - printer.underline(0)
     + printer.underline(Underline.OFF)
-    
+
     - printer.underline(1)
     + printer.underline(Underline.THIN)
 
     - printer.underline(2)
     + printer.underline(Underline.THICK)
+
+- :func:`tools.print_char()` → :func:`ThermalPrinter.print_char()`:
+
+  .. code-block:: diff
+
+    - from thermalprinter.tools import print_char
+
+    - print_char("现")
+    + printer.print_char("现")
+
+- :func:`tools.printer_tests()` → :func:`ThermalPrinter.demo()`:
+
+  .. code-block:: diff
+
+    - from thermalprinter.tools import printer_tests
+
+    - printer_tests()
+    + printer.demo()
+
 
 From v0.2 to v0.3
 =================

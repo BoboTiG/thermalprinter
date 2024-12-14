@@ -12,27 +12,27 @@ from typing import TYPE_CHECKING
 from thermalprinter import constants
 
 if TYPE_CHECKING:
-    from enum import Enum
+    import enum
 
     from thermalprinter import ThermalPrinter
 
 log = getLogger(__name__)
 
 
-def ls(*consts: type[Enum]) -> None:
+def ls(*consts: type[enum.Enum]) -> None:
     """Print constants values.
 
-    :param list constants: Constant(s) to print.
+    :param list[type[enum.Enum]] constants: Constant(s) to print.
 
     Print all constants:
 
     >>> ls()
 
-    Print Chinese constant values:
+    Print :const:`thermalprinter.constants.Chinese` constant values:
 
     >>> ls(Chinese)
 
-    Print Chinese, and CodePage, constant values:
+    Print :const:`thermalprinter.constants.Chinese`, and :const:`thermalprinter.constants.CodePage`, constant values:
 
     >>> ls(Chinese, CodePage)
     """

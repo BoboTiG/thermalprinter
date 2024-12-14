@@ -38,11 +38,6 @@ html_theme_options = {
     "accent_color": "orange",
     "globaltoc_expand_depth": 1,
     "toctree_titles_only": False,
-    "nav_links": [
-        {"title": "Recipes", "url": "https://github.com/BoboTiG/thermalprinter-recipes"},
-        {"title": "Sources", "url": "https://github.com/BoboTiG/thermalprinter"},
-        {"title": "Package", "url": "https://pypi.org/project/thermalprinter/"},
-    ],
 }
 html_favicon = "../icon.svg"
 html_context = {

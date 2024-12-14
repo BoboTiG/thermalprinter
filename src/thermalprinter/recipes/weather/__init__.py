@@ -8,23 +8,28 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import requests
 
 if TYPE_CHECKING:
     from types import TracebackType
-    from typing import Self
+    from typing import Any, Self
 
     from thermalprinter import ThermalPrinter
 
 # Might be something you would like to translate
 TITLE = "Météo"  #: Title.
-UNKNOWN = "Inconnu(e)"  #: When the day does not meet an ephemeride.
+SAINT_OF_THE_DAY = "Fête du jour : {}"  #: Prefix before the saint of the day.
+UNKNOWN = "Inconnu(e)"  #: When the day does not meet a saint of the day.
+NORTH = "N"  #: The North cord point abbreviation.
+EAST = "E"  #: The East cord point abbreviation.
+SOUTH = "S"  #: The South cord point abbreviation.
+WEST = "O"  #: The West cord point abbreviation.
 
 #: OpenWeatherMap API URL
 URL = "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=metric&appid={appid}"
-SAINTS_FILE = "./saints.lst"  #: File containing calendar ephemerides.
+SAINTS_FILE = "./saints.lst"  #: File containing calendar saints.
 
 # Sync with https://openweathermap.org/weather-conditions
 DESCRIPTIONS = {
@@ -318,8 +323,8 @@ class Weather:
         data = self.forge_data(today)
         self.print_data(data)
 
-    def get_ephemeride(self) -> str:
-        """Guess the ephemeride."""
+    def get_the_saint_of_the_day(self) -> str:
+        """Guess the saint of the day."""
         today = datetime.now(tz=UTC).strftime("%d/%m")
         lines = (Path(__file__).parent / SAINTS_FILE).read_text().splitlines()
         return next((line.split(";", 1)[1].strip() for line in lines if line.startswith(today)), UNKNOWN)
@@ -383,9 +388,13 @@ class Weather:
         # Precipitations
         printer.out(lines[4].format(**data))
 
-        # La fête du jour
+        # Saint of the day
         printer.feed()
-        printer.out(f"Fête du jour : {self.get_ephemeride()}", justify=Justify.CENTER, codepage=CodePage.ISO_8859_1)
+        printer.out(
+            SAINT_OF_THE_DAY.format(self.get_the_saint_of_the_day()),
+            justify=Justify.CENTER,
+            codepage=CodePage.ISO_8859_1,
+        )
 
         printer.feed(3)
 
@@ -401,12 +410,12 @@ def mps_to_kmph(mps: float) -> int:
 
 
 def wind_dir(angle: float) -> bytes | str:
-    """Wind direction arrows.
+    """Get the corresponding wind direction arrow, or the cord point abbreviation.
 
     :param float angle: The wind angle.
     :rtype: bytes | str
     :return:
-        The French abbreviation, either bytes for special characters, or plain string.
+        The cord point abbreviation. Either bytes for arrows, or plain string.
 
         .. note::
             Bytes values are :const:`thermalprinter.constants.CodePage` ``THAI2`` characters.
@@ -415,26 +424,26 @@ def wind_dir(angle: float) -> bytes | str:
         # North
         b"\x8d",
         # North-East
-        "NE",
-        "NE",
+        f"{NORTH}{EAST}",
+        f"{NORTH}{EAST}",
         # East
         b"\x8e",
         b"\x8e",
         # South-East
-        "SE",
-        "SE",
+        f"{SOUTH}{EAST}",
+        f"{SOUTH}{EAST}",
         # South
         b"\x8f",
         b"\x8f",
         # South-West
-        "SO",
-        "SO",
+        f"{SOUTH}{WEST}",
+        f"{SOUTH}{WEST}",
         # West
         b"\x8c",
         b"\x8c",
         # North-West
-        "NO",
-        "NO",
+        f"{NORTH}{WEST}",
+        f"{NORTH}{WEST}",
         # North
         b"\x8d",
     ]

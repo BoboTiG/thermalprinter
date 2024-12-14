@@ -2,28 +2,26 @@
 🍳 Recipes
 ==========
 
-.. currentmodule:: thermalprinter
-
 .. versionadded:: 1.0.0
 
-    Recipes are extras codes, or features, that you can install on-demand.
+    Recipes are extras features that you can install on-demand.
 
 .. hint::
 
-    When an executable is made available, optionally, you can tweak printer properties using ``TP_*`` environment variables. See :const:`thermalprinter.constants.Defaults`.
+    When an executable is made available, you can tweak printer properties using ``TP_*`` environment variables. See :const:`thermalprinter.constants.Defaults`.
 
 ------
 
 Calendar
 ========
 
-Print daily stuff from your calendar, and anniversaries in bonus!
+Print daily stuff from your calendar, and birthdays as a bonus!
 
 .. image:: ../preview-calendar.png
 
 .. note::
 
-    All texts are in French by default.
+    🇫🇷 All texts are in French by default.
     You can tweak those constants to better fit your needs:
 
     .. autodata:: thermalprinter.recipes.calendar.BIRTHDAY
@@ -48,9 +46,8 @@ Here is the API:
 
 .. autoclass:: thermalprinter.recipes.calendar.Calendar
 .. automethod:: thermalprinter.recipes.calendar.Calendar.start
-.. autodata:: thermalprinter.recipes.calendar.AGENDA_MODEL
 .. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
-    
+
     .. hint::
 
         The content of this file is as follow:
@@ -87,18 +84,22 @@ Here is the API:
 
     Unicode translations for the Iran code page.
 
+.. note::
+
+    💐 Credits go to `@ghorbanpirizad <https://github.com/ghorbanpirizad>`_ in `issue #4 <https://github.com/BoboTiG/thermalprinter/issues/4>`_.
+
 ------
 
 Weather
 =======
 
-How cool is it to have the weather printed every morning, alongside with the ephemeride? 🥰
+How cool is it to have the weather printed every morning, alongside with the saint of the day? 🥰
 
 .. image:: ../preview-weather.png
 
 .. note::
 
-    All texts are in French by default.
+    🇫🇷 All texts are in French by default.
     You can tweak those constants to better fit your needs:
 
     .. autodata:: thermalprinter.recipes.weather.DESCRIPTIONS
@@ -106,7 +107,12 @@ How cool is it to have the weather printed every morning, alongside with the eph
         That is a big one, kept synced with `OWM weather-conditions <https://openweathermap.org/weather-conditions>`_.
 
     .. autodata:: thermalprinter.recipes.weather.TITLE
+    .. autodata:: thermalprinter.recipes.weather.SAINT_OF_THE_DAY
     .. autodata:: thermalprinter.recipes.weather.UNKNOWN
+    .. autodata:: thermalprinter.recipes.weather.NORTH
+    .. autodata:: thermalprinter.recipes.weather.EAST
+    .. autodata:: thermalprinter.recipes.weather.SOUTH
+    .. autodata:: thermalprinter.recipes.weather.WEST
 
 Installation:
 
@@ -128,7 +134,7 @@ Here is the API:
 .. autofunction:: thermalprinter.recipes.weather.mps_to_kmph
 .. autofunction:: thermalprinter.recipes.weather.wind_dir
 .. autodata:: thermalprinter.recipes.weather.ASCII_ARTS
-    
+
     Beautiful weather ASCII arts, copied from `schachmat/wego <https://github.com/schachmat/wego/blob/2.3/frontends/ascii-art-table.go>`_.
 
 .. autodata:: thermalprinter.recipes.weather.SAINTS_FILE

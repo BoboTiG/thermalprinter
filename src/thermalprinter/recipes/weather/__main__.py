@@ -12,7 +12,7 @@ def main() -> int:
     parser = ArgumentParser(prog="printer-weather")
     parser.add_argument("LAT", type=float, help="Location latitude")
     parser.add_argument("LON", type=float, help="Location longitude")
-    parser.add_argument("APP_ID", help="OpenWeatherMap appid")
+    parser.add_argument("APPID", help="OpenWeatherMap appid")
     parser.add_argument("--port", help="Optional printer port")
     options = parser.parse_args()
 
@@ -23,7 +23,7 @@ def main() -> int:
     else:
         printer = None
 
-    with Weather(options.LAT, options.LON, options.APP_ID, printer=printer) as weather:
+    with Weather(options.LAT, options.LON, options.APPID, printer=printer) as weather:
         weather.start()
 
     return 0
