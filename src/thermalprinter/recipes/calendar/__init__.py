@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from io import BytesIO
 from pathlib import Path
 from textwrap import wrap
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Tuple
 
 from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
@@ -55,10 +55,10 @@ AGENDA_MODEL = """\
 </svg>
 """  # noqa: E501
 
-Birthday = tuple[str, int]
-Birthdays = list[Birthday]
-Event = tuple[str, str, str]
-Events = list[Event]
+Birthday = Tuple[str, int]
+Birthdays = List[Birthday]
+Event = Tuple[str, str, str]
+Events = List[Event]
 
 
 @dataclass
