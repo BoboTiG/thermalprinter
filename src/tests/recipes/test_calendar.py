@@ -7,10 +7,7 @@ import icalevents.icaldownload
 import pytest
 from freezegun import freeze_time
 
-import thermalprinter.recipes.calendar
 from thermalprinter import ThermalPrinter
-from thermalprinter.recipes.calendar import Calendar
-from thermalprinter.recipes.calendar.__main__ import main
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -20,6 +17,9 @@ if TYPE_CHECKING:
 
     from thermalprinter.recipes.calendar import Birthdays
 
+pytest.importorskip("thermalprinter.recipes.calendar", reason="The [calendar] extra dependencies are not installed.")
+
+from thermalprinter.recipes.calendar import Calendar  # noqa: E402
 
 URL = "https://example.org/remote.php/dav/public-calendars/xxx?export"
 RESPONSE = """\
@@ -62,6 +62,8 @@ def test_forge_header_image(calendar: Calendar) -> None:
     ],
 )
 def test_get_birthdays(data: str, expected: Birthdays, calendar: Calendar, tmp_path: Path) -> None:
+    import thermalprinter.recipes.calendar
+
     birdthdays_file = tmp_path / "birthdays.lst"
     birdthdays_file.write_text(f"{data}\n")
 
@@ -122,6 +124,8 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
 @patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE)
 @patch("sys.argv", ["print-calendar", URL])
 def test_main(mocked_sys_argv: MagicMock) -> None:  # noqa: ARG001
+    from thermalprinter.recipes.calendar.__main__ import main
+
     assert main() == 0
 
 
@@ -129,6 +133,8 @@ def test_main(mocked_sys_argv: MagicMock) -> None:  # noqa: ARG001
 @patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE)
 @patch("sys.argv", ["print-calendar", URL, "--port", "loop://"])
 def test_main_with_port(mocked_sys_argv: MagicMock, tmp_path: Path) -> None:  # noqa: ARG001
+    from thermalprinter.recipes.calendar.__main__ import main
+
     write_orig = ThermalPrinter.write
 
     def write(self: ThermalPrinter, data: ReadableBuffer, *, should_log: bool = True) -> int | None:

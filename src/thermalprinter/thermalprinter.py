@@ -269,7 +269,9 @@ class ThermalPrinter:
             try:
                 from thermalprinter.recipes import persian
             except ImportError:
-                log.exception("Cannot print Persian text due to missing dependencies.")
+                log.exception(
+                    "Cannot print Persian text due to missing dependencies. Did you install the [persian] extra?"
+                )
                 return
 
             data = persian.reshape(data)

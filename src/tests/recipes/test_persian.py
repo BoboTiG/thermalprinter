@@ -3,8 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from unittest.mock import patch
 
+import pytest
+
 if TYPE_CHECKING:
     from thermalprinter import ThermalPrinter
+
+pytest.importorskip("thermalprinter.recipes.persian", reason="The [persian] extra dependencies are not installed.")
 
 
 def test_persian(printer: ThermalPrinter) -> None:
