@@ -9,11 +9,11 @@ def main() -> int:
 
     from thermalprinter.recipes.weather import Weather
 
-    parser = ArgumentParser(prog="printer-weather")
-    parser.add_argument("LAT", type=float, help="Location latitude")
-    parser.add_argument("LON", type=float, help="Location longitude")
-    parser.add_argument("APPID", help="OpenWeatherMap appid")
-    parser.add_argument("--port", help="Optional printer port")
+    parser = ArgumentParser(prog="printer-weather", description=str(Weather.__doc__).split("\n", 1)[0])
+    parser.add_argument("LAT", type=float, help="the location latitude")
+    parser.add_argument("LON", type=float, help="the location longitude")
+    parser.add_argument("APPID", help="the OpenWeatherMap appid")
+    parser.add_argument("-p", "--port", help="optional printer port")
     options = parser.parse_args()
 
     if options.port:

@@ -56,10 +56,8 @@ Sponsor = "https://github.com/sponsors/BoboTiG"
 Tracker = "https://github.com/BoboTiG/thermalprinter/issues"
 "Released Versions" = "https://github.com/BoboTiG/thermalprinter/releases"
 
-[project.calendar.scripts]
+[project.scripts]
 print-calendar = "thermalprinter.recipes.calendar.__main__:main"
-
-[project.weather.scripts]
 print-weather = "thermalprinter.recipes.weather.__main__:main"
 
 [project.optional-dependencies]

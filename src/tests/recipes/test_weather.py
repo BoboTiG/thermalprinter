@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from subprocess import check_call
 from typing import TYPE_CHECKING
 from unittest.mock import patch
 
@@ -572,3 +573,16 @@ def test_main_with_port(tmp_path: Path) -> None:
     with patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"):  # noqa: SIM117
         with patch("sys.argv", ["print-weather", str(LAT), str(LON), APPID, "--port", "loop://"]):
             assert main() == 0
+
+
+def test_executable(tmp_path: Path) -> None:
+    # Create the virtual environment
+    venv = tmp_path / "venv"
+    python = venv / "bin" / "python"
+    check_call(["python", "-m", "venv", str(venv)])
+
+    # Install the extra
+    check_call([str(python), "-m", "pip", "install", "-e", ".[weather]"])
+
+    # Call the new executable
+    check_call(["print-weather", "--help"], cwd=python.parent)
