@@ -200,7 +200,7 @@ TODAY = RESPONSE["daily"][0]  # type: ignore[index]
 
 @pytest.fixture
 def weather() -> Generator[Weather]:
-    with Weather(LAT, LON, APPID) as cls:
+    with freeze_time("2024-12-13"), Weather(LAT, LON, APPID) as cls:
         yield cls
 
 
@@ -229,7 +229,6 @@ def test_forge_data_fuzzy(data: dict[str, Any], weather: Weather) -> None:
     assert isinstance(weather.forge_data(data), dict)
 
 
-@freeze_time("2024-12-13")
 @pytest.mark.parametrize(
     ("description", "expected"),
     [
@@ -520,7 +519,6 @@ def test_print_data(description: str, expected: list[str], weather: Weather, pri
     assert result == [*expected, "Fête du jour : Lucie"]
 
 
-@freeze_time("2024-12-13")
 def test_print_data_wind_dir_bytes(weather: Weather, printer: ThermalPrinter) -> None:
     result: list[str] = []
     out_orig = printer.out
