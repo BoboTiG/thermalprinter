@@ -78,7 +78,8 @@ persian = [
   "python-bidi==0.6.3; python_version >= '3.9'",
 ]
 weather = [
-  "requests==2.32.3",
+  "requests; python_version < '3.9'",
+  "requests==2.32.3; python_version >= '3.9'",
 ]
 
 # For developers
