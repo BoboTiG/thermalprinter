@@ -289,7 +289,7 @@ log = getLogger(__name__)
 
 @dataclass
 class Weather:
-    """Print the weather of the day using the data from OpenWeatherMap.
+    """Print the weather of the day alongside with the saint of the day. Using the data from OpenWeatherMap.
 
     :param float lat: Location latitude.
     :param float lon: Location longitude.

@@ -9,9 +9,9 @@ def main() -> int:
 
     from thermalprinter.recipes.calendar import Calendar
 
-    parser = ArgumentParser(prog="print-calendar")
-    parser.add_argument("URL", help="Calendar URL")
-    parser.add_argument("--port", help="Optional printer port")
+    parser = ArgumentParser(prog="print-calendar", description=str(Calendar.__doc__).split("\n", 1)[0])
+    parser.add_argument("URL", help="the calendar URL")
+    parser.add_argument("-p", "--port", help="optional printer port")
     options = parser.parse_args()
 
     if options.port:

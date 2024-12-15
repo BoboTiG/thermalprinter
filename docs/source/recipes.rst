@@ -40,7 +40,6 @@ There is an executable made available:
 .. code-block:: bash
 
     print-calendar --help
-    print-calendar URL [--port PORT]
 
 Here is the API:
 
@@ -125,7 +124,6 @@ There is an executable made available:
 .. code-block:: bash
 
     print-weather --help
-    print-weather LAT LON APPID [--port PORT]
 
 Here is the API:
 

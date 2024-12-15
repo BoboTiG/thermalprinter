@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from subprocess import check_call
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
 
@@ -148,3 +149,16 @@ def test_main_with_port(mocked_sys_argv: MagicMock, tmp_path: Path) -> None:  # 
     with patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"):  # noqa: SIM117
         with patch.object(ThermalPrinter, "write", write):
             assert main() == 0
+
+
+def test_executable(tmp_path: Path) -> None:
+    # Create the virtual environment
+    venv = tmp_path / "venv"
+    python = venv / "bin" / "python"
+    check_call(["python", "-m", "venv", str(venv)])
+
+    # Install the extra
+    check_call([str(python), "-m", "pip", "install", "-e", ".[calendar]"])
+
+    # Call the new executable
+    check_call(["print-calendar", "--help"], cwd=python.parent)

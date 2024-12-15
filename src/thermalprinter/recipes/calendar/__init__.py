@@ -63,7 +63,7 @@ Events = List[Event]
 
 @dataclass
 class Calendar:
-    """Print daily stuff from your calendar.
+    """Print daily stuff from your calendar, and birthdays as a bonus!
 
     :param str url: The calendar URL.
     :param thermalprinter.ThermalPrinter | None printer: Optional printer to use.
