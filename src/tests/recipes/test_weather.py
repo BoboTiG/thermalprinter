@@ -5,11 +5,13 @@ from typing import TYPE_CHECKING
 from unittest.mock import patch
 
 import pytest
-import responses
-from freezegun import freeze_time
 
-from thermalprinter.recipes.weather import URL, Weather
-from thermalprinter.recipes.weather.__main__ import main
+pytest.importorskip("thermalprinter.recipes.weather", reason="The [weather] extra dependencies are not installed.")
+
+import responses  # noqa: E402
+from freezegun import freeze_time  # noqa: E402
+
+from thermalprinter.recipes.weather import URL, Weather  # noqa: E402
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -551,6 +553,8 @@ def test_print_data_wind_dir_bytes(weather: Weather, printer: ThermalPrinter) ->
 
 @responses.activate
 def test_main() -> None:
+    from thermalprinter.recipes.weather.__main__ import main
+
     url = URL.format(lat=LAT, lon=LON, appid=APPID)
     responses.add(responses.GET, url, json=RESPONSE)
 
@@ -560,6 +564,8 @@ def test_main() -> None:
 
 @responses.activate
 def test_main_with_port(tmp_path: Path) -> None:
+    from thermalprinter.recipes.weather.__main__ import main
+
     url = URL.format(lat=LAT, lon=LON, appid=APPID)
     responses.add(responses.GET, url, json=RESPONSE)
 
