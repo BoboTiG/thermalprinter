@@ -4,6 +4,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 
 from __future__ import annotations
 
+from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from io import BytesIO
@@ -100,7 +101,10 @@ class Calendar:
         """Get a list of birthdays."""
         month_and_day = f"{self.now.month:02d}-{self.now.day:02d}"
 
-        data = Path(BIRTHDAYS_FILE).expanduser().read_text()
+        data = ""
+        with suppress(FileNotFoundError):
+            data = Path(BIRTHDAYS_FILE).expanduser().read_text()
+
         birthdays = []
 
         for line in data.splitlines():
