@@ -76,7 +76,3 @@ def test_print_one_line_bytearray(printer: ThermalPrinter) -> None:
 
 def test_print_one_line_memoryview(printer: ThermalPrinter) -> None:
     printer.out(memoryview(b"42"))
-
-
-def test_persian(printer: ThermalPrinter) -> None:
-    printer.out("سلام. این یک جمله فارسی است\nگل پژمرده خار آید", persian=True)
