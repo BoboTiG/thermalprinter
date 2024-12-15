@@ -563,8 +563,6 @@ def test_main_with_port(tmp_path: Path) -> None:
     url = URL.format(lat=LAT, lon=LON, appid=APPID)
     responses.add(responses.GET, url, json=RESPONSE)
 
-    with (
-        patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"),
-        patch("sys.argv", ["print-weather", str(LAT), str(LON), APPID, "--port", "loop://"]),
-    ):
-        assert main() == 0
+    with patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"):  # noqa: SIM117
+        with patch("sys.argv", ["print-weather", str(LAT), str(LON), APPID, "--port", "loop://"]):
+            assert main() == 0

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import icalevents.icaldownload
 import pytest
@@ -85,12 +85,10 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
     events = [("08:00", "12:00", "Débroussaillage"), ("14:00", "17:00", "Noël au Château")]
     birdthdays = [("Alice", 24)]
 
-    with (
-        patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE),
-        patch.object(printer, "out", out),
-    ):
-        calendar.printer = printer
-        calendar.print_data(events, birdthdays)
+    with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE):  # noqa: SIM117
+        with patch.object(printer, "out", out):
+            calendar.printer = printer
+            calendar.print_data(events, birdthdays)
 
     assert result == [
         "C'est l'anniversaire de...",
@@ -121,16 +119,16 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
 
 
 @freeze_time("2024-12-14")
-def test_main() -> None:
-    with (
-        patch("sys.argv", ["print-calendar", URL]),
-        patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE),
-    ):
-        assert main() == 0
+@patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE)
+@patch("sys.argv", ["print-calendar", URL])
+def test_main(mocked_sys_argv: MagicMock) -> None:  # noqa: ARG001
+    assert main() == 0
 
 
 @freeze_time("2024-12-14")
-def test_main_with_port(tmp_path: Path) -> None:
+@patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE)
+@patch("sys.argv", ["print-calendar", URL, "--port", "loop://"])
+def test_main_with_port(mocked_sys_argv: MagicMock, tmp_path: Path) -> None:  # noqa: ARG001
     write_orig = ThermalPrinter.write
 
     def write(self: ThermalPrinter, data: ReadableBuffer, *, should_log: bool = True) -> int | None:
@@ -141,10 +139,6 @@ def test_main_with_port(tmp_path: Path) -> None:
         # Let's skip it.
         return None
 
-    with (
-        patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"),
-        patch("sys.argv", ["print-calendar", URL, "--port", "loop://"]),
-        patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE),
-        patch.object(ThermalPrinter, "write", new=write),
-    ):
-        assert main() == 0
+    with patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"):  # noqa: SIM117
+        with patch.object(ThermalPrinter, "write", new=write):
+            assert main() == 0
