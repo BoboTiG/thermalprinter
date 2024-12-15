@@ -5,7 +5,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -301,6 +301,10 @@ class Weather:
     lon: float
     appid: str
     printer: ThermalPrinter | None = None
+    now: datetime = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.now = datetime.now()  # noqa: DTZ005
 
     def __enter__(self) -> Self:
         """`with Weather(...) as weather: ...`"""
@@ -325,7 +329,7 @@ class Weather:
 
     def get_the_saint_of_the_day(self) -> str:
         """Guess the saint of the day."""
-        today = datetime.now(tz=UTC).strftime("%d/%m")
+        today = self.now.strftime("%d/%m")
         lines = (Path(__file__).parent / SAINTS_FILE).read_text().splitlines()
         return next((line.split(";", 1)[1].strip() for line in lines if line.startswith(today)), UNKNOWN)
 
@@ -364,7 +368,7 @@ class Weather:
         printer.codepage(CodePage.ISO_8859_1)
         printer.feed()
         printer.out(TITLE, bold=True, size=Size.LARGE)
-        printer.out(datetime.now().strftime("%Y-%m-%d"))  # noqa: DTZ005
+        printer.out(self.now.strftime("%Y-%m-%d"))
         printer.feed()
 
         lines = data.pop("ascii").splitlines()
