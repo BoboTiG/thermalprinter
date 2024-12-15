@@ -140,5 +140,5 @@ def test_main_with_port(mocked_sys_argv: MagicMock, tmp_path: Path) -> None:  # 
         return None
 
     with patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"):  # noqa: SIM117
-        with patch.object(ThermalPrinter, "write", new=write):
+        with patch.object(ThermalPrinter, "write", write):
             assert main() == 0
