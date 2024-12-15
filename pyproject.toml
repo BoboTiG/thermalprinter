@@ -75,11 +75,11 @@ calendar = [
 persian = [
   "arabic_reshaper==3.0.0",
   "python-bidi ; python_version < '3.9'",
-  "python-bidi==0.6.3; python_version >= '3.9'",
+  "python-bidi==0.6.3 ; python_version >= '3.9'",
 ]
 weather = [
-  "requests; python_version < '3.9'",
-  "requests==2.32.3; python_version >= '3.9'",
+  "requests ; python_version < '3.9'",
+  "requests==2.32.3 ; python_version >= '3.9'",
 ]
 
 # For developers
@@ -110,7 +110,8 @@ tests = [
   "pytest==8.3.4 ; python_version >= '3.9'",
   "pytest-cov ; python_version < '3.9'",
   "pytest-cov==6.0.0 ; python_version >= '3.9'",
-  "responses==0.25.3",
+  "responses ; python_version < '3.9'",
+  "responses==0.25.3 ; python_version >= '3.9'",
 ]
 
 [tool.hatch.version]
