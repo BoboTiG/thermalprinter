@@ -68,7 +68,6 @@ calendar = [
   "icalevents==0.1.29 ; python_version >= '3.9'",
   "pillow ; python_version < '3.9'",
   "pillow==10.4.0 ; python_version >= '3.9'",
-  "pytz==2024.2",
 ]
 persian = [
   "arabic_reshaper==3.0.0",
@@ -98,7 +97,6 @@ lint = [
   "ruff==0.8.3",
   "types-requests",
   "types-python-dateutil",
-  "types-pytz",
 ]
 tests = [
   "freezegun==1.5.1",
@@ -202,10 +200,6 @@ fixable = ["ALL"]
 [tool.ruff.lint.per-file-ignores]
 "docs/source/conf.py" = [
     "INP001",
-]
-"src/thermalprinter/recipes/calendar/*.py" = [
-    "DTZ005",
-    "DTZ007",
 ]
 "src/thermalprinter/recipes/weather/*.py" = [
     "RUF001",

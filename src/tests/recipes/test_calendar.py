@@ -74,7 +74,7 @@ def test_get_birthdays(data: str, expected: Birthdays, calendar: Calendar, tmp_p
 
 def test_get_events(calendar: Calendar) -> None:
     with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE):
-        assert calendar.get_events() == [("14:00", "17:00", "Noël au Château")]
+        assert calendar.get_events() == [("15:00", "18:00", "Noël au Château")]
 
 
 def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
@@ -85,7 +85,7 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         result.extend(args)
         out_orig(*args, **kwargs)
 
-    events = [("08:00", "12:00", "Débroussaillage"), ("14:00", "17:00", "Noël au Château")]
+    events = [("10:00", "12:00", "Débroussaillage"), ("15:00", "18:00", "Noël au Château")]
     birdthdays = [("Alice", 24)]
 
     with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE):  # noqa: SIM117
@@ -100,7 +100,7 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         b"\xcd" * 30,
         b"\xb8",
         b"\xb3",
-        " 08:00 - 12:00                ",
+        " 10:00 - 12:00                ",
         b"\xb3",
         b"\xb3",
         " Débroussaillage              ",
@@ -109,7 +109,7 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         b"\xc4" * 30,
         b"\xb4",
         b"\xb3",
-        " 14:00 - 17:00                ",
+        " 15:00 - 18:00                ",
         b"\xb3",
         b"\xb3",
         " Noël au Château              ",

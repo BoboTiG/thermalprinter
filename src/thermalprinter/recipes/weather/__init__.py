@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import requests
+from zoneinfo import ZoneInfo
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -26,6 +27,8 @@ NORTH = "N"  #: The North cord point abbreviation.
 EAST = "E"  #: The East cord point abbreviation.
 SOUTH = "S"  #: The South cord point abbreviation.
 WEST = "O"  #: The West cord point abbreviation.
+
+TIMEZONE = "Europe/Paris"  #: The timezone to display proper dates.
 
 #: OpenWeatherMap API URL
 URL = "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=metric&appid={appid}"
@@ -302,9 +305,11 @@ class Weather:
     appid: str
     printer: ThermalPrinter | None = None
     now: datetime = field(init=False)
+    tz: ZoneInfo = field(init=False)
 
     def __post_init__(self) -> None:
-        self.now = datetime.now()  # noqa: DTZ005
+        self.tz = ZoneInfo(TIMEZONE)
+        self.now = datetime.now(tz=self.tz)
 
     def __enter__(self) -> Self:
         """`with Weather(...) as weather: ...`"""
@@ -365,9 +370,8 @@ class Weather:
 
         printer = self.printer
 
-        printer.codepage(CodePage.ISO_8859_1)
         printer.feed()
-        printer.out(TITLE, bold=True, size=Size.LARGE)
+        printer.out(TITLE, bold=True, codepage=CodePage.ISO_8859_1, size=Size.LARGE)
         printer.out(self.now.strftime("%Y-%m-%d"))
         printer.feed()
 
