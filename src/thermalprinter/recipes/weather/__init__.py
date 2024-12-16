@@ -13,6 +13,8 @@ from typing import TYPE_CHECKING
 import requests
 from zoneinfo import ZoneInfo
 
+from thermalprinter import CodePage, Justify, Size
+
 if TYPE_CHECKING:
     from types import TracebackType
     from typing import Any, Self
@@ -235,13 +237,6 @@ ASCII_ARTS = {
    /(___(__)   & {wind} km/h
                {precipitations} mm/h - {humidity}%
     """,
-    "overcast clouds": """\
-
-     .--.      {description}
-  .-(    ).    {temp_min} - {temp_max} °C
- (___.__)__)   & {wind} km/h
-               {precipitations} mm/h - {humidity}%
-    """,
 }  #: :meta hide-value:
 # ASCII art aliases
 # Group 2xx: Thunderstorm
@@ -285,6 +280,7 @@ ASCII_ARTS["sand"] = ASCII_ARTS["fog"]
 ASCII_ARTS["dust"] = ASCII_ARTS["fog"]
 ASCII_ARTS["volcanic ash"] = ASCII_ARTS["fog"]
 # Group 80x: Clouds
+ASCII_ARTS["overcast clouds"] = ASCII_ARTS["broken clouds"]
 ASCII_ARTS["scattered clouds"] = ASCII_ARTS["few clouds"]
 
 log = getLogger(__name__)
@@ -359,12 +355,61 @@ class Weather:
         log.debug("Crafted data: %s", data)
         return data
 
+    def line_out(self, line: str | bytes, *, line_feed: bool = True) -> None:  # noqa: PLR0912
+        """Print one character at a time with the proper code page, and with adapted letters on unsupported unicode."""
+        assert self.printer  # noqa: S101
+
+        if not line:
+            if line_feed:
+                self.printer.feed()
+            return
+
+        char: bytes | str | int
+        data: list[tuple[str | bytes, CodePage]] = []
+
+        for char in line:
+            if char == "‒":
+                char, codepage = b"\xc4", CodePage.CP863  # noqa: PLW2901
+            elif char == "᾿":
+                char, codepage = b"\xa2", CodePage.ISO_8859_7  # noqa: PLW2901
+            elif char == "ʻ":
+                char, codepage = b"\xd7", CodePage.CP1255  # noqa: PLW2901
+            elif char == "‚":
+                char, codepage = b"\xb8", CodePage.CP1255  # noqa: PLW2901
+            elif char == "⚡":
+                char, codepage = b"\x86", CodePage.IRAN  # noqa: PLW2901
+            elif char in {
+                int.from_bytes(b"\x8d"),
+                int.from_bytes(b"\x8e"),
+                int.from_bytes(b"\x8f"),
+                int.from_bytes(b"\x8c"),
+            }:
+                codepage = CodePage.THAI2
+            else:
+                codepage = CodePage.ISO_8859_1
+            data.append((chr(char) if isinstance(char, int) else char, codepage))
+
+        current_codepage = data[0][1]
+        self.printer.codepage(current_codepage)
+        line_data: list[str | bytes] = []
+        for char, codepage in data:
+            if codepage is current_codepage:
+                line_data.append(char)
+            elif line_data:
+                glue = b"" if isinstance(line_data[0], bytes) else ""
+                self.printer.out(glue.join(line_data), line_feed=False)  # type: ignore[arg-type]
+                line_data = []
+            else:
+                self.printer.codepage(codepage)
+                current_codepage = codepage
+
+        glue = b"" if isinstance(line_data[0], bytes) else ""
+        self.printer.out(glue.join(line_data), line_feed=line_feed)  # type: ignore[arg-type]
+
     def print_data(self, data: dict[str, Any]) -> None:
         """Just print."""
         if not self.printer:
             return
-
-        from thermalprinter import CodePage, Justify, Size
 
         printer = self.printer
 
@@ -374,25 +419,22 @@ class Weather:
         printer.feed()
 
         lines = data.pop("ascii").splitlines()
-        printer.out(lines[0])
+        self.line_out(lines[0])
 
         # State
-        printer.out(lines[1].format(**data))
+        self.line_out(lines[1].format(**data))
 
         # Temperature
-        printer.out(lines[2].format(**data))
+        self.line_out(lines[2].format(**data))
 
         # Wind
         part1, part2 = lines[3].split("&", 1)
-        printer.out(part1, line_feed=False)
-        if isinstance(data["wind_dir"], bytes):
-            printer.out(data["wind_dir"], line_feed=False, codepage=CodePage.THAI2)
-        else:
-            printer.out(data["wind_dir"], line_feed=False)
-        printer.out(part2.format(**data))
+        self.line_out(part1, line_feed=False)
+        self.line_out(data["wind_dir"], line_feed=False)
+        self.line_out(part2.format(**data))
 
         # Precipitations
-        printer.out(lines[4].format(**data))
+        self.line_out(lines[4].format(**data))
 
         # Saint of the day
         printer.feed()

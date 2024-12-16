@@ -299,13 +299,14 @@ class ThermalPrinter:
         if line_feed:
             data += b"\n"
 
-        self.write(data)
+        self.write(data, should_log=False)
 
         # Sizes M, and L, have double height
         written_lines_count = data.count(b"\n") * (1 if self._size is Size.SMALL else 2)
         self.__lines += written_lines_count
 
-        sleep(written_lines_count * self._dot_feed_time * self._char_height)
+        if line_feed:
+            sleep(written_lines_count * self._dot_feed_time * self._char_height)
 
         # Restore default styles
         for style in kwargs:
@@ -905,11 +906,6 @@ class ThermalPrinter:
         you can print it using every code pages:
 
         >>> printer.print_char("现")
-
-        This function is equivalent to:
-
-        >>> for codepage in list(CodePage):
-        ...     printer.out(f"{codepage.name}: 现")
 
         .. versionadded:: 1.0.0
         """
