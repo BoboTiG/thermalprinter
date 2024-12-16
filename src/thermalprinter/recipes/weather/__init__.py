@@ -305,11 +305,9 @@ class Weather:
     appid: str
     printer: ThermalPrinter | None = None
     now: datetime = field(init=False)
-    tz: ZoneInfo = field(init=False)
 
     def __post_init__(self) -> None:
-        self.tz = ZoneInfo(TIMEZONE)
-        self.now = datetime.now(tz=self.tz)
+        self.now = datetime.now(tz=ZoneInfo(TIMEZONE))
 
     def __enter__(self) -> Self:
         """`with Weather(...) as weather: ...`"""
