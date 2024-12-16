@@ -78,7 +78,7 @@ class Calendar:
 
     def __post_init__(self) -> None:
         self.tz = ZoneInfo(TIMEZONE)
-        self.now = datetime.now(tz=self.tz)
+        self.now = datetime.now(tz=self.tz).replace(hour=0, minute=0, second=0, microsecond=0)
 
     def __enter__(self) -> Self:
         """`with Calender(...) as calendar: ...`"""
