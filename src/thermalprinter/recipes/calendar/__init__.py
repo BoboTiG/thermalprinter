@@ -16,7 +16,7 @@ from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
 from icalevents import icalevents
 from PIL import Image
-from pytz import utc
+from zoneinfo import ZoneInfo
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -42,6 +42,8 @@ MONTH_NAMES = [
     "Novembre",
     "Décembre",
 ]  #: Months names.
+
+TIMEZONE = "Europe/Paris"  #: The timezone to display proper hours.
 
 #: File containing birthdays.
 BIRTHDAYS_FILE = "~/.birthdays.lst"
@@ -72,9 +74,11 @@ class Calendar:
     url: str
     printer: ThermalPrinter | None = None
     now: datetime = field(init=False)
+    tz: ZoneInfo = field(init=False)
 
     def __post_init__(self) -> None:
-        self.now = utc.localize(datetime.now())
+        self.tz = ZoneInfo(TIMEZONE)
+        self.now = datetime.now(tz=self.tz)
 
     def __enter__(self) -> Self:
         """`with Calender(...) as calendar: ...`"""
@@ -110,7 +114,7 @@ class Calendar:
         for line in data.splitlines():
             if line[5:10] == month_and_day:
                 born, name = line.split("=", 1)
-                born_date = utc.localize(datetime.strptime(born.strip(), "%Y-%m-%d"))
+                born_date = datetime.strptime(born.strip(), "%Y-%m-%d").replace(tzinfo=self.tz)
                 years = relativedelta(self.now, born_date).years
                 birthdays.append((name.strip(), years))
 
@@ -118,7 +122,7 @@ class Calendar:
 
     def get_events(self) -> Events:
         """Retrieve events of the day."""
-        events = icalevents.events(url=self.url, end=self.now + timedelta(days=1))
+        events = icalevents.events(url=self.url, end=self.now + timedelta(days=1), tzinfo=self.tz)
         return sorted(
             {(event.start.strftime("%H:%M"), event.end.strftime("%H:%M"), event.summary) for event in events},
             key=lambda x: x[0],
@@ -141,7 +145,7 @@ class Calendar:
 
         def header() -> None:
             """Print the header."""
-            # Check if still needed: printer.codepage(CodePage.ISO_8859_1)
+            printer.codepage(CodePage.ISO_8859_1)
             printer.feed()
             printer.image(self.forge_header_image())
             printer.feed()

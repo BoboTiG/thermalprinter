@@ -46,6 +46,7 @@ Here is the API:
 .. autoclass:: thermalprinter.recipes.calendar.Calendar
 .. automethod:: thermalprinter.recipes.calendar.Calendar.start
 .. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
+.. autodata:: thermalprinter.recipes.calendar.TIMEZONE
 
     .. hint::
 
@@ -137,3 +138,4 @@ Here is the API:
 
 .. autodata:: thermalprinter.recipes.weather.SAINTS_FILE
 .. autodata:: thermalprinter.recipes.weather.URL
+.. autodata:: thermalprinter.recipes.weather.TIMEZONE
