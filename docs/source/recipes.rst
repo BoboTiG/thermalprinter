@@ -45,8 +45,8 @@ Here is the API:
 
 .. autoclass:: thermalprinter.recipes.calendar.Calendar
 .. automethod:: thermalprinter.recipes.calendar.Calendar.start
-.. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
 .. autodata:: thermalprinter.recipes.calendar.TIMEZONE
+.. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
 
     .. hint::
 
