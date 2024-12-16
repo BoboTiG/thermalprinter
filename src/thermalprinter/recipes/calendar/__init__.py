@@ -131,7 +131,7 @@ class Calendar:
     def forge_header_image(self) -> Image:
         """Create the image object containing the nice image with current month, and day."""
         agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[self.now.month - 1]).replace("DAY", str(self.now.day))
-        agenda_png = svg2png(agenda_svg)
+        agenda_png = svg2png(agenda_svg, background_color="white")
         return Image.open(BytesIO(agenda_png))
 
     def print_data(self, events: Events, anniversaries: Birthdays) -> None:
