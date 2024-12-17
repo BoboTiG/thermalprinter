@@ -63,12 +63,12 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 [project.optional-dependencies]
 # For users
 calendar = [
-  "cairosvg >=2.7, <3",
+  "cairosvg==2.7.1",
   "icalevents >=0.1, <0.2",
   "pillow >=9.5, <11",
 ]
 persian = [
-  "arabic_reshaper >=3, <4",
+  "arabic_reshaper==3.0.0",
   "python-bidi >=0.6, <0.7; python_version < '3.14'",
 ]
 weather = [
