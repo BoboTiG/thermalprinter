@@ -68,7 +68,7 @@ calendar = [
   "pillow >=9.5, <11",
 ]
 persian = [
-  "arabic_reshaper==3.0.0",
+  "arabic-reshaper==3.0.0",
   "python-bidi >=0.6, <0.7; python_version < '3.14'",
 ]
 weather = [
@@ -86,7 +86,7 @@ docs = [
   "shibuya==2024.12.15",
   "sphinx==8.1.3",
   "sphinx-copybutton==0.5.2",
-  "sphinx_new_tab_link==0.6.1",
+  "sphinx-new-tab-link==0.6.1",
 ]
 lint = [
   "mypy==1.13.0",
