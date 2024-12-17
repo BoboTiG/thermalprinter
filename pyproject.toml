@@ -67,7 +67,7 @@ calendar = [
   "icalevents ; python_version < '3.9'",
   "icalevents==0.1.29 ; python_version >= '3.9'",
   "pillow ; python_version < '3.9'",
-  "pillow==10.4.0 ; python_version >= '3.9'",
+  "pillow==11.0.0 ; python_version >= '3.9'",
 ]
 persian = [
   "arabic_reshaper==3.0.0",
@@ -101,7 +101,7 @@ lint = [
 tests = [
   "freezegun==1.5.1",
   "pillow ; python_version < '3.9'",
-  "pillow==10.4.0 ; python_version >= '3.9'",
+  "pillow==11.0.0 ; python_version >= '3.9'",
   "pytest ; python_version < '3.9'",
   "pytest==8.3.4 ; python_version >= '3.9'",
   "pytest-cov ; python_version < '3.9'",
