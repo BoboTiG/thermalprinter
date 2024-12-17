@@ -1,6 +1,6 @@
 # 1.0.0
 
-Release date: `2024-12-xx`
+Release date: `2024-12-17`
 
 ## Bug Fixes
 
@@ -9,6 +9,7 @@ Release date: `2024-12-xx`
 
 ## Features
 
+- Support for QR701 printers is confirmed (#15).
 - New extra: `calendar`, to print daily stuff from your calendar, and birthdays as a bonus! It provides the `print-calendar` executable.
 - New extra: `persian`, to make your life easier when printing Persian text: `ThermalPrinter.out("...", persian=True")`.
 - New extra: `weather`, to print the weather alongside with the saint of the day! It provides the `print-weather` executable.
