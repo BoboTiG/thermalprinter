@@ -66,12 +66,12 @@ calendar = [
   "cairosvg==2.7.1",
   "icalevents ; python_version < '3.9'",
   "icalevents==0.1.29 ; python_version >= '3.9'",
-  "pillow ; python_version < '3.9'",
+  "pillow ; python_version < '3.9' or platform_machine == 'armv7l'",
   "pillow==11.0.0 ; python_version >= '3.9'",
 ]
 persian = [
   "arabic_reshaper==3.0.0",
-  "python-bidi ; python_version < '3.9'",
+  "python-bidi ; python_version < '3.9' or python_version >= '3.14'",
   "python-bidi==0.6.3 ; python_version >= '3.9'",
 ]
 weather = [
