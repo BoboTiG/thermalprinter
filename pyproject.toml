@@ -65,14 +65,14 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 calendar = [
   "cairosvg >=2.7, <3",
   "icalevents >=0.1, <0.2",
-  "pillow >=10, <11",
+  "pillow >=9.5, <11",
 ]
 persian = [
-  "arabic_reshaper >=3.0, <4",
+  "arabic_reshaper >=3, <4",
   "python-bidi >=0.6, <0.7; python_version < '3.14'",
 ]
 weather = [
-  "requests >=2.3, <2.4",
+  "requests >=2.30, <2.40",
 ]
 
 # For developers
@@ -96,7 +96,7 @@ lint = [
 ]
 tests = [
   "freezegun==1.5.1",
-  "pillow >=10, <11",
+  "pillow >=9.5, <11",
   "pytest >=8, <9",
   "pytest-cov >=6, <7",
   "responses >=0.25, <0.26",
