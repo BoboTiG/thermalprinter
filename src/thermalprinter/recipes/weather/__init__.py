@@ -379,10 +379,10 @@ class Weather:
             elif char == "⚡":
                 char, codepage = b"\x86", CodePage.IRAN  # noqa: PLW2901
             elif char in {
-                int.from_bytes(b"\x8d"),
-                int.from_bytes(b"\x8e"),
-                int.from_bytes(b"\x8f"),
-                int.from_bytes(b"\x8c"),
+                int.from_bytes(b"\x8d", "big"),
+                int.from_bytes(b"\x8e", "big"),
+                int.from_bytes(b"\x8f", "big"),
+                int.from_bytes(b"\x8c", "big"),
             }:
                 codepage = CodePage.THAI2
             else:
