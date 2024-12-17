@@ -63,20 +63,16 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 [project.optional-dependencies]
 # For users
 calendar = [
-  "cairosvg==2.7.1",
-  "icalevents ; python_version < '3.9'",
-  "icalevents==0.1.29 ; python_version >= '3.9'",
-  "pillow ; python_version < '3.9' or platform_machine == 'armv7l'",
-  "pillow==11.0.0 ; python_version >= '3.9' and platform_machine != 'armv7l'",
+  "cairosvg >=2.7, <3",
+  "icalevents >=0.1, <0.2",
+  "pillow >=10, <11",
 ]
 persian = [
-  "arabic_reshaper==3.0.0",
-  "python-bidi ; python_version < '3.9' or python_version >= '3.14'",
-  "python-bidi==0.6.3 ; python_version >= '3.9' and python_version < '3.14'",
+  "arabic_reshaper >=3.0, <4",
+  "python-bidi >=0.6, <0.7; python_version < '3.14'",
 ]
 weather = [
-  "requests ; python_version < '3.9'",
-  "requests==2.32.3 ; python_version >= '3.9'",
+  "requests >=2.3, <2.4",
 ]
 
 # For developers
@@ -100,14 +96,10 @@ lint = [
 ]
 tests = [
   "freezegun==1.5.1",
-  "pillow ; python_version < '3.9'",
-  "pillow==11.0.0 ; python_version >= '3.9'",
-  "pytest ; python_version < '3.9'",
-  "pytest==8.3.4 ; python_version >= '3.9'",
-  "pytest-cov ; python_version < '3.9'",
-  "pytest-cov==6.0.0 ; python_version >= '3.9'",
-  "responses ; python_version < '3.9'",
-  "responses==0.25.3 ; python_version >= '3.9'",
+  "pillow >=10, <11",
+  "pytest >=8, <9",
+  "pytest-cov >=6, <7",
+  "responses >=0.25, <0.26",
 ]
 
 [tool.hatch.version]
