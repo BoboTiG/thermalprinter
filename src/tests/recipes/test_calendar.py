@@ -39,6 +39,12 @@ DTSTART;TZID=Europe/Paris:20240814T100000
 DTEND;TZID=Europe/Paris:20240814T120000
 END:VEVENT
 
+BEGIN:VEVENT
+SUMMARY:HR Zoom
+DTSTART;TZID=America/New_York:20241214T080000
+DTEND;TZID=America/New_York:20241214T083000
+END:VEVENT
+
 END:VCALENDAR
 """
 
@@ -74,7 +80,7 @@ def test_get_birthdays(data: str, expected: Birthdays, calendar: Calendar, tmp_p
 
 def test_get_events(calendar: Calendar) -> None:
     with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=RESPONSE):
-        assert calendar.get_events() == [("15:00", "18:00", "Noël au Château")]
+        assert calendar.get_events() == [("14:00", "14:30", "HR Zoom"), ("15:00", "18:00", "Noël au Château")]
 
 
 def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
