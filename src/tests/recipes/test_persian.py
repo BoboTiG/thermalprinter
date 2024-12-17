@@ -14,7 +14,7 @@ pytest.importorskip("thermalprinter.recipes.persian", reason="The [persian] extr
 def test_persian(printer: ThermalPrinter) -> None:
     result: list[bytes] = []
 
-    def write(data: bytes) -> int | None:
+    def write(data: bytes, *, should_log: bool = True) -> int | None:  # noqa: ARG001
         result.append(data)
         return len(data)
 
