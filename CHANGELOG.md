@@ -1,3 +1,19 @@
+# 1.0.1-dev
+
+Release date: `202x-xx-xx`
+
+## Bug Fixes
+
+-
+
+## Features
+
+-
+
+## Technical Changes
+
+-
+
 # 1.0.0
 
 Release date: `2024-12-17`
