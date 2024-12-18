@@ -82,8 +82,13 @@ jobs:
         with:
           commands: |
             python3 -V
-            sudo apt install --yes python3-pip
-            python3 -m pip install --user -e '.[calendar,persian,weather]'
+            sudo apt install --yes python3-pip python3-venv
+            python3 -m venv venv
+            . venv/bin/activate
+            python -m pip install -e '.[calendar,persian,weather]'
+            python -c 'import thermalprinter as tp; print(tp.__version__)'
+            print-calendar -h
+            print-weather -h
 
   automerge:
     name: Automerge
