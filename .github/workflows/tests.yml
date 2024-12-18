@@ -74,7 +74,7 @@ jobs:
   # So while the CI was green, the project would be unusable on those systems. This job ensures current
   # requirements versions can be statisfied out-of-the-box.
   deps-arm:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     # if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - uses: actions/checkout@v4
