@@ -75,13 +75,14 @@ jobs:
   # requirements versions can be statisfied out-of-the-box.
   deps-arm:
     runs-on: ubuntu-22.04
+    # if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - uses: actions/checkout@v4
       - uses: pguyot/arm-runner-action@v2
         with:
           commands: |
             python3 -V
-            sudo apt install python3-pip
+            sudo apt install --yes python3-pip
             python3 -m pip install --user -e '.[calendar,persian,weather]'
 
   automerge:
