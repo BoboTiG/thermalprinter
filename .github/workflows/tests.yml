@@ -71,7 +71,7 @@ jobs:
         run: python -m pytest
 
   deps-arm:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: pguyot/arm-runner-action@v2
