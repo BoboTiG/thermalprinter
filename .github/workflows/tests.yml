@@ -70,13 +70,16 @@ jobs:
       - name: Unit tests
         run: python -m pytest
 
+  # That module being more used on Raspberry Pi, I've seen dependencies not available for ARM from time to time.
+  # So while the CI was green, the project would be unusable on those systems. This job ensures current
+  # requirements versions can be statisfied out-of-the-box.
   deps-arm:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: pguyot/arm-runner-action@v2
         with:
-          base_image: dietpi:rpi_armv7_bookworm
+          base_image: dietpi:rpi_armv7_bullseye
           commands: |
             python -m pip install -U pip
             python -m pip install -e '.[calendar,persian,weather]'
