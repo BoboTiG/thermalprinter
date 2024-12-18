@@ -33,6 +33,7 @@ Installation:
 
 .. code-block:: bash
 
+    sudo apt install libcairo2
     python -m pip install -U 'thermalprinter[calendar]'
 
 There is an executable made available:
