@@ -80,11 +80,9 @@ jobs:
       - uses: pguyot/arm-runner-action@v2
         with:
           commands: |
-            python -V
-            sudo apt install python-pip python-venv
-            python -m venv venv
-            . venv/bin/activate
-            python -m pip install -e '.[calendar,persian,weather]'
+            python3 -V
+            sudo apt install python3-pip
+            python3 -m pip install --user -e '.[calendar,persian,weather]'
 
   automerge:
     name: Automerge
