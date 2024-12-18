@@ -81,9 +81,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pguyot/arm-runner-action@v2
         with:
+          cpu: cortex-a7
           commands: |
             python3 -V
-            sudo apt install --yes libcairo2 python3-pip python3-venv
+            sudo apt install --yes libcairo2 libopenjp2-7 python3-pip python3-venv
             python3 -m venv venv
             . venv/bin/activate
             python -m pip install -e '.[calendar,persian,weather]' --only-binary=:all: --no-binary=thermalprinter
