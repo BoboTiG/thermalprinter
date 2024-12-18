@@ -76,16 +76,17 @@ jobs:
   deps-arm:
     runs-on: ubuntu-latest
     # if: ${{ github.actor == 'dependabot[bot]' }}
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: pguyot/arm-runner-action@v2
         with:
           commands: |
             python3 -V
-            sudo apt install --yes python3-pip python3-venv
+            sudo apt install --yes libcairo2 python3-pip python3-venv
             python3 -m venv venv
             . venv/bin/activate
-            python -m pip install -e '.[calendar,persian,weather]'
+            python -m pip install -e '.[calendar,persian,weather]' --only-binary=:all: --no-binary=thermalprinter
             python -c 'import thermalprinter as tp; print(tp.__version__)'
             print-calendar -h
             print-weather -h
