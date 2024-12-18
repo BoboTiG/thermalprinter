@@ -75,7 +75,7 @@ jobs:
   # requirements versions can be statisfied out-of-the-box.
   deps-arm:
     runs-on: ubuntu-latest
-    # if: ${{ github.actor == 'dependabot[bot]' }}
+    if: ${{ github.actor == 'dependabot[bot]' }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
