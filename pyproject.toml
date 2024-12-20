@@ -90,7 +90,7 @@ docs = [
 ]
 lint = [
   "mypy==1.13.0",
-  "ruff==0.8.3",
+  "ruff==0.8.4",
   "types-requests",
   "types-python-dateutil",
 ]
