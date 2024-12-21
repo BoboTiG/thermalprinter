@@ -4,6 +4,7 @@ Release date: `202x-xx-xx`
 
 ## Bug Fixes
 
+- Weather recipe: fixed special characters handling.
 - Weather recipe: added the missing `byteorder` (keyword-)argument to `int.from_bytes()` calls for Python 3.9, and 3.10.
 
 ## Features

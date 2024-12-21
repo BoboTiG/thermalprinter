@@ -358,10 +358,11 @@ class Weather:
     def line_out(self, line: str | bytes, *, line_feed: bool = True) -> None:  # noqa: PLR0912
         """Print one character at a time with the proper code page, and with adapted letters on unsupported unicode."""
         assert self.printer  # noqa: S101
+        printer = self.printer
 
         if not line:
             if line_feed:
-                self.printer.feed()
+                printer.feed()
             return
 
         char: bytes | str | int
@@ -389,22 +390,23 @@ class Weather:
                 codepage = CodePage.ISO_8859_1
             data.append((chr(char) if isinstance(char, int) else char, codepage))
 
-        current_codepage = data[0][1]
-        self.printer.codepage(current_codepage)
         line_data: list[str | bytes] = []
         for char, codepage in data:
-            if codepage is current_codepage:
+            if codepage is printer._codepage:
                 line_data.append(char)
-            elif line_data:
-                glue = b"" if isinstance(line_data[0], bytes) else ""
-                self.printer.out(glue.join(line_data), line_feed=False)  # type: ignore[arg-type]
-                line_data = []
-            else:
-                self.printer.codepage(codepage)
-                current_codepage = codepage
+                continue
 
-        glue = b"" if isinstance(line_data[0], bytes) else ""
-        self.printer.out(glue.join(line_data), line_feed=line_feed)  # type: ignore[arg-type]
+            if line_data:
+                glue = b"" if isinstance(line_data[0], bytes) else ""
+                printer.out(glue.join(line_data), line_feed=False)  # type: ignore[arg-type]
+                line_data = []
+
+            line_data.append(char)
+            printer.codepage(codepage)
+
+        if line_data:
+            glue = b"" if isinstance(line_data[0], bytes) else ""
+            printer.out(glue.join(line_data), line_feed=line_feed)  # type: ignore[arg-type]
 
     def print_data(self, data: dict[str, Any]) -> None:
         """Just print."""
@@ -413,8 +415,9 @@ class Weather:
 
         printer = self.printer
 
+        printer.codepage(CodePage.ISO_8859_1)
         printer.feed()
-        printer.out(TITLE, bold=True, codepage=CodePage.ISO_8859_1, size=Size.LARGE)
+        printer.out(TITLE, bold=True, size=Size.LARGE)
         printer.out(self.now.strftime("%Y-%m-%d"))
         printer.feed()
 
@@ -437,12 +440,9 @@ class Weather:
         self.line_out(lines[4].format(**data))
 
         # Saint of the day
+        printer.codepage(CodePage.ISO_8859_1)
         printer.feed()
-        printer.out(
-            SAINT_OF_THE_DAY.format(self.get_the_saint_of_the_day()),
-            justify=Justify.CENTER,
-            codepage=CodePage.ISO_8859_1,
-        )
+        printer.out(SAINT_OF_THE_DAY.format(self.get_the_saint_of_the_day()), justify=Justify.CENTER)
 
         printer.feed(3)
 
