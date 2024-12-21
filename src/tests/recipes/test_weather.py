@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from subprocess import check_call
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
 import pytest
@@ -12,6 +12,7 @@ pytest.importorskip("thermalprinter.recipes.weather", reason="The [weather] extr
 import responses  # noqa: E402
 from freezegun import freeze_time  # noqa: E402
 
+from thermalprinter.constants import CodePage, Justify, Size  # noqa: E402
 from thermalprinter.recipes.weather import DESCRIPTIONS, URL, Weather  # noqa: E402
 
 if TYPE_CHECKING:
@@ -100,6 +101,71 @@ def test_print_data_wind_dir_bytes(weather: Weather, printer: ThermalPrinter) ->
 
     weather.printer = printer
     weather.print_data(data)
+
+
+def test_line_out(weather: Weather, printer: ThermalPrinter) -> None:
+    today = deepcopy(TODAY)
+    today["wind_deg"] = 0.0
+    today["weather"][0]["description"] = "clear sky"
+    data = weather.forge_data(today)
+
+    instructions: list[Any] = []
+    orig_codepage = printer.codepage
+    orig_feed = printer.feed
+    orig_out = printer.out
+
+    def codepage(codepage: CodePage = CodePage.CP437) -> None:
+        instructions.append(codepage)
+        orig_codepage(codepage)
+
+    def feed(number: int = 1) -> None:
+        instructions.extend([r"\n"] * number)
+        orig_feed(number)
+
+    def out(data: Any, line_feed: bool = True, **kwargs: Any) -> None:
+        instructions.append((data, line_feed, kwargs))
+        orig_out(data, line_feed=line_feed, **kwargs)
+
+    with patch.object(printer, "codepage", codepage), patch.object(printer, "feed", feed):  # noqa: SIM117
+        with patch.object(printer, "out", out):
+            weather.printer = printer
+            weather.print_data(data)
+
+    expected = [
+        CodePage.ISO_8859_1,
+        r"\n",
+        ("Météo", True, {"bold": True, "size": Size.LARGE}),
+        ("2024-12-13", True, {}),
+        r"\n",
+        ("    \\ . /", True, {}),
+        ("   - .-. -     Ciel dégagé", True, {}),
+        ("  ", False, {}),
+        CodePage.CP863,
+        (b"\xc4", False, {}),
+        CodePage.ISO_8859_1,
+        (" (   ) ", False, {}),
+        CodePage.CP863,
+        (b"\xc4", False, {}),
+        CodePage.ISO_8859_1,
+        ("    3 - 10 °C", True, {}),
+        ("   . `-", False, {}),
+        CodePage.ISO_8859_7,
+        (b"\xa2", False, {}),
+        CodePage.ISO_8859_1,
+        (" .     ", False, {}),
+        CodePage.THAI2,
+        ("\x8d", False, {}),
+        CodePage.ISO_8859_1,
+        (" 18 km/h", True, {}),
+        ("    / ' \\      6 mm/h - 75%", True, {}),
+        CodePage.ISO_8859_1,
+        r"\n",
+        ("Fête du jour : Lucie", True, {"justify": Justify.CENTER}),
+        r"\n",
+        r"\n",
+        r"\n",
+    ]
+    assert instructions == expected
 
 
 @responses.activate
