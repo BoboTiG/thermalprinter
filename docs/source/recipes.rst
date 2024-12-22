@@ -2,6 +2,8 @@
 🍳 Recipes
 ==========
 
+.. module:: thermalprinter.recipes
+
 .. versionadded:: 1.0.0
 
     Recipes are extras features that you can install on-demand.
@@ -14,6 +16,8 @@
 
 Calendar
 ========
+
+.. module:: thermalprinter.recipes.calendar
 
 Print daily stuff from your calendar, and birthdays as a bonus!
 
@@ -60,6 +64,8 @@ Here is the API:
 
 ------
 
+.. module:: thermalprinter.recipes.perisan
+
 .. _persian-text:
 
 Persian
@@ -93,6 +99,8 @@ Here is the API:
 
 Weather
 =======
+
+.. module:: thermalprinter.recipes.weather
 
 How cool is it to have the weather printed every morning, alongside with the saint of the day? 🥰
 
