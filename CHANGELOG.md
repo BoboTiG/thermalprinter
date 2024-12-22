@@ -9,11 +9,11 @@ Release date: `202x-xx-xx`
 
 ## Features
 
-- Weather recipe: added the `USER_AGENT` constant.
+- Weather recipe: now using a custom User-Agent HTTP header to fetch OpenWeatherMap data, added the `USER_AGENT` constant.
 
 ## Technical Changes
 
--
+- Weather recipe: removed the useless `UNKNOWN` constant.
 
 # 1.0.0
 
