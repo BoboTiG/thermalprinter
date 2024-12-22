@@ -109,7 +109,6 @@ How cool is it to have the weather printed every morning, alongside with the sai
 
     .. autodata:: thermalprinter.recipes.weather.TITLE
     .. autodata:: thermalprinter.recipes.weather.SAINT_OF_THE_DAY
-    .. autodata:: thermalprinter.recipes.weather.UNKNOWN
     .. autodata:: thermalprinter.recipes.weather.NORTH
     .. autodata:: thermalprinter.recipes.weather.EAST
     .. autodata:: thermalprinter.recipes.weather.SOUTH

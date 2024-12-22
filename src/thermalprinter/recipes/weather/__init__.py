@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 # Might be something you would like to translate
 TITLE = "Météo"  #: Title.
 SAINT_OF_THE_DAY = "Fête du jour : {}"  #: Prefix before the saint of the day.
-UNKNOWN = "Inconnu(e)"  #: When the day does not meet a saint of the day.
 NORTH = "N"  #: The North cord point abbreviation.
 EAST = "E"  #: The East cord point abbreviation.
 SOUTH = "S"  #: The South cord point abbreviation.
@@ -330,7 +329,7 @@ class Weather:
         """Guess the saint of the day."""
         today = self.now.strftime("%d/%m")
         lines = (Path(__file__).parent / SAINTS_FILE).read_text().splitlines()
-        return next((line.split(";", 1)[1].strip() for line in lines if line.startswith(today)), UNKNOWN)
+        return next((line.split(";", 1)[1].strip() for line in lines if line.startswith(today)), "")
 
     def get_today_data(self) -> dict[str, Any]:
         """Retreive today weather metrics."""
