@@ -146,4 +146,5 @@ Here is the API:
 
 .. autodata:: thermalprinter.recipes.weather.SAINTS_FILE
 .. autodata:: thermalprinter.recipes.weather.URL
+.. autodata:: thermalprinter.recipes.weather.USER_AGENT
 .. autodata:: thermalprinter.recipes.weather.TIMEZONE

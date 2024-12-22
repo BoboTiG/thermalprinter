@@ -33,7 +33,11 @@ TIMEZONE = "Europe/Paris"  #: The timezone to display proper dates.
 
 #: OpenWeatherMap API URL
 URL = "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=metric&appid={appid}"
-SAINTS_FILE = "./saints.lst"  #: File containing calendar saints.
+#: User-Agent HTTP header used to fetch OpenWeatherMap data.
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0"
+
+#: File containing calendar saints.
+SAINTS_FILE = "./saints.lst"
 
 # Sync with https://openweathermap.org/weather-conditions
 DESCRIPTIONS = {
@@ -334,7 +338,8 @@ class Weather:
     def get_today_data(self) -> dict[str, Any]:
         """Retreive today weather metrics."""
         url = URL.format(lat=self.lat, lon=self.lon, appid=self.appid)
-        with requests.get(url, timeout=15) as req:
+        headers = {"User-Agent": USER_AGENT}
+        with requests.get(url, headers=headers, timeout=15) as req:
             data = req.json()
         log.info("Got weather data: %s", data)
         return data["daily"][0]

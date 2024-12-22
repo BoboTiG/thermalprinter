@@ -9,7 +9,7 @@ Release date: `202x-xx-xx`
 
 ## Features
 
--
+- Weather recipe: added the `USER_AGENT` constant.
 
 ## Technical Changes
 
