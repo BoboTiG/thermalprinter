@@ -31,7 +31,7 @@ WEST = "O"  #: The West cord point abbreviation.
 
 TIMEZONE = "Europe/Paris"  #: The timezone to display proper dates.
 
-#: OpenWeatherMap API URL
+#: OpenWeatherMap API URL.
 URL = "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&units=metric&appid={appid}"
 #: User-Agent HTTP header used to fetch OpenWeatherMap data.
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0"
