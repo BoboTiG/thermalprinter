@@ -151,7 +151,7 @@ class ThermalPrinter:
         self.close()
 
     def close(self) -> None:
-        """To be sure we keep stats, and cleanup."""
+        """Persist statistics, *if desired*, and close the serial port."""
         if self._use_stats and (self.lines or self.feeds):
             from thermalprinter.tools import stats_save
 
@@ -699,6 +699,9 @@ class ThermalPrinter:
 
         .. tip::
             Since **v1.0.0** the image will be automatically resized when too wide.
+
+        .. important::
+            It works better with white background instead of transparence.
         """
         if isinstance(image, (str, Path)):
             try:
@@ -735,10 +738,10 @@ class ThermalPrinter:
         self.__lines += height // self._line_spacing + 1
 
     def image_chunks(self, image: Any) -> bytearray:
-        """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
+        """TODO Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
 
-        :param PIL.Image image: The PIL Image object to convert.
-        :rtype: :py:obj:`PIL.Image`
+        :param PIL.Image image: The PIL Image object to handle.
+        :rtype: bytearray
         :return: The converted image object, if converted, else the original ``image``.
 
         .. hint::

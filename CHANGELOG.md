@@ -38,7 +38,7 @@ Release date: `2024-12-17`
 - New extra: `persian`, to make your life easier when printing Persian text, see {ref}`recipes <persian-text>`.
 - New extra: `weather`, to print the weather alongside with the saint of the day! See {ref}`recipes <weather>`.
 - New text styles: {meth}`thermalprinter.ThermalPrinter.font_b()`, and {meth}`thermalprinter.ThermalPrinter.left_blank()`.
-- New options to tweak printer behaviors: `byte_time`, `dot_feed_time`, `dot_print_time`, `read_timeout`, and `write_timeout`.
+- New options to tweak printer behaviors: `byte_time`, `dot_feed_time`, `dot_print_time`, `read_timeout`, and `write_timeout`. See {class}`thermalprinter.ThermalPrinter`.
 - New option to control printer settings at initialization to {class}`thermalprinter.ThermalPrinter`: `run_setup_cmd=bool` ({issue}`15`).
 - It is now possible to pass barcode styling instructions in {meth}`thermalprinter.ThermalPrinter.barcode()`, in the same way it's done for {meth}`thermalprinter.ThermalPrinter.out()`.
 - Introduced statistics persisted at exit. This behavior can be disabled by passing `use_stats=False` to {class}`thermalprinter.ThermalPrinter`.
@@ -71,7 +71,7 @@ Release date: `2024-12-17`
 - Moved the {func}`thermalprinter.tools.printer_tests()` function to the {meth}`thermalprinter.ThermalPrinter.demo()` method (**breaking change**).
 - Moved the {func}`thermalprinter.tools.print_char()` function to the {meth}`thermalprinter.ThermalPrinter.print_char()` method (**breaking change**).
 - Moved the {func}`thermalprinter.validate.validate_barcode()` function to the {meth}`thermalprinter.ThermalPrinter.validate_barcode()` method.
-- Removed the {file}`validate.py` file, and most of `validate_*()` functions.
+- Removed the {file}`validate.py` file, and most `validate_*()` functions.
 - Removed the {obj}`thermlaprinter.exceptions.ThermalPrinterConstantError` class.
 
 # 0.3.0
@@ -123,3 +123,15 @@ Release date: `2019-01-10`
 ## Contributors
 
 Thanks to our beloved contributors: {contributor}`d21d3q`
+
+# 0.1.0
+
+Release date: `2016-05-24`
+
+## Features
+
+- First working version.
+
+## Contributors
+
+Thanks to our beloved contributors: {contributor}`phillipthelen`, and {contributor}`AKokkalas`

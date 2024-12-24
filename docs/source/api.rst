@@ -53,6 +53,7 @@ Text Styling
 .. automethod:: ThermalPrinter.font_b
 .. automethod:: ThermalPrinter.inverse
 .. automethod:: ThermalPrinter.justify
+.. automethod:: ThermalPrinter.left_blank
 .. automethod:: ThermalPrinter.left_margin
 .. automethod:: ThermalPrinter.line_spacing
 .. automethod:: ThermalPrinter.rotate
