@@ -10,6 +10,7 @@ Release date: `202x-xx-xx`
 ## Features
 
 - Calendar recipe: improve multi-days event display (#43).
+- Calendar recipe: feed before printing birthdays.
 - Weather recipe: now using a custom User-Agent HTTP header to fetch OpenWeatherMap data, added the `USER_AGENT` constant.
 
 ## Technical Changes
