@@ -10,9 +10,13 @@ import icalevents.icaldownload
 import pytest
 from freezegun import freeze_time
 from icalevents.icalparser import create_event
-from zoneinfo import ZoneInfo
 
 from thermalprinter import ThermalPrinter
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore[no-redef]
 
 if TYPE_CHECKING:
     from pathlib import Path

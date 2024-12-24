@@ -16,7 +16,11 @@ from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
 from icalevents import icalevents
 from PIL import Image
-from zoneinfo import ZoneInfo
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore[no-redef]
 
 if TYPE_CHECKING:
     from types import TracebackType
