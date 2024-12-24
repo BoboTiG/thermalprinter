@@ -18,6 +18,7 @@ Release date: `202x-xx-xx`
 - Drop support for Python 3.7, and 3.8.
 - Calendar recipe: added the `DAYS_NAMES` constant.
 - Calendar recipe: added the `format_event_date()` function.
+- Calendar recipe: moved the `Calendar.forge_header_image()` method to a distinct function.
 - Weather recipe: removed the useless `UNKNOWN` constant.
 
 # 1.0.0

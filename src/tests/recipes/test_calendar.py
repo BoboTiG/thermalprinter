@@ -25,7 +25,14 @@ if TYPE_CHECKING:
 
 pytest.importorskip("thermalprinter.recipes.calendar", reason="The [calendar] extra dependencies are not installed.")
 
-from thermalprinter.recipes.calendar import TIMEZONE, UNTIL, WHOLE_DAY, Calendar, format_event_date  # noqa: E402
+from thermalprinter.recipes.calendar import (  # noqa: E402
+    TIMEZONE,
+    UNTIL,
+    WHOLE_DAY,
+    Calendar,
+    forge_header_image,
+    format_event_date,
+)
 
 TZ = ZoneInfo(TIMEZONE)
 TODAY = datetime(2024, 12, 14, tzinfo=TZ)
@@ -75,8 +82,8 @@ def calendar() -> Generator[Calendar]:
         yield cls
 
 
-def test_forge_header_image(calendar: Calendar) -> None:
-    image = calendar.forge_header_image(TODAY)
+def test_forge_header_image() -> None:
+    image = forge_header_image(TODAY)
     assert image.size == (189, 197)
 
 

@@ -54,6 +54,11 @@ Here is the API:
 
 .. autoclass:: thermalprinter.recipes.calendar.Calendar
 .. automethod:: thermalprinter.recipes.calendar.Calendar.start
+.. autofunction:: thermalprinter.recipes.calendar.forge_header_image
+
+    .. versionadded:: 1.1.0
+        It was a class method in v1.0.0.
+
 .. autofunction:: thermalprinter.recipes.calendar.format_event_date
 
     .. versionadded:: 1.1.0

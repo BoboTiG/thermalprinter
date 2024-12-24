@@ -134,12 +134,6 @@ class Calendar:
         events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
         return sorted((event.start, format_event_date(when, event), event.summary) for event in events)
 
-    def forge_header_image(self, when: datetime) -> Image:
-        """Create the image object containing the nice image with current month, and day."""
-        agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[when.month - 1]).replace("DAY", str(when.day))
-        agenda_png = svg2png(agenda_svg, background_color="white")
-        return Image.open(BytesIO(agenda_png))
-
     def print_data(self, when: datetime, events: Events, anniversaries: Birthdays) -> None:
         """Just print."""
         if not self.printer:
@@ -153,7 +147,7 @@ class Calendar:
             """Print the header."""
             printer.codepage(CodePage.ISO_8859_1)
             printer.feed()
-            printer.image(self.forge_header_image(when))
+            printer.image(forge_header_image(when))
             printer.feed()
 
         def birthdays() -> None:
@@ -209,6 +203,18 @@ class Calendar:
             for event in events:
                 line(event, first_line=event is first, last_line=event is last)
         footer()
+
+
+def forge_header_image(now: datetime) -> Image:
+    """Create the image object containing the nice image with current month, and day.
+
+    :param: datetime now: the current date to compare event's dates to.
+    :rtype: PIL.Image
+    :return: a PNG file-like `Image` object.
+    """
+    agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[now.month - 1]).replace("DAY", str(now.day))
+    agenda_png = svg2png(agenda_svg, background_color="white")
+    return Image.open(BytesIO(agenda_png))
 
 
 def format_event_date(now: datetime, event: icalevents.Event) -> str:
