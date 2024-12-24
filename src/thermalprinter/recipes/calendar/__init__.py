@@ -162,6 +162,7 @@ class Calendar:
 
         def birthdays() -> None:
             """Print anniversaries."""
+            printer.feed()
             printer.out(BIRTHDAY)
             for name, years in anniversaries:
                 printer.out(f"  ... {name} ({years}) !", codepage=CodePage.ISO_8859_1)
