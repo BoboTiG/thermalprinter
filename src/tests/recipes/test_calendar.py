@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from subprocess import check_call
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 from zoneinfo import ZoneInfo
 
@@ -17,6 +17,7 @@ from thermalprinter import ThermalPrinter
 if TYPE_CHECKING:
     from collections.abc import Generator
     from pathlib import Path
+    from typing import Any
 
     from _typeshed import ReadableBuffer
 

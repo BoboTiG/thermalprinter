@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from subprocess import check_call
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from unittest.mock import patch
 
 import pytest
@@ -18,6 +18,7 @@ from thermalprinter.recipes.weather import DESCRIPTIONS, URL, Weather  # noqa: E
 if TYPE_CHECKING:
     from collections.abc import Generator
     from pathlib import Path
+    from typing import Any
 
     from thermalprinter import ThermalPrinter
 
