@@ -29,6 +29,10 @@ Print daily stuff from your calendar, and birthdays as a bonus!
     You can tweak those constants to better fit your needs:
 
     .. autodata:: thermalprinter.recipes.calendar.BIRTHDAY
+    .. autodata:: thermalprinter.recipes.calendar.DAYS_NAMES
+
+        .. versionadded:: 1.1.0
+
     .. autodata:: thermalprinter.recipes.calendar.MONTH_NAMES
     .. autodata:: thermalprinter.recipes.calendar.NICE_DAY
     .. autodata:: thermalprinter.recipes.calendar.WHOLE_DAY
@@ -50,6 +54,10 @@ Here is the API:
 
 .. autoclass:: thermalprinter.recipes.calendar.Calendar
 .. automethod:: thermalprinter.recipes.calendar.Calendar.start
+.. autofunction:: thermalprinter.recipes.calendar.format_event_date
+
+    .. versionadded:: 1.1.0
+
 .. autodata:: thermalprinter.recipes.calendar.TIMEZONE
 .. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
 

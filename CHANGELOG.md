@@ -9,10 +9,13 @@ Release date: `202x-xx-xx`
 
 ## Features
 
+- Calendar recipe: improve multi-days event display (#43).
 - Weather recipe: now using a custom User-Agent HTTP header to fetch OpenWeatherMap data, added the `USER_AGENT` constant.
 
 ## Technical Changes
 
+- Calendar recipe: added the `DAYS_NAMES` constant.
+- Calendar recipe: added the `format_event_date()` function.
 - Weather recipe: removed the useless `UNKNOWN` constant.
 
 # 1.0.0
