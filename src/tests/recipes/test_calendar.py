@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from subprocess import check_call
@@ -245,5 +246,8 @@ def test_format_event_date(now: datetime, start: datetime, end: datetime, expect
     class D:
         dt: datetime
 
-    event = create_event({"dtstart": D(start), "dtend": D(end)}, True)
+    if sys.version_info < (3, 9):
+        event = create_event({"dtstart": D(start), "dtend": D(end)}, tz=TZ)
+    else:
+        event = create_event({"dtstart": D(start), "dtend": D(end)}, True)
     assert format_event_date(now, event) == expected
