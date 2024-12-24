@@ -4,6 +4,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 
 from __future__ import annotations
 
+import sys
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -135,7 +136,10 @@ class Calendar:
 
     def get_events(self, when: datetime) -> Events:
         """Retrieve events of the day."""
-        events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
+        if sys.version_info < (3, 9):  # pragma: nocover
+            events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1))
+        else:
+            events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
         return sorted((event.start, format_event_date(when, event), event.summary) for event in events)
 
     def forge_header_image(self, when: datetime) -> Image:
