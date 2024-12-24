@@ -4,24 +4,19 @@ Source: https://github.com/BoboTiG/thermalprinter.
 
 from __future__ import annotations
 
-import sys
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from io import BytesIO
 from pathlib import Path
 from textwrap import wrap
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo
 
 from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
 from icalevents import icalevents
 from PIL import Image
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore[no-redef]
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -73,10 +68,10 @@ AGENDA_MODEL = """\
 </svg>
 """  # noqa: E501
 
-Birthday = Tuple[str, int]
-Birthdays = List[Birthday]
-Event = Tuple[datetime, str, str]
-Events = List[Event]
+Birthday = tuple[str, int]
+Birthdays = list[Birthday]
+Event = tuple[datetime, str, str]
+Events = list[Event]
 
 
 @dataclass
@@ -136,10 +131,7 @@ class Calendar:
 
     def get_events(self, when: datetime) -> Events:
         """Retrieve events of the day."""
-        if sys.version_info < (3, 9):  # pragma: nocover
-            events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1))
-        else:
-            events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
+        events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
         return sorted((event.start, format_event_date(when, event), event.summary) for event in events)
 
     def forge_header_image(self, when: datetime) -> Image:

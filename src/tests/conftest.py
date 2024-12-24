@@ -7,7 +7,7 @@ import pytest
 from tests.faker import FakeThermalPrinter
 
 if TYPE_CHECKING:
-    from typing import Generator
+    from collections.abc import Generator
 
     from thermalprinter import ThermalPrinter
 

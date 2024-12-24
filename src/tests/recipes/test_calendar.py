@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
 from datetime import datetime
 from subprocess import check_call
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
+from zoneinfo import ZoneInfo
 
 import icalevents.icaldownload
 import pytest
@@ -14,14 +14,9 @@ from icalevents.icalparser import create_event
 
 from thermalprinter import ThermalPrinter
 
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore[no-redef]
-
 if TYPE_CHECKING:
+    from collections.abc import Generator
     from pathlib import Path
-    from typing import Generator
 
     from _typeshed import ReadableBuffer
 
@@ -246,8 +241,5 @@ def test_format_event_date(now: datetime, start: datetime, end: datetime, expect
     class D:
         dt: datetime
 
-    if sys.version_info < (3, 9):
-        event = create_event({"dtstart": D(start), "dtend": D(end)}, tz=TZ)
-    else:
-        event = create_event({"dtstart": D(start), "dtend": D(end)}, True)
+    event = create_event({"dtstart": D(start), "dtend": D(end)}, True)
     assert format_event_date(now, event) == expected

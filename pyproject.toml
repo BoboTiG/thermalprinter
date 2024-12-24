@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "thermalprinter"
 description = "Driver for the DP-EH600 thermal printer (AdaFruit)."
 readme = "README.md"
-requires-python = ">= 3.7"
+requires-python = ">= 3.9"
 authors = [
   { name = "Mickaël Schoentgen", email="contact@tiger-222.fr" },
 ]
@@ -23,8 +23,6 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -63,7 +61,6 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 [project.optional-dependencies]
 # For users
 calendar = [
-  "backports.zoneinfo==0.2.1 ; python_version < '3.9'",
   "cairosvg==2.7.1",
   "icalevents >=0.1, <0.2",
   "pillow >=9.5, <12",
@@ -163,7 +160,7 @@ addopts = """
 [tool.ruff]
 line-length = 120
 indent-width = 4
-target-version = "py37"
+target-version = "py39"
 
 [tool.ruff.format]
 quote-style = "double"

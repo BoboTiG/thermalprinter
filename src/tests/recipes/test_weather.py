@@ -16,8 +16,8 @@ from thermalprinter.constants import CodePage, Justify, Size  # noqa: E402
 from thermalprinter.recipes.weather import DESCRIPTIONS, URL, Weather  # noqa: E402
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
     from pathlib import Path
-    from typing import Generator
 
     from thermalprinter import ThermalPrinter
 
