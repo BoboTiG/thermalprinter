@@ -335,7 +335,8 @@ class ThermalPrinter:
         """Convert data before sending to the printer.
 
         :param mixed data: Any type of data to print.
-        :return bytes: The converted data in bytes.
+        :rtype: bytes
+        :return: The converted data in bytes.
         """
         if isinstance(data, (bool, int, float, complex)):
             data = str(data)
@@ -693,7 +694,8 @@ class ThermalPrinter:
         >>> printer.image(Image.open("picture.png"))
 
         .. versionchanged:: 1.0.0
-            ``image`` can also be a :obj:`str`, or :obj:`pathlib.Path`.
+            ``image`` can also be a :obj:`str`, or :obj:`pathlib.Path`,
+            in addition to the original :py:obj:`PIL.Image` object.
 
         .. tip::
             Since **v1.0.0** the image will be automatically resized when too wide.
@@ -736,7 +738,7 @@ class ThermalPrinter:
         """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
 
         :param PIL.Image image: The PIL Image object to convert.
-        :rtype: PIL.Image
+        :rtype: :py:obj:`PIL.Image`
         :return: The converted image object, if converted, else the original ``image``.
 
         .. hint::
@@ -764,7 +766,7 @@ class ThermalPrinter:
         """Convert a given ``image`` to 1-bit without diffusion dithering, *if necessary*.
 
         :param PIL.Image image: The PIL Image object to convert.
-        :rtype: PIL.Image
+        :rtype: :py:obj:`PIL.Image`
         :return: The converted image object, if converted, else the original ``image``.
 
         .. hint::
@@ -788,7 +790,7 @@ class ThermalPrinter:
         The size proportion will be respected.
 
         :param PIL.Image image: The PIL Image object to resize.
-        :rtype: PIL.Image
+        :rtype: :py:obj:`PIL.Image`
         :return: The resized image object, if resized, else the original ``image``.
 
         .. hint::
@@ -846,7 +848,7 @@ class ThermalPrinter:
         .. versionadded:: 1.0.0
         """
         if not isinstance(value, int) or not (0 <= value <= 255):
-            msg = "value should be betwwen 0 and 255."
+            msg = "value should be between 0 and 255."
             raise ThermalPrinterValueError(msg)
 
         if value != self._left_blank:

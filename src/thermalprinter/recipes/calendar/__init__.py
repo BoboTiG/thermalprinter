@@ -208,9 +208,9 @@ class Calendar:
 def forge_header_image(now: datetime) -> Image:
     """Create the image object containing the nice image with current month, and day.
 
-    :param: datetime now: the current date to compare event's dates to.
-    :rtype: PIL.Image
-    :return: a PNG file-like `Image` object.
+    :param datetime now: The current date to compare event's dates to.
+    :rtype: :py:obj:`PIL.Image`
+    :return: A PNG file-like :py:obj:`PIL.Image` object.
     """
     agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[now.month - 1]).replace("DAY", str(now.day))
     agenda_png = svg2png(agenda_svg, background_color="white")
@@ -220,10 +220,10 @@ def forge_header_image(now: datetime) -> Image:
 def format_event_date(now: datetime, event: icalevents.Event) -> str:
     """Given the current date, and an iCal event, return the formated event's start, and end.
 
-    :param: datetime now: the current date to compare event's dates to.
-    :param: icalevents.Event event: the iCal event.
+    :param datetime now: The current date to compare event's dates to.
+    :param icalevents.Event event: The iCal event.
     :rtype: str
-    :return: the formated event duration.
+    :return: The formated event duration.
     """
     delta = event.end - event.start
 

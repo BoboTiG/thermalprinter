@@ -14,6 +14,8 @@
 
 ------
 
+.. _calendar:
+
 Calendar
 ========
 
@@ -31,7 +33,7 @@ Print daily stuff from your calendar, and birthdays as a bonus!
     .. autodata:: thermalprinter.recipes.calendar.BIRTHDAY
     .. autodata:: thermalprinter.recipes.calendar.DAYS_NAMES
 
-        .. versionadded:: 1.1.0
+        .. versionadded:: 2.0.0
 
     .. autodata:: thermalprinter.recipes.calendar.MONTH_NAMES
     .. autodata:: thermalprinter.recipes.calendar.NICE_DAY
@@ -56,12 +58,12 @@ Here is the API:
 .. automethod:: thermalprinter.recipes.calendar.Calendar.start
 .. autofunction:: thermalprinter.recipes.calendar.forge_header_image
 
-    .. versionadded:: 1.1.0
+    .. versionadded:: 2.0.0
         It was a class method in v1.0.0.
 
 .. autofunction:: thermalprinter.recipes.calendar.format_event_date
 
-    .. versionadded:: 1.1.0
+    .. versionadded:: 2.0.0
 
 .. autodata:: thermalprinter.recipes.calendar.TIMEZONE
 .. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
@@ -109,6 +111,8 @@ Here is the API:
     💐 Credits go to `@ghorbanpirizad <https://github.com/ghorbanpirizad>`_ in `issue #4 <https://github.com/BoboTiG/thermalprinter/issues/4>`_.
 
 ------
+
+.. _weather:
 
 Weather
 =======

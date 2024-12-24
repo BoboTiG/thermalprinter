@@ -295,7 +295,7 @@ class Weather:
 
     :param float lat: Location latitude.
     :param float lon: Location longitude.
-    :param str appid: OpenWeatherMap appid.
+    :param str appid: OpenWeatherMap `API key <https://openweathermap.org/appid>`_.
     :param thermalprinter.ThermalPrinter | None printer: Optional printer to use.
     """
 

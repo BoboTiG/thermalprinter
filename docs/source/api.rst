@@ -37,6 +37,7 @@ Images
 ------
 
 .. automethod:: ThermalPrinter.image
+.. automethod:: ThermalPrinter.image_chunks
 .. automethod:: ThermalPrinter.image_convert
 .. automethod:: ThermalPrinter.image_resize
 
@@ -95,6 +96,7 @@ Printer State
 Special Methods
 ---------------
 
+.. automethod:: ThermalPrinter.close
 .. automethod:: ThermalPrinter.flush
 .. automethod:: ThermalPrinter.init
 .. automethod:: ThermalPrinter.print_char

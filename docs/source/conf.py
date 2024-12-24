@@ -18,12 +18,22 @@ extensions = [
     "myst_parser",
     "sphinx_copybutton",
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx_new_tab_link",
 ]
 new_tab_link_show_external_link_icon = True
 source_suffix = {".rst": "restructuredtext"}
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+extlinks = {
+    "contributor": ("https://github.com/BoboTiG/thermalprinter/commits?author=%s", "@%s"),
+    "issue": ("https://github.com/BoboTiG/thermalprinter/issues/%s", "issue #%s"),
+    "pull": ("https://github.com/BoboTiG/thermalprinter/pull/%s", "PR #%s"),
+}
+intersphinx_mapping = {
+    "icalevents": ("https://icalevents.readthedocs.io/en/latest/", None),
+    "pillow": ("https://pillow.readthedocs.io/en/latest/", None),
+    "python": ("https://docs.python.org/3", None),
+}
 project = "ThermalPrinter"
 author = thermalprinter.__author__
 copyright = thermalprinter.__copyright__.splitlines()[1].removeprefix("Copyright (c) ").strip()  # noqa: A001
