@@ -11,9 +11,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import requests
-from zoneinfo import ZoneInfo
 
 from thermalprinter import CodePage, Justify, Size
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore[no-redef]
 
 if TYPE_CHECKING:
     from types import TracebackType

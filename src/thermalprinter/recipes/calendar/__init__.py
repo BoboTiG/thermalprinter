@@ -4,6 +4,7 @@ Source: https://github.com/BoboTiG/thermalprinter.
 
 from __future__ import annotations
 
+import sys
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -16,7 +17,11 @@ from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
 from icalevents import icalevents
 from PIL import Image
-from zoneinfo import ZoneInfo
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore[no-redef]
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -42,6 +47,17 @@ MONTH_NAMES = [
     "Novembre",
     "Décembre",
 ]  #: Months names.
+DAYS_NAMES = [
+    "lundi",
+    "mardi",
+    "mercredi",
+    "jeudi",
+    "vendredi",
+    "samedi",
+    "dimanche",
+]  #: Days names.
+TOMORROW = "demain"  #: Tomorrow.
+UNTIL = "jusqu'à"  #: Until.
 
 TIMEZONE = "Europe/Paris"  #: The timezone to display proper hours.
 
@@ -59,7 +75,7 @@ AGENDA_MODEL = """\
 
 Birthday = Tuple[str, int]
 Birthdays = List[Birthday]
-Event = Tuple[str, str, str]
+Event = Tuple[datetime, str, str]
 Events = List[Event]
 
 
@@ -73,12 +89,10 @@ class Calendar:
 
     url: str
     printer: ThermalPrinter | None = None
-    now: datetime = field(init=False)
     tz: ZoneInfo = field(init=False)
 
     def __post_init__(self) -> None:
         self.tz = ZoneInfo(TIMEZONE)
-        self.now = datetime.now(tz=self.tz).replace(hour=0, minute=0, second=0, microsecond=0)
 
     def __enter__(self) -> Self:
         """`with Calender(...) as calendar: ...`"""
@@ -97,44 +111,44 @@ class Calendar:
 
     def start(self) -> None:
         """Where all the magic happens."""
-        events = self.get_events()
-        anniversaries = self.get_birthdays()
-        self.print_data(events, anniversaries)
+        now = datetime.now(tz=self.tz).replace(hour=0, minute=0, second=0, microsecond=0)
+        events = self.get_events(now)
+        anniversaries = self.get_birthdays(now)
+        self.print_data(now, events, anniversaries)
 
-    def get_birthdays(self) -> Birthdays:
+    def get_birthdays(self, when: datetime) -> Birthdays:
         """Get a list of birthdays."""
-        month_and_day = f"{self.now.month:02d}-{self.now.day:02d}"
-
         data = ""
         with suppress(FileNotFoundError):
             data = Path(BIRTHDAYS_FILE).expanduser().read_text()
 
+        month_and_day = f"{when.month:02d}-{when.day:02d}"
         birthdays = []
 
         for line in data.splitlines():
             if line[5:10] == month_and_day:
                 born, name = line.split("=", 1)
                 born_date = datetime.strptime(born.strip(), "%Y-%m-%d").replace(tzinfo=self.tz)
-                years = relativedelta(self.now, born_date).years
+                years = relativedelta(when, born_date).years
                 birthdays.append((name.strip(), years))
 
         return birthdays
 
-    def get_events(self) -> Events:
+    def get_events(self, when: datetime) -> Events:
         """Retrieve events of the day."""
-        events = icalevents.events(url=self.url, end=self.now + timedelta(days=1), tzinfo=self.tz)
-        return sorted(
-            {(event.start.strftime("%H:%M"), event.end.strftime("%H:%M"), event.summary) for event in events},
-            key=lambda x: x[0],
-        )
+        if sys.version_info < (3, 9):  # pragma: nocover
+            events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1))
+        else:
+            events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
+        return sorted((event.start, format_event_date(when, event), event.summary) for event in events)
 
-    def forge_header_image(self) -> Image:
+    def forge_header_image(self, when: datetime) -> Image:
         """Create the image object containing the nice image with current month, and day."""
-        agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[self.now.month - 1]).replace("DAY", str(self.now.day))
+        agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[when.month - 1]).replace("DAY", str(when.day))
         agenda_png = svg2png(agenda_svg, background_color="white")
         return Image.open(BytesIO(agenda_png))
 
-    def print_data(self, events: Events, anniversaries: Birthdays) -> None:
+    def print_data(self, when: datetime, events: Events, anniversaries: Birthdays) -> None:
         """Just print."""
         if not self.printer:
             return
@@ -147,11 +161,12 @@ class Calendar:
             """Print the header."""
             printer.codepage(CodePage.ISO_8859_1)
             printer.feed()
-            printer.image(self.forge_header_image())
+            printer.image(self.forge_header_image(when))
             printer.feed()
 
         def birthdays() -> None:
             """Print anniversaries."""
+            printer.feed()
             printer.out(BIRTHDAY)
             for name, years in anniversaries:
                 printer.out(f"  ... {name} ({years}) !", codepage=CodePage.ISO_8859_1)
@@ -159,8 +174,7 @@ class Calendar:
 
         def line(evt: Event, *, first_line: bool = False, last_line: bool = False) -> None:
             """Print an event."""
-            start, end, sumary = evt
-            hour = WHOLE_DAY if start == end else f"{start} - {end}"
+            _, duration, sumary = evt
 
             if first_line:
                 printer.out(b"\xd5", line_feed=False, codepage=CodePage.CP437)
@@ -169,7 +183,7 @@ class Calendar:
 
             printer.out(b"\xb3", line_feed=False, codepage=CodePage.CP437)
             printer.out(
-                " {0: <{1}} ".format(hour, printer.max_column - 4),
+                " {0: <{1}} ".format(duration, printer.max_column - 4),
                 line_feed=False,
                 codepage=CodePage.ISO_8859_1,
             )
@@ -203,3 +217,36 @@ class Calendar:
             for event in events:
                 line(event, first_line=event is first, last_line=event is last)
         footer()
+
+
+def format_event_date(now: datetime, event: icalevents.Event) -> str:
+    """Given the current date, and an iCal event, return the formated event's start, and end.
+
+    :param: datetime now: the current date to compare event's dates to.
+    :param: icalevents.Event event: the iCal event.
+    :rtype: str
+    :return: the formated event duration.
+    """
+    delta = event.end - event.start
+
+    # A single-day event
+    if not delta.days:
+        if event.start == event.end:
+            return WHOLE_DAY
+        return f"{event.start.strftime('%H:%M')} - {event.end.strftime('%H:%M')}"
+
+    # A multi-days event
+
+    if event.start < now < event.end and event.end.strftime("%Y-%m-%d") != now.strftime("%Y-%m-%d"):
+        return WHOLE_DAY
+
+    delta = event.end - now
+    if delta.days == 1:
+        return f"{event.start.strftime('%H:%M')} - {TOMORROW} {event.end.strftime('%H:%M')}"
+
+    if delta.days < 1:
+        return f"{UNTIL} {event.end.strftime('%H:%M')}"
+
+    return (
+        f"{event.start.strftime('%H:%M')} - {DAYS_NAMES[int(event.end.strftime('%w'))]} {event.end.strftime('%H:%M')}"
+    )
