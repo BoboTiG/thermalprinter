@@ -124,9 +124,11 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
     result: list[str] = []
     out_orig = printer.out
 
-    def out(*args: Any, **kwargs: Any) -> None:
-        result.extend(args)
-        out_orig(*args, **kwargs)
+    def out(data: str, **kwargs: Any) -> None:
+        result.append(data)
+        if kwargs:
+            result.append("    " + ", ".join(f"{k}={v}" for k, v in kwargs.items()))
+        out_orig(data, **kwargs)
 
     birdthdays = [("Alice", 24)]
 
@@ -137,28 +139,39 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
     assert result == [
         "C'est l'anniversaire de...",
         "  ... Alice (24) !",
-        b"\xd5",
-        b"\xcd" * 30,
-        b"\xb8",
+        "    codepage=CodePage.ISO_8859_1",
+        b"\xd5" + b"\xcd" * 30 + b"\xb8",
+        "    codepage=CodePage.CP437",
         b"\xb3",
+        "    line_feed=False, codepage=CodePage.CP437",
         " 14:00 - 14:30                ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1",
         b"\xb3",
+        "    codepage=CodePage.CP437",
         b"\xb3",
+        "    line_feed=False, codepage=CodePage.CP437",
         " HR Zoom                      ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1",
         b"\xb3",
-        b"\xc3",
-        b"\xc4" * 30,
-        b"\xb4",
+        "    codepage=CodePage.CP437",
+        b"\xc3" + b"\xc4" * 30 + b"\xb4",
+        "    codepage=CodePage.CP437",
         b"\xb3",
+        "    line_feed=False, codepage=CodePage.CP437",
         " 15:00 - 18:00                ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1",
         b"\xb3",
+        "    codepage=CodePage.CP437",
         b"\xb3",
+        "    line_feed=False, codepage=CodePage.CP437",
         " Noël au Château              ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1",
         b"\xb3",
-        b"\xd4",
-        b"\xcd" * 30,
-        b"\xbe",
+        "    codepage=CodePage.CP437",
+        b"\xd4" + b"\xcd" * 30 + b"\xbe",
+        "    codepage=CodePage.CP437",
         "Belle journée :)",
+        "    justify=Justify.CENTER, codepage=CodePage.ISO_8859_1",
     ]
 
 

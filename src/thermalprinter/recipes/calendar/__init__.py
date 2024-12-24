@@ -158,36 +158,24 @@ class Calendar:
                 printer.out(f"  ... {name} ({years}) !", codepage=CodePage.ISO_8859_1)
             printer.feed()
 
-        def line(evt: Event, *, first_line: bool = False, last_line: bool = False) -> None:
+        def line(evt: Event, *, first: bool = False, last: bool = False) -> None:
             """Print an event."""
             _, duration, sumary = evt
 
-            if first_line:
-                printer.out(b"\xd5", line_feed=False, codepage=CodePage.CP437)
-                printer.out(b"\xcd" * (printer.max_column - 2), line_feed=False, codepage=CodePage.CP437)
-                printer.out(b"\xb8", codepage=CodePage.CP437)
+            if first:
+                printer.out(b"\xd5" + b"\xcd" * (printer.max_column - 2) + b"\xb8", codepage=CodePage.CP437)
 
             printer.out(b"\xb3", line_feed=False, codepage=CodePage.CP437)
-            printer.out(
-                " {0: <{1}} ".format(duration, printer.max_column - 4),
-                line_feed=False,
-                codepage=CodePage.ISO_8859_1,
-            )
+            printer.out(f" {duration: <{printer.max_column - 4}} ", line_feed=False, codepage=CodePage.ISO_8859_1)
             printer.out(b"\xb3", codepage=CodePage.CP437)
 
-            for line_ in wrap(sumary, printer.max_column - 4):
+            for line in wrap(sumary, printer.max_column - 4):
                 printer.out(b"\xb3", line_feed=False, codepage=CodePage.CP437)
-                printer.out(
-                    " {0: <{1}} ".format(line_, printer.max_column - 4),
-                    line_feed=False,
-                    codepage=CodePage.ISO_8859_1,
-                )
+                printer.out(f" {line: <{printer.max_column - 4}} ", line_feed=False, codepage=CodePage.ISO_8859_1)
                 printer.out(b"\xb3", codepage=CodePage.CP437)
 
-            left, middle, right = (b"\xd4", b"\xcd", b"\xbe") if last_line else (b"\xc3", b"\xc4", b"\xb4")
-            printer.out(left, line_feed=False, codepage=CodePage.CP437)
-            printer.out(middle * (printer.max_column - 2), line_feed=False, codepage=CodePage.CP437)
-            printer.out(right, codepage=CodePage.CP437)
+            left, middle, right = (b"\xd4", b"\xcd", b"\xbe") if last else (b"\xc3", b"\xc4", b"\xb4")
+            printer.out(left + middle * (printer.max_column - 2) + right, codepage=CodePage.CP437)
 
         def footer() -> None:
             """Printed the footer."""
@@ -201,7 +189,7 @@ class Calendar:
         if events:
             first, last = events[0], events[-1]
             for event in events:
-                line(event, first_line=event is first, last_line=event is last)
+                line(event, first=event is first, last=event is last)
         footer()
 
 
