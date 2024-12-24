@@ -76,6 +76,11 @@ END:VCALENDAR
 EVENT_MULTI_DAYS_RES = [(datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00 - vendredi 12:00", "Débroussaillage")]
 
 
+@dataclass
+class Date:
+    dt: datetime
+
+
 @pytest.fixture
 def calendar() -> Generator[Calendar]:
     with Calendar(URL) as cls:
@@ -245,9 +250,5 @@ def test_executable(tmp_path: Path) -> None:
     ],
 )
 def test_format_event_date(now: datetime, start: datetime, end: datetime, expected: str) -> None:
-    @dataclass
-    class D:
-        dt: datetime
-
-    event = create_event({"dtstart": D(start), "dtend": D(end)}, True)
+    event = create_event({"dtstart": Date(start), "dtend": Date(end)}, True)
     assert format_event_date(now, event) == expected
