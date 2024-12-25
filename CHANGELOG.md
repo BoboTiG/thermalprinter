@@ -29,7 +29,7 @@ Release date: `2024-12-17`
 ## Bug Fixes
 
 - Reworked images printing to, hopefully, fix all issues.
-- Fixed printed lines counting in {meth}`thermalprinter.ThermalPrinter.out()`.
+- Fixed printed lines counting in {meth}`ThermalPrinter.out()`.
 
 ## Features
 
