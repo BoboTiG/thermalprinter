@@ -17,7 +17,7 @@ Release date: `202x-xx-xx`
 ## Technical Changes
 
 - Drop support for Python 3.7, and 3.8.
-- Calendar recipe: added the {const}`thermalprinter.recipes.calendar.DAYS_NAMES` constant.
+- Calendar recipe: added the {const}`recipes.calendar.DAYS_NAMES` constant.
 - Calendar recipe: added the {func}`recipes.calendar.format_event_date()` function.
 - Calendar recipe: moved the {meth}`recipes.calendar.Calendar.forge_header_image()` method to its own {func}`recipes.calendar.forge_header_image()` function.
 - Weather recipe: removed the useless {const}`recipes.weather.UNKNOWN` constant.
@@ -40,7 +40,7 @@ Release date: `2024-12-17`
 - New text styles: {meth}`ThermalPrinter.font_b()`, and {meth}`ThermalPrinter.left_blank()`.
 - New options to tweak printer behaviors: `byte_time`, `dot_feed_time`, `dot_print_time`, `read_timeout`, and `write_timeout`. See {class}`ThermalPrinter`.
 - New option to control printer settings at initialization to {class}`ThermalPrinter`: `run_setup_cmd=bool` ({issue}`15`).
-- It is now possible to pass barcode styling instructions in {meth}`thermalprinter.ThermalPrinter.barcode()`, in the same way it's done for {meth}`ThermalPrinter.out()`.
+- It is now possible to pass barcode styling instructions in {meth}`ThermalPrinter.barcode()`, in the same way it's done for {meth}`ThermalPrinter.out()`.
 - Introduced statistics persisted at exit. This behavior can be disabled by passing `use_stats=False` to {class}`thermalprinter.ThermalPrinter`.
 - Enhanced the demonstration code.
 - Rewrote the entire documentation to cover all possible stuff, and it is way prettier now, (thanks to the awesome [Shibuya theme](https://shibuya.lepture.com)).
@@ -50,8 +50,8 @@ Release date: `2024-12-17`
 
 ## Technical Changes
 
-- Added the {const}`onstants.Justify` constant to use in the {meth}`ThermalPrinter.justify()` method (**breaking change**).
-- Added the {const}`constants.Size` constant to use in the {meth}`hermalPrinter.size()` method (**breaking change**).
+- Added the {const}`constants.Justify` constant to use in the {meth}`ThermalPrinter.justify()` method (**breaking change**).
+- Added the {const}`constants.Size` constant to use in the {meth}`ThermalPrinter.size()` method (**breaking change**).
 - Added the {const}`constants.Underline` constant to use in the {meth}`ThermalPrinter.underline()` method (**breaking change**).
 - Added the {const}`constants.Defaults` constant. And they can be tweaked via `TP_*` environment variables.
 - Added the {meth}`ThermalPrinter.__exit__()` method to properly close the printer when leaving the context manager.
@@ -106,7 +106,7 @@ Release date: `2019-01-10`
 
 ## Bug Fixes
 
-- Fixed image printing in {func}`ools.printer_tests()` when the module is installed. Will now raise an exception if `raise_on_error` argument is `True` (default).
+- Fixed image printing in {func}`tools.printer_tests()` when the module is installed. Will now raise an exception if `raise_on_error` argument is `True` (default).
 
 ## Features
 
