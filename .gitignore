@@ -1,6 +1,5 @@
 # Files
 .coverage
-MANIFEST.in
 
 # Folders
 __pycache__/
