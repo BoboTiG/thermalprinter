@@ -41,7 +41,7 @@ Release date: `2024-12-17`
 - New options to tweak printer behaviors: `byte_time`, `dot_feed_time`, `dot_print_time`, `read_timeout`, and `write_timeout`. See {class}`ThermalPrinter`.
 - New option to control printer settings at initialization to {class}`ThermalPrinter`: `run_setup_cmd=bool` ({issue}`15`).
 - It is now possible to pass barcode styling instructions in {meth}`ThermalPrinter.barcode()`, in the same way it's done for {meth}`ThermalPrinter.out()`.
-- Introduced statistics persisted at exit. This behavior can be disabled by passing `use_stats=False` to {class}`thermalprinter.ThermalPrinter`.
+- Introduced statistics persisted at exit. This behavior can be disabled by passing `use_stats=False` to {class}`ThermalPrinter`.
 - Enhanced the demonstration code.
 - Rewrote the entire documentation to cover all possible stuff, and it is way prettier now, (thanks to the awesome [Shibuya theme](https://shibuya.lepture.com)).
 - Improved the documentation by fixing issues found with [Harper](https://github.com/elijah-potter/harper).
