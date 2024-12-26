@@ -12,7 +12,7 @@ Release date: `202x-xx-xx`
 - Calendar recipe: improve multi-days event display ({issue}`43`).
 - Calendar recipe: improve printing performances.
 - Calendar recipe: feed before printing birthdays.
-- Weather recipe: now using a custom User-Agent HTTP header to fetch OpenWeatherMap data, added the {const}`recipes.weather.USER_AGENT` constant.
+- Weather recipe: now using a custom User-Agent HTTP header to fetch OpenWeatherMap data.
 
 ## Technical Changes
 
@@ -20,6 +20,7 @@ Release date: `202x-xx-xx`
 - Calendar recipe: added the {const}`recipes.calendar.DAYS_NAMES` constant.
 - Calendar recipe: added the {func}`recipes.calendar.format_event_date()` function.
 - Calendar recipe: moved the {meth}`recipes.calendar.Calendar.forge_header_image()` method to its own {func}`recipes.calendar.forge_header_image()` function.
+- Weather recipe: added the {const}`recipes.weather.USER_AGENT` constant.
 - Weather recipe: removed the useless {const}`recipes.weather.UNKNOWN` constant.
 
 # 1.0.0
