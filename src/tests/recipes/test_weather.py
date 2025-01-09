@@ -155,7 +155,7 @@ def test_line_out(weather: Weather, printer: ThermalPrinter) -> None:
         CodePage.ISO_8859_1,
         (" .     ", False, {}),
         CodePage.THAI2,
-        ("\x8d", False, {}),
+        (b"\x8d", False, {}),
         CodePage.ISO_8859_1,
         (" 18 km/h", True, {}),
         ("    / ' \\      6 mm/h - 75%", True, {}),

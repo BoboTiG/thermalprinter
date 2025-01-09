@@ -392,7 +392,7 @@ class Weather:
                 codepage = CodePage.THAI2
             else:
                 codepage = CodePage.ISO_8859_1
-            data.append((chr(char) if isinstance(char, int) else char, codepage))
+            data.append((bytes([char]) if isinstance(char, int) else char, codepage))
 
         line_data: list[str | bytes] = []
         for char, codepage in data:
