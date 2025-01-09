@@ -31,7 +31,6 @@ Print daily stuff from your calendar, and birthdays as a bonus!
     You can tweak those constants to better fit your needs:
 
     .. autodata:: thermalprinter.recipes.calendar.BIRTHDAY
-    .. autodata:: thermalprinter.recipes.calendar.DAYS_NAMES
 
         .. versionadded:: 2.0.0
 

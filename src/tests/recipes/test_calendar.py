@@ -246,7 +246,7 @@ def test_executable(tmp_path: Path) -> None:
             datetime(2024, 12, 14, tzinfo=TZ),
             datetime(2024, 12, 14, hour=8, minute=30, tzinfo=TZ),
             datetime(2024, 12, 16, hour=10, tzinfo=TZ),
-            "08:30 - mardi 10:00",
+            "08:30",
         ),
         (
             datetime(2024, 12, 14, tzinfo=TZ),

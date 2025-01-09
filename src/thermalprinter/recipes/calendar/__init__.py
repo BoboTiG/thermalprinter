@@ -42,15 +42,6 @@ MONTH_NAMES = [
     "Novembre",
     "Décembre",
 ]  #: Months names.
-DAYS_NAMES = [
-    "lundi",
-    "mardi",
-    "mercredi",
-    "jeudi",
-    "vendredi",
-    "samedi",
-    "dimanche",
-]  #: Days names.
 TOMORROW = "demain"  #: Tomorrow.
 UNTIL = "jusqu'à"  #: Until.
 
@@ -233,6 +224,4 @@ def format_event_date(now: datetime, event: icalevents.Event) -> str:
     if delta.days < 1:
         return f"{UNTIL} {event.end.strftime('%H:%M')}"
 
-    return (
-        f"{event.start.strftime('%H:%M')} - {DAYS_NAMES[int(event.end.strftime('%w'))]} {event.end.strftime('%H:%M')}"
-    )
+    return event.start.strftime("%H:%M")
