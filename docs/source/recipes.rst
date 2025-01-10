@@ -31,11 +31,16 @@ Print daily stuff from your calendar, and birthdays as a bonus!
     You can tweak those constants to better fit your needs:
 
     .. autodata:: thermalprinter.recipes.calendar.BIRTHDAY
+    .. autodata:: thermalprinter.recipes.calendar.MONTH_NAMES
+    .. autodata:: thermalprinter.recipes.calendar.NICE_DAY
+    .. autodata:: thermalprinter.recipes.calendar.TOMORROW
 
         .. versionadded:: 2.0.0
 
-    .. autodata:: thermalprinter.recipes.calendar.MONTH_NAMES
-    .. autodata:: thermalprinter.recipes.calendar.NICE_DAY
+    .. autodata:: thermalprinter.recipes.calendar.UNTIL
+
+        .. versionadded:: 2.0.0
+
     .. autodata:: thermalprinter.recipes.calendar.WHOLE_DAY
 
 Installation:
@@ -161,6 +166,12 @@ Here is the API:
     Beautiful weather ASCII arts, copied from `schachmat/wego <https://github.com/schachmat/wego/blob/2.3/frontends/ascii-art-table.go>`_.
 
 .. autodata:: thermalprinter.recipes.weather.SAINTS_FILE
+
+        .. versionadded:: 2.0.0
+
 .. autodata:: thermalprinter.recipes.weather.URL
 .. autodata:: thermalprinter.recipes.weather.USER_AGENT
+
+        .. versionadded:: 2.0.0
+
 .. autodata:: thermalprinter.recipes.weather.TIMEZONE
