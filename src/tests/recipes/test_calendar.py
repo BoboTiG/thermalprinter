@@ -73,7 +73,7 @@ END:VEVENT
 
 END:VCALENDAR
 """
-EVENT_MULTI_DAYS_RES = [(datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00 - vendredi 12:00", "Débroussaillage")]
+EVENT_MULTI_DAYS_RES = [(datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00", "Débroussaillage")]
 
 
 @dataclass

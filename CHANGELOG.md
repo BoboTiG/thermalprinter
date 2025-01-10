@@ -4,7 +4,7 @@ Release date: `2025-xx-xx`
 
 ## Bug Fixes
 
-- 
+- Tests: missing code adaptation in `test_calendar.py::test_get_events_on_multi_days()`.
 
 ## Features
 
