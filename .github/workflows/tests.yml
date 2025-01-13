@@ -82,6 +82,7 @@ jobs:
           cpu: cortex-a7
           commands: |
             python3 -V
+            sudo apt update
             sudo apt install --yes libcairo2 libopenjp2-7 python3-pip python3-venv
             python3 -m venv venv
             . venv/bin/activate
