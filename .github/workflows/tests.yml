@@ -24,8 +24,7 @@ jobs:
           python-version: "3.13"
           cache: pip
       - name: Install requirements
-        run: |
-          python -m pip install -e '.[calendar,persian,weather,docs]' --only-binary=:all: --no-binary=thermalprinter
+        run: python -m pip install -e '.[calendar,persian,weather,docs]'
       - name: Check the documentation (${{ matrix.variant }})
         run: sphinx-build --color -W -b${{ matrix.variant }} docs/source docs/output
 
@@ -44,10 +43,13 @@ jobs:
         run: ./checks.sh
 
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-latest-arm
         python:
           - "3.9"
           - "3.10"
@@ -65,32 +67,13 @@ jobs:
       - name: Install requirements
         run: |
           python -m pip install -U pip
-          python -m pip install -e '.[calendar,persian,weather,tests]'
+          python -m pip install -e '.[calendar,persian,weather,tests]' --only-binary=:all: --no-binary=thermalprinter
       - name: Unit tests
         run: python -m pytest
-
-  # That module being more used on Raspberry Pi, I've seen dependencies not available for ARM from time to time.
-  # So while the CI was green, the project would be unusable on those systems. This job ensures current
-  # requirements versions can be statisfied out-of-the-box.
-  deps-arm:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pguyot/arm-runner-action@v2
-        with:
-          cpu: cortex-a7
-          commands: |
-            python3 -V
-            sudo apt update
-            sudo apt install --yes libcairo2 libopenjp2-7 python3-pip python3-venv
-            python3 -m venv venv
-            . venv/bin/activate
-            python -m pip install -e '.[calendar,persian,weather]' --only-binary=:all: --no-binary=thermalprinter
-            python -c 'import thermalprinter as tp; print(tp.__version__)'
-            print-calendar -h
-            print-weather -h
+      - name: Executable checks
+        run: |
+          print-calendar -h
+          print-weather -h
 
   automerge:
     name: Automerge
