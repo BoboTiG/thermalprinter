@@ -70,10 +70,10 @@ def test_forge_data(weather: Weather) -> None:
     assert weather.forge_data(TODAY) == {
         "ascii": (
             "\n"
-            "     .--.      {description}\n"
-            "  .-(    ).    {temp_min} - {temp_max} °C\n"
-            " (___.__)__)   & {wind} km/h\n"
-            "               {precipitations} mm/h - {humidity}%"
+            "     .--.     {description}\n"
+            "  .-(    ).   {temp_min} - {temp_max} °C\n"
+            " (___.__)__)  & {wind} km/h\n"
+            "              {precipitations} mm/h - {humidity}%"
         ),
         "description": "Nuages couverts",
         "humidity": 75,
@@ -139,7 +139,7 @@ def test_line_out(weather: Weather, printer: ThermalPrinter) -> None:
         ("2024-12-13", True, {}),
         r"\n",
         ("    \\ . /", True, {}),
-        ("   - .-. -     Ciel dégagé", True, {}),
+        ("   - .-. -    Ciel dégagé", True, {}),
         ("  ", False, {}),
         CodePage.CP863,
         (b"\xc4", False, {}),
@@ -148,17 +148,17 @@ def test_line_out(weather: Weather, printer: ThermalPrinter) -> None:
         CodePage.CP863,
         (b"\xc4", False, {}),
         CodePage.ISO_8859_1,
-        ("    3 - 10 °C", True, {}),
+        ("   3 - 10 °C", True, {}),
         ("   . `-", False, {}),
         CodePage.ISO_8859_7,
         (b"\xa2", False, {}),
         CodePage.ISO_8859_1,
-        (" .     ", False, {}),
+        (" .    ", False, {}),
         CodePage.THAI2,
         (b"\x8d", False, {}),
         CodePage.ISO_8859_1,
         (" 18 km/h", True, {}),
-        ("    / ' \\      6 mm/h - 75%", True, {}),
+        ("    / ' \\     6 mm/h - 75%", True, {}),
         CodePage.ISO_8859_1,
         r"\n",
         ("Fête du jour : Lucie", True, {"justify": Justify.CENTER}),

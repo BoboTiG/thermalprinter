@@ -43,36 +43,36 @@ SAINTS_FILE = "./saints.lst"
 DESCRIPTIONS = {
     # Group 2xx: Thunderstorm
     "thunderstorm": "Orage",
-    "thunderstorm with light rain": "Orage avec fine pluie",
-    "thunderstorm with rain": "Orage avec pluie",
-    "thunderstorm with heavy rain": "Orage avec fortes pluies",
+    "thunderstorm with light rain": "Orage & fine pluie",
+    "thunderstorm with rain": "Orage & pluie",
+    "thunderstorm with heavy rain": "Orage & pluies++",
     "light thunderstorm": "Léger orage",
     "heavy thunderstorm": "Fort orage",
-    "ragged thunderstorm": "Orage en dent de scie",
-    "thunderstorm with light drizzle": "Orage avec légère bruine",
-    "thunderstorm with drizzle": "Orage avec bruine",
-    "thunderstorm with heavy drizzle": "orage avec forte bruine",
+    "ragged thunderstorm": "Orage",
+    "thunderstorm with light drizzle": "Orage & bruine",
+    "thunderstorm with drizzle": "Orage & bruine",
+    "thunderstorm with heavy drizzle": "Orage & bruine++",
     # Group 3xx: Drizzle
     "light intensity drizzle": "Légère bruine",
     "drizzle": "Bruine",
     "heavy intensity drizzle": "Forte bruine",
-    "light intensity drizzle rain": "Légère bruine avec pluie",
+    "light intensity drizzle rain": "Légère bruine",
     "drizzle rain": "Bruine pluvieuse",
-    "heavy intensity drizzle rain": "Forte bruine pluvieuse",
-    "shower rain and drizzle": "Averse et bruine",
-    "heavy shower rain and drizzle": "Forte averse et bruine",
-    "shower drizzle": "Averse et bruine",
+    "heavy intensity drizzle rain": "Forte bruine",
+    "shower rain and drizzle": "Averse & bruine",
+    "heavy shower rain and drizzle": "Averse++ & bruine",
+    "shower drizzle": "Averse & bruine",
     # Group 5xx: Rain
     "light rain": "Pluie légère",
     "moderate rain": "Pluie modérée",
-    "heavy intensity rain": "Pluie très intense",
+    "heavy intensity rain": "Pluie intense",
     "very heavy rain": "Pluie très forte",
     "extreme rain": "Pluie extrême",
     "freezing rain": "Pluie vergalçante",
     "light intensity shower rain": "Pluie légère",
     "shower rain": "Averse",
     "heavy intensity shower rain": "Forte averse",
-    "ragged shower rain": "Pluie en dent de scie",
+    "ragged shower rain": "Pluie",
     # Group 6xx: Snow
     "light snow": "Neige légère",
     "snow": "Neige",
@@ -80,16 +80,16 @@ DESCRIPTIONS = {
     "sleet": "Grésil",
     "light shower sleet": "Grésil léger",
     "shower sleet": "Averse de grésil",
-    "light rain and snow": "Pluie fine et neige",
-    "rain and snow": "Pluie et neige",
-    "light shower snow": "Pluie légère et neige",
+    "light rain and snow": "Pluie fine & neige",
+    "rain and snow": "Pluie & neige",
+    "light shower snow": "Pluie de neige",
     "shower snow": "Pluie de neige",
     "heavy shower snow": "Tempête de neige",
     # Group 7xx: Atmosphere
     "mist": "Brume",
     "smoke": "Fumée",
     "haze": "Brume",
-    "sand/dust whirls": "Tourbillons de sable/poussière",
+    "sand/dust whirls": "Tourbillons",
     "fog": "Brouillard",
     "sand": "Sable",
     "dust": "Poussière",
@@ -110,135 +110,135 @@ ASCII_ARTS = {
     # Group 2xx: Thunderstorm
     "thunderstorm": """\
  _`/"".-.
-   \\_(   ).    {description}
-   /(___(__)   {temp_min} - {temp_max} °C
-    ⚡ʻ ʻ⚡ʻ ʻ   & {wind} km/h
-    ʻ ʻ ʻ ʻ    {precipitations} mm/h - {humidity}%
+   \\_(   ).   {description}
+   /(___(__)  {temp_min} - {temp_max} °C
+    ⚡ʻ ʻ⚡ʻ    & {wind} km/h
+    ʻ ʻ ʻ ʻ   {precipitations} mm/h - {humidity}%
     """,
     "heavy thunderstorm": """\
      .-.
-    (   ).     {description}
-   (___(__)    {temp_min} - {temp_max} °C
-  ‚ʻ⚡ʻ‚⚡‚ʻ     & {wind} km/h
-  ‚ʻ‚ʻ⚡ʻ‚ʻ     {precipitations} mm/h - {humidity}%
+    (   ).    {description}
+   (___(__)   {temp_min} - {temp_max} °C
+  ‚ʻ⚡ʻ‚⚡‚ʻ    & {wind} km/h
+  ‚ʻ‚ʻ⚡ʻ‚ʻ    {precipitations} mm/h - {humidity}%
     """,
     # Group 3xx: Drizzle
     # Group 5xx: Rain
     "light rain": """\
      .-.
-    (   ).     {description}
-   (___(__)    {temp_min} - {temp_max} °C
-    ʻ ʻ ʻ ʻ    & {wind} km/h
-   ʻ ʻ ʻ ʻ     {precipitations} mm/h - {humidity}%
+    (   ).    {description}
+   (___(__)   {temp_min} - {temp_max} °C
+    ʻ ʻ ʻ ʻ   & {wind} km/h
+   ʻ ʻ ʻ ʻ    {precipitations} mm/h - {humidity}%
     """,
     "shower rain": """\
  _`/"".-.
-   \\_(   ).    {description}
-   /(___(__)   {temp_min} - {temp_max} °C
-     ʻ ʻ ʻ ʻ   & {wind} km/h
-    ʻ ʻ ʻ ʻ    {precipitations} mm/h - {humidity}%
+   \\_(   ).   {description}
+   /(___(__)  {temp_min} - {temp_max} °C
+     ʻ ʻ ʻ ʻ  & {wind} km/h
+    ʻ ʻ ʻ ʻ   {precipitations} mm/h - {humidity}%
     """,
     "very heavy rain": """\
      .-.
-    (   ).     {description}
-   (___(__)    {temp_min} - {temp_max} °C
-  ‚ʻ‚ʻ‚ʻ‚ʻ     & {wind} km/h
-  ‚ʻ‚ʻ‚ʻ‚ʻ     {precipitations} mm/h - {humidity}%
+    (   ).    {description}
+   (___(__)   {temp_min} - {temp_max} °C
+  ‚ʻ‚ʻ‚ʻ‚ʻ    & {wind} km/h
+  ‚ʻ‚ʻ‚ʻ‚ʻ    {precipitations} mm/h - {humidity}%
     """,
     "heavy intensity shower rain": """\
  _`/"".-.
-   \\_(   ).    {description}
-   /(___(__)   {temp_min} - {temp_max} °C
-   ‚ʻ‚ʻ‚ʻ‚ʻ    & {wind} km/h
-   ‚ʻ‚ʻ‚ʻ‚ʻ    {precipitations} mm/h - {humidity}%
+   \\_(   ).   {description}
+   /(___(__)  {temp_min} - {temp_max} °C
+   ‚ʻ‚ʻ‚ʻ‚ʻ   & {wind} km/h
+   ‚ʻ‚ʻ‚ʻ‚ʻ   {precipitations} mm/h - {humidity}%
     """,
     "freezing rain": """\
      .-.
-    (   ).     {description}
-   (___(__)    {temp_min} - {temp_max} °C
-    ʻ * ʻ *    & {wind} km/h
-   * ʻ * ʻ     {precipitations} mm/h - {humidity}%
+    (   ).    {description}
+   (___(__)   {temp_min} - {temp_max} °C
+    ʻ * ʻ *   & {wind} km/h
+   * ʻ * ʻ    {precipitations} mm/h - {humidity}%
     """,
     # Group 6xx: Snow
     "snow": """\
      .-.
-    (   ).     {description}
-   (___(__)    {temp_min} - {temp_max} °C
-    *  *  *    & {wind} km/h
-   *  *  *     {precipitations} mm/h - {humidity}%
+    (   ).    {description}
+   (___(__)   {temp_min} - {temp_max} °C
+    *  *  *   & {wind} km/h
+   *  *  *    {precipitations} mm/h - {humidity}%
     """,
     "heavy snow": """\
      .-.
-    (   ).     {description}
-   (___(__)    {temp_min} - {temp_max} °C
-   * * * *     & {wind} km/h
-  * * * *      {precipitations} mm/h - {humidity}%
+    (   ).    {description}
+   (___(__)   {temp_min} - {temp_max} °C
+   * * * *    & {wind} km/h
+  * * * *     {precipitations} mm/h - {humidity}%
     """,
     "heavy shower snow": """\
  _`/"".-.
-   \\_(   ).    {description}
-   /(___(__)   {temp_min} - {temp_max} °C
-    * * * *    & {wind} km/h
-   * * * *     {precipitations} mm/h - {humidity}%
+   \\_(   ).   {description}
+   /(___(__)  {temp_min} - {temp_max} °C
+    * * * *   & {wind} km/h
+   * * * *    {precipitations} mm/h - {humidity}%
     """,
     "shower sleet": """\
  _`/"".-.
-   \\_(   ).    {description}
-   /(___(__)   {temp_min} - {temp_max} °C
-     ʻ * ʻ *   & {wind} km/h
-    * ʻ * ʻ    {precipitations} mm/h - {humidity}%
+   \\_(   ).   {description}
+   /(___(__)  {temp_min} - {temp_max} °C
+     ʻ * ʻ *  & {wind} km/h
+    * ʻ * ʻ   {precipitations} mm/h - {humidity}%
     """,
     "shower snow": """\
  _`/"".-.
-   \\_(   ).    {description}
-   /(___(__)   {temp_min} - {temp_max} °C
-     *  *  *   & {wind} km/h
-    *  *  *    {precipitations} mm/h - {humidity}%
+   \\_(   ).   {description}
+   /(___(__)  {temp_min} - {temp_max} °C
+     *  *  *  & {wind} km/h
+    *  *  *   {precipitations} mm/h - {humidity}%
     """,
     # Group 7xx: Atmosphere
     "fog": """\
 
- _ - _ - _ -   {description}
-  _ - _ - _    {temp_min} - {temp_max} °C
- _ - _ - _ -   & {wind} km/h
-               {precipitations} mm/h - {humidity}%
+ _ - _ - _ -  {description}
+  _ - _ - _   {temp_min} - {temp_max} °C
+ _ - _ - _ -  & {wind} km/h
+              {precipitations} mm/h - {humidity}%
     """,
     "tornado": """\
     (    )
-     (  )     {description}
-    ( )       {temp_min} - {temp_max} °C
-     ()       & {wind} km/h
-     .        {precipitations} mm/h - {humidity}%
+     (  )    {description}
+    ( )      {temp_min} - {temp_max} °C
+     ()      & {wind} km/h
+     .       {precipitations} mm/h - {humidity}%
     """,
     "squalls": """\
 
-               {description}
-   \\ \\ \\ \\     {temp_min} - {temp_max} °C
-     \\ \\ \\ \\   & {wind} km/h
-               {precipitations} mm/h - {humidity}%
+              {description}
+   \\ \\ \\ \\    {temp_min} - {temp_max} °C
+     \\ \\ \\ \\  & {wind} km/h
+              {precipitations} mm/h - {humidity}%
     """,
     # Group 800: Clear
     "clear sky": """\
     \\ . /
-   - .-. -     {description}
-  ‒ (   ) ‒    {temp_min} - {temp_max} °C
-   . `-᾿ .     & {wind} km/h
-    / ' \\      {precipitations} mm/h - {humidity}%
+   - .-. -    {description}
+  ‒ (   ) ‒   {temp_min} - {temp_max} °C
+   . `-᾿ .    & {wind} km/h
+    / ' \\     {precipitations} mm/h - {humidity}%
     """,
     # Group 80x: Clouds
     "broken clouds": """\
 
-     .--.      {description}
-  .-(    ).    {temp_min} - {temp_max} °C
- (___.__)__)   & {wind} km/h
-               {precipitations} mm/h - {humidity}%
+     .--.     {description}
+  .-(    ).   {temp_min} - {temp_max} °C
+ (___.__)__)  & {wind} km/h
+              {precipitations} mm/h - {humidity}%
     """,
     "few clouds": """\
    \\__/
- __/  .-.      {description}
-   \\_(   ).    {temp_min} - {temp_max} °C
-   /(___(__)   & {wind} km/h
-               {precipitations} mm/h - {humidity}%
+ __/  .-.     {description}
+   \\_(   ).   {temp_min} - {temp_max} °C
+   /(___(__)  & {wind} km/h
+              {precipitations} mm/h - {humidity}%
     """,
 }  #: :meta hide-value:
 # ASCII art aliases
