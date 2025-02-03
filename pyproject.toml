@@ -62,7 +62,7 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 # For users
 calendar = [
   "cairosvg==2.7.1",
-  "icalevents >=0.1, <0.3",
+  "icalevents==0.2.0",
   "pillow >=9.5, <12",
 ]
 persian = [

@@ -15,7 +15,7 @@ Release date: `2025-xx-xx`
 
 ## Technical Changes
 
-- 
+- Pin the `icalevents` requirement to a specific version, instead of a range of versions.
 
 # 2.0.0
 
