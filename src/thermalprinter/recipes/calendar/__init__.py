@@ -206,6 +206,9 @@ def format_event_date(now: datetime, event: icalevents.Event) -> str:
     """
     delta = event.end - event.start
 
+    if event.all_day:
+        return WHOLE_DAY
+
     # A single-day event
     if not delta.days:
         if event.start == event.end:

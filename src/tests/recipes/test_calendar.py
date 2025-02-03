@@ -54,9 +54,18 @@ DTSTART;TZID=America/New_York:20241214T080000
 DTEND;TZID=America/New_York:20241214T083000
 END:VEVENT
 
+BEGIN:VEVENT
+SUMMARY:Chandeleur
+DTSTART;VALUE=DATE:20241214
+DTEND;VALUE=DATE:20241215
+RRULE:FREQ=YEARLY;INTERVAL=1
+STATUS:CONFIRMED
+END:VEVENT
+
 END:VCALENDAR
 """
 EVENTS_SINGLE_DAY_RES = [
+    (datetime(2024, 12, 14, hour=1, tzinfo=TZ), "Toute la journée", "Chandeleur"),
     (datetime(2024, 12, 14, hour=14, tzinfo=TZ), "14:00 - 14:30", "HR Zoom"),
     (datetime(2024, 12, 14, hour=15, tzinfo=TZ), "15:00 - 18:00", "Noël au Château"),
 ]
@@ -141,6 +150,21 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         "  ... Alice (24) !",
         "    codepage=CodePage.ISO_8859_1",
         b"\xd5" + b"\xcd" * 30 + b"\xb8",
+        '    codepage=CodePage.CP437',
+        b'\xb3',
+        '    line_feed=False, codepage=CodePage.CP437',
+        ' Toute la journée             ',
+        '    line_feed=False, codepage=CodePage.ISO_8859_1',
+        b'\xb3',
+        '    codepage=CodePage.CP437',
+        b'\xb3',
+        '    line_feed=False, codepage=CodePage.CP437',
+        ' Chandeleur                   ',
+        '    line_feed=False, codepage=CodePage.ISO_8859_1',
+        b'\xb3',
+        '    codepage=CodePage.CP437',
+        b'\xc3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4'
+        b'\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xb4',
         "    codepage=CodePage.CP437",
         b"\xb3",
         "    line_feed=False, codepage=CodePage.CP437",
