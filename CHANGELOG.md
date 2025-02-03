@@ -4,6 +4,7 @@ Release date: `2025-xx-xx`
 
 ## Bug Fixes
 
+- Calendar recipe: more precise events date range to prevent whole-day events from day N-1 to also appear at day N.
 - Calendar recipe: whole-day event date formatting.
 - Weather recipe: shortened descriptions to fit into the remaining 18 characters wide
 - Tests: missing code adaptation in `test_calendar.py::test_get_events_on_multi_days()`.

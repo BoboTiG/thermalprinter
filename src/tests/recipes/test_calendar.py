@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from subprocess import check_call
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
@@ -58,8 +58,7 @@ BEGIN:VEVENT
 SUMMARY:Chandeleur
 DTSTART;VALUE=DATE:20241214
 DTEND;VALUE=DATE:20241215
-RRULE:FREQ=YEARLY;INTERVAL=1
-STATUS:CONFIRMED
+RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=12
 END:VEVENT
 
 END:VCALENDAR
@@ -80,9 +79,19 @@ DTSTART;TZID=Europe/Paris:20241214T100000
 DTEND;TZID=Europe/Paris:20241219T120000
 END:VEVENT
 
+BEGIN:VEVENT
+SUMMARY:Firenze dans la forêt interdite
+DTSTART;TZID=Europe/Paris:20241122T163000
+DTEND;TZID=Europe/Paris:20241129T090000
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=SA
+END:VEVENT
+
 END:VCALENDAR
 """
-EVENT_MULTI_DAYS_RES = [(datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00", "Débroussaillage")]
+EVENT_MULTI_DAYS_RES = [
+    # (datetime(2024, 12, 14, hour=10, tzinfo=TZ), "Toute la journée", "Firenze dans la forêt interdite"),
+    (datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00", "Débroussaillage"),
+]
 
 
 @dataclass
@@ -124,6 +133,12 @@ def test_get_events_on_a_single_day(calendar: Calendar) -> None:
         assert calendar.get_events(TODAY) == EVENTS_SINGLE_DAY_RES
 
 
+def test_get_events_on_a_single_day__one_day_before(calendar: Calendar) -> None:
+    yesterday = TODAY - timedelta(days=1)
+    with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENTS_SINGLE_DAY):
+        assert not calendar.get_events(yesterday)
+
+
 def test_get_events_on_multi_days(calendar: Calendar) -> None:
     with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENT_MULTI_DAYS):
         assert calendar.get_events(TODAY) == EVENT_MULTI_DAYS_RES
@@ -150,21 +165,21 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         "  ... Alice (24) !",
         "    codepage=CodePage.ISO_8859_1",
         b"\xd5" + b"\xcd" * 30 + b"\xb8",
-        '    codepage=CodePage.CP437',
-        b'\xb3',
-        '    line_feed=False, codepage=CodePage.CP437',
-        ' Toute la journée             ',
-        '    line_feed=False, codepage=CodePage.ISO_8859_1',
-        b'\xb3',
-        '    codepage=CodePage.CP437',
-        b'\xb3',
-        '    line_feed=False, codepage=CodePage.CP437',
-        ' Chandeleur                   ',
-        '    line_feed=False, codepage=CodePage.ISO_8859_1',
-        b'\xb3',
-        '    codepage=CodePage.CP437',
-        b'\xc3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4'
-        b'\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xb4',
+        "    codepage=CodePage.CP437",
+        b"\xb3",
+        "    line_feed=False, codepage=CodePage.CP437",
+        " Toute la journée             ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1",
+        b"\xb3",
+        "    codepage=CodePage.CP437",
+        b"\xb3",
+        "    line_feed=False, codepage=CodePage.CP437",
+        " Chandeleur                   ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1",
+        b"\xb3",
+        "    codepage=CodePage.CP437",
+        b"\xc3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4"
+        b"\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xb4",
         "    codepage=CodePage.CP437",
         b"\xb3",
         "    line_feed=False, codepage=CodePage.CP437",

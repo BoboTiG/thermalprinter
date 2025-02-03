@@ -122,8 +122,16 @@ class Calendar:
 
     def get_events(self, when: datetime) -> Events:
         """Retrieve events of the day."""
-        events = icalevents.events(url=self.url, start=when, end=when + timedelta(days=1), tzinfo=self.tz)
-        return sorted((event.start, format_event_date(when, event), event.summary) for event in events)
+        return [
+            (event.start, format_event_date(when, event), event.summary)
+            for event in icalevents.events(
+                url=self.url,
+                start=when,
+                end=when + timedelta(hours=23, minutes=59),
+                tzinfo=self.tz,
+                sort=True,
+            )
+        ]
 
     def print_data(self, when: datetime, events: Events, anniversaries: Birthdays) -> None:
         """Just print."""

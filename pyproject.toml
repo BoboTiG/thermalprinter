@@ -180,6 +180,7 @@ ignore = [
     "FBT",      # boolean positional arguments are good for this project
     "ISC001",   # conflict
     "N802",     # test functions names should be lowercase
+    "PLR0911",  # too many return statements
     "PLR2004",  # magic values
     "PLW1508",  # invalid type for environment variable default
     "SLF",      # private class access in tests
