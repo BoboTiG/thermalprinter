@@ -89,7 +89,6 @@ END:VEVENT
 END:VCALENDAR
 """
 EVENT_MULTI_DAYS_RES = [
-    # (datetime(2024, 12, 14, hour=10, tzinfo=TZ), "Toute la journée", "Firenze dans la forêt interdite"),
     (datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00", "Débroussaillage"),
 ]
 
