@@ -25,14 +25,7 @@ if TYPE_CHECKING:
 
 pytest.importorskip("thermalprinter.recipes.calendar", reason="The [calendar] extra dependencies are not installed.")
 
-from thermalprinter.recipes.calendar import (  # noqa: E402
-    TIMEZONE,
-    UNTIL,
-    WHOLE_DAY,
-    Calendar,
-    forge_header_image,
-    format_event_date,
-)
+from thermalprinter.recipes.calendar import TIMEZONE, UNTIL, WHOLE_DAY, Calendar, forge_header_image, format_event_date
 
 TZ = ZoneInfo(TIMEZONE)
 TODAY = datetime(2024, 12, 14, tzinfo=TZ)

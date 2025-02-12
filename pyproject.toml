@@ -192,6 +192,9 @@ fixable = ["ALL"]
 "docs/source/conf.py" = [
     "INP001",
 ]
+"src/thermalprinter/recipes/calendar/*.py" = [
+    "A005",  # module `calendar` shadows a Python standard-library module
+]
 "src/thermalprinter/recipes/weather/*.py" = [
     "RUF001",
 ]

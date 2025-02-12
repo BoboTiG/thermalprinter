@@ -9,11 +9,11 @@ import pytest
 
 pytest.importorskip("thermalprinter.recipes.weather", reason="The [weather] extra dependencies are not installed.")
 
-import responses  # noqa: E402
-from freezegun import freeze_time  # noqa: E402
+import responses
+from freezegun import freeze_time
 
-from thermalprinter.constants import CodePage, Justify, Size  # noqa: E402
-from thermalprinter.recipes.weather import DESCRIPTIONS, URL, Weather  # noqa: E402
+from thermalprinter.constants import CodePage, Justify, Size
+from thermalprinter.recipes.weather import DESCRIPTIONS, URL, Weather
 
 if TYPE_CHECKING:
     from collections.abc import Generator
