@@ -62,6 +62,11 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
+      - name: Install Pillow requirements for Python 3.14
+        if: ${{ matrix.python == '3.14-dev' }}
+        run: |
+          sudo apt update
+          sudo apt install -y libjpeg-dev
       - name: Install requirements
         run: |
           python -m pip install -U pip
