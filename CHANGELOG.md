@@ -14,7 +14,6 @@ Release date: `2025-xx-xx`
 ## Features
 
 - Calendar recipe: support in-between recurring events.
-- Calendar recipe: use the {meth}`ThermalPrinter.font_b()` style for event dates.
 
 ## Technical Changes
 

@@ -164,9 +164,7 @@ class Calendar:
                 printer.out(b"\xd5" + b"\xcd" * (printer.max_column - 2) + b"\xb8", codepage=CodePage.CP437)
 
             printer.out(b"\xb3", line_feed=False, codepage=CodePage.CP437)
-            printer.out(
-                f" {duration: <{printer.max_column - 4}} ", line_feed=False, codepage=CodePage.ISO_8859_1, font_b=True
-            )
+            printer.out(f" {duration: <{printer.max_column - 4}} ", line_feed=False, codepage=CodePage.ISO_8859_1)
             printer.out(b"\xb3", codepage=CodePage.CP437)
 
             for line in wrap(sumary, printer.max_column - 4):
