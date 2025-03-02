@@ -13,12 +13,12 @@ from textwrap import wrap
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
+import PIL
 import icalendar
 import recurring_ical_events
 import requests
 from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
-from PIL import Image
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -191,22 +191,22 @@ class Calendar:
         footer()
 
 
-def forge_header_image(now: datetime) -> Image:
+def forge_header_image(now: datetime) -> PIL.Image:
     """Create the image object containing the nice image with current month, and day.
 
-    :param datetime now: The current date to compare event's dates to.
+    :param datetime.datetime now: The current date to compare event's dates to.
     :rtype: :py:obj:`PIL.Image`
     :return: A PNG file-like :py:obj:`PIL.Image` object.
     """
     agenda_svg = AGENDA_MODEL.replace("MONTH", MONTH_NAMES[now.month - 1]).replace("DAY", str(now.day))
     agenda_png = svg2png(agenda_svg, background_color="white")
-    return Image.open(BytesIO(agenda_png))
+    return PIL.Image.open(BytesIO(agenda_png))
 
 
 def format_event_date(now: datetime, event: icalendar.cal.Event) -> str:
     """Given the current date, and an iCal event, return the formated event's start, and end.
 
-    :param datetime now: The current date to compare event's dates to.
+    :param datetime.datetime now: The current date to compare event's dates to.
     :param icalendar.cal.Event event: The iCal event.
     :rtype: str
     :return: The formated event duration.
@@ -237,12 +237,12 @@ def format_event_date(now: datetime, event: icalendar.cal.Event) -> str:
     return start.strftime("%H:%M")
 
 
-def localize(event_date: datetime, dst_tz: ZoneInfo) -> datetime:
+def localize(event_date: date | datetime, dst_tz: ZoneInfo) -> datetime:
     """Given an event date, and a timezone, return the localized date.
 
-    :param datetime event_date: The event date.
-    :param ZoneInfo dst_tz: The destination timezone to localize the event date to.
-    :rtype: datetime
+    :param datetime.date | datetime.datetime event_date: The event date.
+    :param zoneinfo.ZoneInfo dst_tz: The destination timezone to localize the event date to.
+    :rtype: datetime.datetime
     :return: The localized event date.
     """
     if type(event_date) is date:
