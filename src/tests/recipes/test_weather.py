@@ -75,7 +75,7 @@ def test_forge_data(weather: Weather) -> None:
             " (___.__)__)    & {wind} km/h\n"
             "                {precipitations} mm/h - {humidity}%"
         ),
-        "description": "Nuages couverts",
+        "description": "Ciel couvert",
         "humidity": 75,
         "precipitations": 6,
         "temp_max": 10,

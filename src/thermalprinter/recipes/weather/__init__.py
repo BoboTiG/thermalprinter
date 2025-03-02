@@ -63,22 +63,22 @@ DESCRIPTIONS = {
     "heavy shower rain and drizzle": "Averse++ & bruine",
     "shower drizzle": "Averse & bruine",
     # Group 5xx: Rain
-    "light rain": "Pluie légère",
+    "light rain": "Légère pluie",
     "moderate rain": "Pluie modérée",
     "heavy intensity rain": "Pluie intense",
     "very heavy rain": "Pluie très forte",
     "extreme rain": "Pluie extrême",
     "freezing rain": "Pluie vergalçante",
-    "light intensity shower rain": "Pluie légère",
+    "light intensity shower rain": "Légère pluie",
     "shower rain": "Averse",
     "heavy intensity shower rain": "Forte averse",
     "ragged shower rain": "Pluie",
     # Group 6xx: Snow
-    "light snow": "Neige légère",
+    "light snow": "Légère neige",
     "snow": "Neige",
     "heavy snow": "Forte neige",
     "sleet": "Grésil",
-    "light shower sleet": "Grésil léger",
+    "light shower sleet": "Léger grésil",
     "shower sleet": "Averse de grésil",
     "light rain and snow": "Pluie fine & neige",
     "rain and snow": "Pluie & neige",
@@ -99,10 +99,10 @@ DESCRIPTIONS = {
     # Group 800: Clear
     "clear sky": "Ciel dégagé",
     # Group 80x: Clouds
-    "few clouds": "Quelques nuages",
+    "few clouds": "Nuages épars",
     "scattered clouds": "Nuages épars",
     "broken clouds": "Nuages fragmentés",
-    "overcast clouds": "Nuages couverts",
+    "overcast clouds": "Ciel couvert",
 }  #: :meta hide-value:
 
 # https://github.com/schachmat/wego/blob/2.3/frontends/ascii-art-table.go
