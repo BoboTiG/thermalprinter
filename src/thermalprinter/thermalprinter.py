@@ -835,6 +835,8 @@ class ThermalPrinter:
     def justify(self, value: Justify = Justify.LEFT) -> None:
         """Set the text justification.
 
+        :param Justify value: The justification to use.
+
         .. versionchanged:: 1.0.0
             The ``value`` keyword-argument was converted from a :obj:`str` to :const:`constants.Justify`.
         """
@@ -963,6 +965,8 @@ class ThermalPrinter:
     def size(self, value: Size = Size.SMALL) -> None:
         """Set the text size.
 
+        :param Size value: The size to use.
+
         .. note::
             This method affects :attr:`max_column`.
 
@@ -1058,6 +1062,8 @@ class ThermalPrinter:
 
     def underline(self, weight: Underline = Underline.OFF) -> None:
         """Set the underline mode.
+
+        :param Underline weight: The underline weight to use.
 
         .. versionchanged:: 1.0.0
             The ``weight`` keyword-argument was converted from an :obj:`int` to :const:`constants.Underline`.
