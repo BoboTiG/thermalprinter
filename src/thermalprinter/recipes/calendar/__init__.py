@@ -6,16 +6,18 @@ from __future__ import annotations
 
 from contextlib import suppress
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from io import BytesIO
 from pathlib import Path
 from textwrap import wrap
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
+import icalendar
+import recurring_ical_events
+import requests
 from cairosvg import svg2png
 from dateutil.relativedelta import relativedelta
-from icalevents import icalevents
 from PIL import Image
 
 if TYPE_CHECKING:
@@ -43,9 +45,10 @@ MONTH_NAMES = [
     "Décembre",
 ]  #: Months names.
 TOMORROW = "demain"  #: Tomorrow.
-UNTIL = "jusqu'à"  #: Until.
+UNTIL = "Jusqu'à"  #: Until.
 
 TIMEZONE = "Europe/Paris"  #: The timezone to display proper hours.
+_ONE_DAY = timedelta(days=1)
 
 #: File containing birthdays.
 BIRTHDAYS_FILE = "~/.birthdays.lst"
@@ -122,25 +125,21 @@ class Calendar:
 
     def get_events(self, when: datetime) -> Events:
         """Retrieve events of the day."""
-        return [
-            (event.start, format_event_date(when, event), event.summary)
-            for event in icalevents.events(
-                url=self.url,
-                start=when,
-                end=when + timedelta(hours=23, minutes=59),
-                tzinfo=self.tz,
-                sort=True,
-            )
-        ]
+        with requests.get(self.url, timeout=60) as req:
+            ical_string = req.content
+
+        calendar = icalendar.Calendar.from_ical(ical_string)
+        return sorted(
+            (localize(event.DTSTART, self.tz), format_event_date(when, event), str(event.get("summary")))
+            for event in recurring_ical_events.of(calendar).between(when, _ONE_DAY)
+        )
 
     def print_data(self, when: datetime, events: Events, anniversaries: Birthdays) -> None:
         """Just print."""
-        if not self.printer:
+        if not (printer := self.printer):
             return
 
         from thermalprinter import CodePage, Justify
-
-        printer = self.printer
 
         def header() -> None:
             """Print the header."""
@@ -148,10 +147,10 @@ class Calendar:
             printer.feed()
             printer.image(forge_header_image(when))
             printer.feed()
+            printer.feed()
 
         def birthdays() -> None:
             """Print anniversaries."""
-            printer.feed()
             printer.out(BIRTHDAY)
             for name, years in anniversaries:
                 printer.out(f"  ... {name} ({years}) !", codepage=CodePage.ISO_8859_1)
@@ -165,7 +164,9 @@ class Calendar:
                 printer.out(b"\xd5" + b"\xcd" * (printer.max_column - 2) + b"\xb8", codepage=CodePage.CP437)
 
             printer.out(b"\xb3", line_feed=False, codepage=CodePage.CP437)
-            printer.out(f" {duration: <{printer.max_column - 4}} ", line_feed=False, codepage=CodePage.ISO_8859_1)
+            printer.out(
+                f" {duration: <{printer.max_column - 4}} ", line_feed=False, codepage=CodePage.ISO_8859_1, font_b=True
+            )
             printer.out(b"\xb3", codepage=CodePage.CP437)
 
             for line in wrap(sumary, printer.max_column - 4):
@@ -204,35 +205,48 @@ def forge_header_image(now: datetime) -> Image:
     return Image.open(BytesIO(agenda_png))
 
 
-def format_event_date(now: datetime, event: icalevents.Event) -> str:
+def format_event_date(now: datetime, event: icalendar.cal.Event) -> str:
     """Given the current date, and an iCal event, return the formated event's start, and end.
 
     :param datetime now: The current date to compare event's dates to.
-    :param icalevents.Event event: The iCal event.
+    :param icalendar.cal.Event event: The iCal event.
     :rtype: str
     :return: The formated event duration.
     """
-    delta = event.end - event.start
-
-    if event.all_day:
-        return WHOLE_DAY
+    tz = now.tzinfo
+    start, end = localize(event["DTSTART"].dt, tz), localize(event["DTEND"].dt, tz)  # type: ignore[arg-type]
 
     # A single-day event
-    if not delta.days:
-        if event.start == event.end:
+    if not (end - start).days:
+        if start == end:
             return WHOLE_DAY
-        return f"{event.start.strftime('%H:%M')} - {event.end.strftime('%H:%M')}"
+        return f"{start.strftime('%H:%M')} - {end.strftime('%H:%M')}"
 
     # A multi-days event
 
-    if event.start < now < event.end and event.end.strftime("%Y-%m-%d") != now.strftime("%Y-%m-%d"):
+    if start < now < end and end.strftime("%Y-%m-%d") != now.strftime("%Y-%m-%d"):
         return WHOLE_DAY
 
-    delta = event.end - now
+    if (delta := end - now) == _ONE_DAY:
+        return WHOLE_DAY
+
     if delta.days == 1:
-        return f"{event.start.strftime('%H:%M')} - {TOMORROW} {event.end.strftime('%H:%M')}"
+        return f"{start.strftime('%H:%M')} - {TOMORROW} {end.strftime('%H:%M')}"
 
     if delta.days < 1:
-        return f"{UNTIL} {event.end.strftime('%H:%M')}"
+        return f"{UNTIL} {end.strftime('%H:%M')}"
 
-    return event.start.strftime("%H:%M")
+    return start.strftime("%H:%M")
+
+
+def localize(event_date: datetime, dst_tz: ZoneInfo) -> datetime:
+    """Given an event date, and a timezone, return the localized date.
+
+    :param datetime event_date: The event date.
+    :param ZoneInfo dst_tz: The destination timezone to localize the event date to.
+    :rtype: datetime
+    :return: The localized event date.
+    """
+    if type(event_date) is date:
+        return datetime(event_date.year, event_date.month, event_date.day, tzinfo=dst_tz)
+    return event_date.astimezone(dst_tz)

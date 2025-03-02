@@ -361,8 +361,8 @@ class Weather:
 
     def line_out(self, line: str | bytes, *, line_feed: bool = True) -> None:  # noqa: PLR0912
         """Print one character at a time with the proper code page, and with adapted letters on unsupported unicode."""
-        assert self.printer  # noqa: S101
-        printer = self.printer
+        if not (printer := self.printer):
+            return
 
         if not line:
             if line_feed:
@@ -414,10 +414,8 @@ class Weather:
 
     def print_data(self, data: dict[str, Any]) -> None:
         """Just print."""
-        if not self.printer:
+        if not (printer := self.printer):
             return
-
-        printer = self.printer
 
         printer.codepage(CodePage.ISO_8859_1)
         printer.feed()

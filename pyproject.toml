@@ -62,8 +62,9 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 # For users
 calendar = [
   "cairosvg==2.7.1",
-  "icalevents==0.2.1",
   "pillow >=9.5, <12",
+  "recurring-ical-events==3.5.2",
+  "requests >=2.30, <2.40",
 ]
 persian = [
   "arabic-reshaper==3.0.0",
@@ -171,7 +172,7 @@ line-ending = "auto"
 [tool.ruff.lint]
 extend-select = ["ALL"]
 ignore = [
-    "ANN401",   # allow Any for *constants
+    "ANN401",   # allow Any for `*constants`
     "C901",     # too complex
     "COM812",   # conflict
     "D",        # TODO
@@ -184,7 +185,7 @@ ignore = [
     "PLR2004",  # magic values
     "PLW1508",  # invalid type for environment variable default
     "SLF",      # private class access in tests
-    "T201",     # print()
+    "T201",     # `print()`
 ]
 fixable = ["ALL"]
 

@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import datetime, timedelta
 from subprocess import check_call
 from typing import TYPE_CHECKING
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
-import icalevents.icaldownload
+import icalendar
 import pytest
+import responses
 from freezegun import freeze_time
-from icalevents.icalparser import create_event
 
 from thermalprinter import ThermalPrinter
 
@@ -25,7 +24,17 @@ if TYPE_CHECKING:
 
 pytest.importorskip("thermalprinter.recipes.calendar", reason="The [calendar] extra dependencies are not installed.")
 
-from thermalprinter.recipes.calendar import TIMEZONE, UNTIL, WHOLE_DAY, Calendar, forge_header_image, format_event_date
+from thermalprinter.recipes.calendar import (
+    BIRTHDAY,
+    NICE_DAY,
+    TIMEZONE,
+    TOMORROW,
+    UNTIL,
+    WHOLE_DAY,
+    Calendar,
+    forge_header_image,
+    format_event_date,
+)
 
 TZ = ZoneInfo(TIMEZONE)
 TODAY = datetime(2024, 12, 14, tzinfo=TZ)
@@ -57,7 +66,7 @@ END:VEVENT
 END:VCALENDAR
 """
 EVENTS_SINGLE_DAY_RES = [
-    (datetime(2024, 12, 14, hour=1, tzinfo=TZ), "Toute la journée", "Chandeleur"),
+    (datetime(2024, 12, 14, tzinfo=TZ), WHOLE_DAY, "Chandeleur"),
     (datetime(2024, 12, 14, hour=14, tzinfo=TZ), "14:00 - 14:30", "HR Zoom"),
     (datetime(2024, 12, 14, hour=15, tzinfo=TZ), "15:00 - 18:00", "Noël au Château"),
 ]
@@ -82,13 +91,9 @@ END:VEVENT
 END:VCALENDAR
 """
 EVENT_MULTI_DAYS_RES = [
+    (datetime(2024, 12, 7, hour=16, minute=30, tzinfo=TZ), f"{UNTIL} 09:00", "Firenze dans la forêt interdite"),
     (datetime(2024, 12, 14, hour=10, tzinfo=TZ), "10:00", "Débroussaillage"),
 ]
-
-
-@dataclass
-class Date:
-    dt: datetime
 
 
 @pytest.fixture
@@ -120,20 +125,26 @@ def test_get_birthdays(data: str, expected: Birthdays, calendar: Calendar, tmp_p
         assert calendar.get_birthdays(TODAY) == expected
 
 
+@responses.activate
 def test_get_events_on_a_single_day(calendar: Calendar) -> None:
-    with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENTS_SINGLE_DAY):
-        assert calendar.get_events(TODAY) == EVENTS_SINGLE_DAY_RES
+    responses.add(responses.GET, calendar.url, body=EVENTS_SINGLE_DAY)
+
+    assert calendar.get_events(TODAY) == EVENTS_SINGLE_DAY_RES
 
 
+@responses.activate
 def test_get_events_on_a_single_day__one_day_before(calendar: Calendar) -> None:
+    responses.add(responses.GET, calendar.url, body=EVENTS_SINGLE_DAY)
+
     yesterday = TODAY - timedelta(days=1)
-    with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENTS_SINGLE_DAY):
-        assert not calendar.get_events(yesterday)
+    assert not calendar.get_events(yesterday)
 
 
+@responses.activate
 def test_get_events_on_multi_days(calendar: Calendar) -> None:
-    with patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENT_MULTI_DAYS):
-        assert calendar.get_events(TODAY) == EVENT_MULTI_DAYS_RES
+    responses.add(responses.GET, calendar.url, body=EVENT_MULTI_DAYS)
+
+    assert calendar.get_events(TODAY) == EVENT_MULTI_DAYS_RES
 
 
 def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
@@ -153,15 +164,15 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         calendar.print_data(TODAY, EVENTS_SINGLE_DAY_RES, birdthdays)
 
     assert result == [
-        "C'est l'anniversaire de...",
+        BIRTHDAY,
         "  ... Alice (24) !",
         "    codepage=CodePage.ISO_8859_1",
         b"\xd5" + b"\xcd" * 30 + b"\xb8",
         "    codepage=CodePage.CP437",
         b"\xb3",
         "    line_feed=False, codepage=CodePage.CP437",
-        " Toute la journée             ",
-        "    line_feed=False, codepage=CodePage.ISO_8859_1",
+        f" {WHOLE_DAY}             ",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1, font_b=True",
         b"\xb3",
         "    codepage=CodePage.CP437",
         b"\xb3",
@@ -176,7 +187,7 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         b"\xb3",
         "    line_feed=False, codepage=CodePage.CP437",
         " 14:00 - 14:30                ",
-        "    line_feed=False, codepage=CodePage.ISO_8859_1",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1, font_b=True",
         b"\xb3",
         "    codepage=CodePage.CP437",
         b"\xb3",
@@ -190,7 +201,7 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         b"\xb3",
         "    line_feed=False, codepage=CodePage.CP437",
         " 15:00 - 18:00                ",
-        "    line_feed=False, codepage=CodePage.ISO_8859_1",
+        "    line_feed=False, codepage=CodePage.ISO_8859_1, font_b=True",
         b"\xb3",
         "    codepage=CodePage.CP437",
         b"\xb3",
@@ -201,24 +212,26 @@ def test_print_data(calendar: Calendar, printer: ThermalPrinter) -> None:
         "    codepage=CodePage.CP437",
         b"\xd4" + b"\xcd" * 30 + b"\xbe",
         "    codepage=CodePage.CP437",
-        "Belle journée :)",
+        NICE_DAY,
         "    justify=Justify.CENTER, codepage=CodePage.ISO_8859_1",
     ]
 
 
+@responses.activate
 @freeze_time("2024-12-14")
-@patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENTS_SINGLE_DAY)
 @patch("sys.argv", ["print-calendar", URL])
-def test_main(mocked_sys_argv: MagicMock) -> None:  # noqa: ARG001
+def test_main() -> None:
     from thermalprinter.recipes.calendar.__main__ import main
+
+    responses.add(responses.GET, URL, body=EVENTS_SINGLE_DAY)
 
     assert main() == 0
 
 
+@responses.activate
 @freeze_time("2024-12-14")
-@patch.object(icalevents.icaldownload.ICalDownload, "data_from_url", return_value=EVENTS_SINGLE_DAY)
 @patch("sys.argv", ["print-calendar", URL, "--port", "loop://"])
-def test_main_with_port(mocked_sys_argv: MagicMock, tmp_path: Path) -> None:  # noqa: ARG001
+def test_main_with_port(tmp_path: Path) -> None:
     from thermalprinter.recipes.calendar.__main__ import main
 
     write_orig = ThermalPrinter.write
@@ -230,6 +243,8 @@ def test_main_with_port(mocked_sys_argv: MagicMock, tmp_path: Path) -> None:  # 
         # We are writing a lot of data: the image, and it make the test serial device queue full.
         # Let's skip it.
         return None
+
+    responses.add(responses.GET, URL, body=EVENTS_SINGLE_DAY)
 
     with patch("thermalprinter.constants.STATS_FILE", f"{tmp_path}/stats.json"):  # noqa: SIM117
         with patch.object(ThermalPrinter, "write", write):
@@ -271,7 +286,7 @@ def test_executable(tmp_path: Path) -> None:
             datetime(2024, 12, 14, tzinfo=TZ),
             datetime(2024, 12, 14, hour=8, minute=30, tzinfo=TZ),
             datetime(2024, 12, 15, hour=10, tzinfo=TZ),
-            "08:30 - demain 10:00",
+            f"08:30 - {TOMORROW} 10:00",
         ),
         (
             datetime(2024, 12, 14, tzinfo=TZ),
@@ -294,5 +309,11 @@ def test_executable(tmp_path: Path) -> None:
     ],
 )
 def test_format_event_date(now: datetime, start: datetime, end: datetime, expected: str) -> None:
-    event = create_event({"dtstart": Date(start), "dtend": Date(end)}, True)
+    event = icalendar.cal.Event.from_ical(f"""
+BEGIN:VEVENT
+SUMMARY:Foo
+DTSTART;TZID={start.tzinfo}:{start.strftime("%Y%m%dT%H%M%S")}
+DTEND;TZID={end.tzinfo}:{end.strftime("%Y%m%dT%H%M%S")}
+END:VEVENT
+""")
     assert format_event_date(now, event) == expected

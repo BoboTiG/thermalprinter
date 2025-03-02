@@ -30,7 +30,7 @@ extlinks = {
     "pull": ("https://github.com/BoboTiG/thermalprinter/pull/%s", "PR #%s"),
 }
 intersphinx_mapping = {
-    "icalevents": ("https://icalevents.readthedocs.io/en/latest/", None),
+    "icalendar": ("https://icalendar.readthedocs.io/en/latest/", None),
     "pillow": ("https://pillow.readthedocs.io/en/latest/", None),
     "python": ("https://docs.python.org/3", None),
 }

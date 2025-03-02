@@ -1,21 +1,25 @@
-# 2.0.1-dev
+# 2.1.0-dev
 
 Release date: `2025-xx-xx`
 
 ## Bug Fixes
 
+
 - Calendar recipe: more precise events date range to prevent whole-day events from day N-1 to also appear at day N.
 - Calendar recipe: whole-day event date formatting.
-- Weather recipe: shortened descriptions to fit into the remaining 18 characters wide
+- Calendar recipe: consistent spacing between the calendar picture and the next item.
+- Weather recipe: shortened descriptions to fit into the remaining 18 characters wide.
 - Tests: missing code adaptation in `test_calendar.py::test_get_events_on_multi_days()`.
 
 ## Features
 
-- 
+- Calendar recipe: support in-between recurring events.
+- Calendar recipe: use the {meth}`ThermalPrinter.font_b()` style for event dates.
 
 ## Technical Changes
 
-- Pin the `icalevents` requirement to a specific version, instead of a range of versions.
+- Calendar recipe: removed the `icalevents` requirement.
+- Calendar recipe: added `recurring-ical-events`, and `requests`, requirements.
 
 # 2.0.0
 

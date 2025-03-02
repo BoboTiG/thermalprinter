@@ -69,6 +69,10 @@ Here is the API:
 
     .. versionadded:: 2.0.0
 
+.. autofunction:: thermalprinter.recipes.calendar.localize
+
+    .. versionadded:: 2.1.0
+
 .. autodata:: thermalprinter.recipes.calendar.TIMEZONE
 .. autodata:: thermalprinter.recipes.calendar.BIRTHDAYS_FILE
 
