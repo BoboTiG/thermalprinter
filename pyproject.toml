@@ -83,7 +83,7 @@ docs = [
   "enum-tools[sphinx]==0.12.0",
   "myst-parser==4.0.1",
   "shibuya==2025.2.28",
-  "sphinx==8.2.1",
+  "sphinx==8.2.3",
   "sphinx-copybutton==0.5.2",
   "sphinx-new-tab-link==0.6.1",
 ]
