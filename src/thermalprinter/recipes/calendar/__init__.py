@@ -13,8 +13,8 @@ from textwrap import wrap
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
-import PIL
 import icalendar
+import PIL
 import recurring_ical_events
 import requests
 from cairosvg import svg2png
@@ -237,10 +237,10 @@ def format_event_date(now: datetime, event: icalendar.cal.Event) -> str:
     return start.strftime("%H:%M")
 
 
-def localize(event_date: date | datetime, dst_tz: ZoneInfo) -> datetime:
+def localize(event_date: datetime, dst_tz: ZoneInfo) -> datetime:
     """Given an event date, and a timezone, return the localized date.
 
-    :param datetime.date | datetime.datetime event_date: The event date.
+    :param datetime.datetime event_date: The event date.
     :param zoneinfo.ZoneInfo dst_tz: The destination timezone to localize the event date to.
     :rtype: datetime.datetime
     :return: The localized event date.
