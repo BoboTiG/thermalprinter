@@ -1,11 +1,10 @@
-# 2.1.0-dev
+# 2.1.0
 
-Release date: `2025-xx-xx`
+Release date: `2025-03-03`
 
 ## Bug Fixes
 
-
-- Calendar recipe: more precise events date range to prevent whole-day events from day N-1 to also appear at day N.
+- Calendar recipe: prevent whole-day events from day N-1 to also appear at day N.
 - Calendar recipe: whole-day event date formatting.
 - Calendar recipe: consistent spacing between the calendar picture and the next item.
 - Weather recipe: shortened descriptions to fit into the remaining 18 characters wide.
