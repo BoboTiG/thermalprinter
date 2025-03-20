@@ -6,6 +6,8 @@
 [![Tests](https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml)
 [![Github License](https://img.shields.io/github/license/BoboTiG/thermalprinter.svg)](https://github.com/BoboTiG/thermalprinter/blob/master/LICENSE)
 
+[![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/mschoentgen)
+
 Python module to manage DP-EH600 thermal printers (the one sold by AdaFruit).
 
 - **Python 3.9** minimum;
