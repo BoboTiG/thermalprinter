@@ -12,6 +12,9 @@ ThermalPrinter's documentation
 .. image:: https://img.shields.io/github/license/BoboTiG/thermalprinter.svg
    :target: https://github.com/BoboTiG/thermalprinter/blob/master/LICENSE
 
+.. image:: https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white
+   :target: https://www.patreon.com/mschoentgen
+
 Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 
 - **Python 3.9** minimum;
