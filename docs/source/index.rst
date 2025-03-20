@@ -1,19 +1,13 @@
 ThermalPrinter's documentation
 ==============================
 
-.. image:: https://img.shields.io/pypi/v/thermalprinter.svg
-   :target: https://pypi.python.org/pypi/thermalprinter
-.. image:: https://img.shields.io/pypi/status/thermalprinter.svg
-   :target: https://pypi.python.org/pypi/thermalprinter
-.. image:: https://img.shields.io/pypi/pyversions/thermalprinter.svg
-   :target: https://pypi.python.org/pypi/thermalprinter
-.. image:: https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml/badge.svg?branch=master
-   :target: https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml
-.. image:: https://img.shields.io/github/license/BoboTiG/thermalprinter.svg
-   :target: https://github.com/BoboTiG/thermalprinter/blob/master/LICENSE
+|PyPI Version|
+|PyPI Status|
+|PyPI Python Versions|
+|GitHub Build Status|
+|GitHub License|
 
-.. image:: https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white
-   :target: https://www.patreon.com/mschoentgen
+|Patreon|
 
 Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 
@@ -51,3 +45,16 @@ Python module to manage the DP-EH600 thermal printer (the one sold by AdaFruit).
 - :ref:`genindex`
 - :ref:`modindex`
 - :ref:`search`
+
+.. |PyPI Version| image:: https://img.shields.io/pypi/v/thermalprinter.svg
+   :target: https://pypi.python.org/pypi/thermalprinter/
+.. |PyPI Status| image:: https://img.shields.io/pypi/status/thermalprinter.svg
+   :target: https://pypi.python.org/pypi/thermalprinter/
+.. |PyPI Python Versions| image:: https://img.shields.io/pypi/pyversions/thermalprinter.svg
+   :target: https://pypi.python.org/pypi/thermalprinter/
+.. |Github Build Status| image:: https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml/badge.svg?branch=master
+   :target: https://github.com/BoboTiG/thermalprinter/actions/workflows/tests.yml
+.. |GitHub License| image:: https://img.shields.io/github/license/BoboTiG/thermalprinter.svg
+   :target: https://github.com/BoboTiG/thermalprinter/blob/master/LICENSE
+.. |Patreon| image:: https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white
+   :target: https://www.patreon.com/mschoentgen
