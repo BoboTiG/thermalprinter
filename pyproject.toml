@@ -82,7 +82,7 @@ dev = [
 docs = [
   "enum-tools[sphinx]==0.13.0",
   "myst-parser==4.0.1",
-  "shibuya==2025.3.24",
+  "shibuya==2025.4.25",
   "sphinx==8.2.3",
   "sphinx-copybutton==0.5.2",
   "sphinx-new-tab-link==0.8.0",
