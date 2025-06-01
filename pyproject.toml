@@ -94,7 +94,7 @@ lint = [
   "types-python-dateutil",
 ]
 tests = [
-  "freezegun==1.5.1",
+  "freezegun==1.5.2",
   "pillow >=9.5, <12",
   "pytest >=7.4, <9",
   "pytest-cov >=4, <7",
