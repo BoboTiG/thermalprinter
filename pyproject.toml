@@ -77,7 +77,7 @@ weather = [
 # For developers
 dev = [
   "build==1.2.2.post1",
-  "twine==6.1.0",
+  "twine==6.2.0",
 ]
 docs = [
   "enum-tools[sphinx]==0.13.0",
