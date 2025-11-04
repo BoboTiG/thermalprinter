@@ -89,7 +89,7 @@ docs = [
 ]
 lint = [
   "mypy==1.16.1",
-  "ruff==0.11.12",
+  "ruff==0.14.3",
   "types-requests",
   "types-python-dateutil",
 ]
@@ -181,6 +181,7 @@ ignore = [
     "FBT",      # boolean positional arguments are good for this project
     "ISC001",   # conflict
     "N802",     # test functions names should be lowercase
+    "PLC0415",  #  `import` should be at the top-level of a file
     "PLR0911",  # too many return statements
     "PLR2004",  # magic values
     "PLW1508",  # invalid type for environment variable default
