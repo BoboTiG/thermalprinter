@@ -17,7 +17,7 @@ jobs:
           - html
           - singlehtml
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -32,7 +32,7 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -56,7 +56,7 @@ jobs:
           - "3.13"
           - "3.14-dev"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -82,7 +82,7 @@ jobs:
     if: ${{ github.actor == 'dependabot[bot]' }}
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: pguyot/arm-runner-action@v2
         with:
           cpu: cortex-a7
