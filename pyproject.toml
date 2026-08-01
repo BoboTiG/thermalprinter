@@ -88,7 +88,7 @@ docs = [
   "sphinx-new-tab-link==0.8.1",
 ]
 lint = [
-  "mypy==1.19.1",
+  "mypy==2.3.0",
   "ruff==0.15.20",
   "types-requests",
   "types-python-dateutil",
