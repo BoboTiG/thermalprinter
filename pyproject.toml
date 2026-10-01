@@ -62,7 +62,7 @@ print-weather = "thermalprinter.recipes.weather.__main__:main"
 # For users
 calendar = [
   "cairosvg==2.8.2",
-  "pillow >=9.5, <12",
+  "pillow >=9.5, <13",
   "recurring-ical-events==3.8.2",
   "requests >=2.30, <2.40",
 ]
@@ -95,7 +95,7 @@ lint = [
 ]
 tests = [
   "freezegun==1.5.5",
-  "pillow >=9.5, <12",
+  "pillow >=9.5, <13",
   "pytest >=7.4, <9",
   "pytest-cov >=4, <8",
   "responses >=0.23, <0.27",
