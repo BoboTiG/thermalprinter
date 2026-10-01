@@ -67,7 +67,7 @@ calendar = [
   "requests >=2.30, <2.40",
 ]
 persian = [
-  "arabic-reshaper==3.0.0",
+  "arabic-reshaper==3.0.1",
   "python-bidi >=0.6, <0.7; python_version < '3.14'",
 ]
 weather = [
